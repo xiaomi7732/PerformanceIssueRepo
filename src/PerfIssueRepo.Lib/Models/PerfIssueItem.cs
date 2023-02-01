@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace PerfIssueRepo.Models;
 
 public record PerfIssueItem : PerfIssue
@@ -7,11 +9,13 @@ public record PerfIssueItem : PerfIssue
         Id = issueSpec.Id;
         Title = issueSpec.Title;
         Description = issueSpec.Description;
-        DocLink = issueSpec.DocLink;
+        DocURL = issueSpec.DocURL;
         Recommendation = issueSpec.Recommendation;
         Rationale = issueSpec.Rationale;
-        Type = issueTypeCode;
+        TypeCode = issueTypeCode;
     }
 
-    public string Type { get; init; } = IssueType.Unknown;
+    public string TypeCode { get; init; } = IssueType.Unknown;
+
+    public string DisplayId => TypeCode + Id.ToString("D3", CultureInfo.InvariantCulture);
 }

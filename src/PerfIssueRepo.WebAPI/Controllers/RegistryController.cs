@@ -20,7 +20,7 @@ public class RegistryController : ControllerBase
     [HttpGet]
     public async IAsyncEnumerable<PerfIssueRegisterEntry> GetAll([EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await foreach (PerfIssueRegisterEntry entry in _issueService.GetAllIssuesAsync(cancellationToken))
+        await foreach (PerfIssueRegisterEntry entry in _issueService.GetRegisteredIssuesAsync(cancellationToken))
         {
             yield return entry;
         }

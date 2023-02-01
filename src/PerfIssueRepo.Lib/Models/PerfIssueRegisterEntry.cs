@@ -14,7 +14,7 @@ public record PerfIssueRegisterEntry : PerfIssue
         Id = newId;
         Title = issue.Title;
         Description = issue.Description;
-        DocLink = issue.DocLink;
+        DocURL = issue.DocURL;
         Recommendation = issue.Recommendation;
         Rationale = issue.Rationale;
         SupportedTypes = supportedTypes;
