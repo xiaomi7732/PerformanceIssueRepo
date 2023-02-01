@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 
 namespace PerfIssueRepo.WebAPI.Services;
@@ -7,7 +8,8 @@ public class IssueTypeCodeService
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private static IDictionary<string, string>? _typeCodeMapping;
 
-    public IssueTypeCodeService(JsonSerializerOptions jsonSerializerOptions)
+    public IssueTypeCodeService(
+        JsonSerializerOptions jsonSerializerOptions)
     {
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
     }
@@ -42,9 +44,12 @@ public class IssueTypeCodeService
     // DAL
     private async Task<IDictionary<string, string>?> GetTypeCodeMappingAsync(CancellationToken cancellationToken)
     {
+        string binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        string filePath = Path.Combine(binPath, "issue-code.json");
+
         if (_typeCodeMapping is null)
         {
-            using (Stream readingStream = File.OpenRead("issue-code.json"))
+            using (Stream readingStream = File.OpenRead(filePath))
             {
                 Dictionary<string, string>? mapping = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(readingStream, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
                 if (mapping is null)
