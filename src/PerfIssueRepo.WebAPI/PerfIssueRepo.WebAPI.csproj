@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PerfIssueRepo.Lib\PerfIssueRepo.Lib.csproj" />
+    <None Include="./issue-code.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

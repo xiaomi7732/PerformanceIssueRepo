@@ -11,7 +11,7 @@ public record PerfIssueRegisterEntry : PerfIssue
 
     public PerfIssueRegisterEntry(int newId, PerfIssue issue, IEnumerable<string> supportedTypes)
     {
-        Id = newId;
+        IssueId = newId;
         Title = issue.Title;
         Description = issue.Description;
         DocURL = issue.DocURL;

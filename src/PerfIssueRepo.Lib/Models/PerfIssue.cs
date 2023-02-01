@@ -4,7 +4,7 @@ namespace PerfIssueRepo.Models;
 
 public abstract record PerfIssue
 {
-    public int Id { get; init; } = 0;
+    public int IssueId { get; init; } = 0;
     public string Title { get; init; } = default!;
     public string Description { get; init; } = default!;
     public Uri? DocURL { get; init; } = default!;

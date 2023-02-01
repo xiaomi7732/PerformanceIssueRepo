@@ -8,15 +8,18 @@ namespace PerfIssueRepo.WebAPI.Services;
 public class IssueService
 {
     private readonly IssueServiceOptions _options;
+    private readonly IssueItemFactory _issueItemFactory;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly ILogger _logger;
 
     public IssueService(
         IOptions<IssueServiceOptions> options,
+        IssueItemFactory issueItemFactory,
         JsonSerializerOptions jsonSerializerOptions,
         ILogger<IssueService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        _issueItemFactory = issueItemFactory ?? throw new ArgumentNullException(nameof(issueItemFactory));
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -26,14 +29,14 @@ public class IssueService
     {
         int newId = await GetNextAvailableIssueIdAsync(cancellationToken).ConfigureAwait(false);
         PerfIssueRegisterEntry newItem = new PerfIssueRegisterEntry(newId, issueSpec, new string[] { issueType });
-        return new PerfIssueItem(newItem, issueType);
+        return await _issueItemFactory.CreateAsync(newItem, issueType, cancellationToken);
     }
 
     public async Task<PerfIssueRegisterEntry?> GetRegisteredItem(int id, CancellationToken cancellationToken)
     {
         await foreach (PerfIssueRegisterEntry item in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
         {
-            if (item.Id == id)
+            if (item.IssueId == id)
             {
                 return item;
             }
@@ -46,14 +49,14 @@ public class IssueService
         int newId = await GetNextAvailableIssueIdAsync(cancellationToken).ConfigureAwait(false);
 
         // Any register entry shall have id of zero
-        if (registerEntry.Id != 0)
+        if (registerEntry.IssueId != 0)
         {
             throw new InvalidCastException("New perf issue registry entry should always have an id of zero.");
         }
 
         registerEntry = registerEntry with
         {
-            Id = newId
+            IssueId = newId
         };
 
         List<PerfIssueRegisterEntry> result = new List<PerfIssueRegisterEntry>();
@@ -79,7 +82,7 @@ public class IssueService
         await foreach (PerfIssueRegisterEntry entry in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
         {
             // No hit;
-            if (entry.Id != issueId)
+            if (entry.IssueId != issueId)
             {
                 result.Add(entry);
                 continue;
@@ -109,7 +112,7 @@ public class IssueService
         bool deleted = false;
         await foreach (PerfIssueRegisterEntry item in GetAllPerfIssuesAsync(cancellationToken).ConfigureAwait(false))
         {
-            if (item.Id == issueId)
+            if (item.IssueId == issueId)
             {
                 deleted = true;
             }
@@ -131,7 +134,7 @@ public class IssueService
         bool found = false;
         await foreach (PerfIssueRegisterEntry entry in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
         {
-            if (entry.Id != newIssueRegistryItem.Id)
+            if (entry.IssueId != newIssueRegistryItem.IssueId)
             {
                 results.Add(entry);
                 continue;
@@ -143,7 +146,7 @@ public class IssueService
 
         if (!found)
         {
-            throw new IndexOutOfRangeException($"Can't find an entry by id: {newIssueRegistryItem.Id}");
+            throw new IndexOutOfRangeException($"Can't find an entry by id: {newIssueRegistryItem.IssueId}");
         }
 
         await SaveAllPerfIssueAsync(results, cancellationToken).ConfigureAwait(false);
@@ -155,15 +158,15 @@ public class IssueService
         return GetAllPerfIssuesAsync(cancellationToken);
     }
 
-    public async IAsyncEnumerable<PerfIssueItem> GetAllIssueItems(bool? activeState, [EnumeratorCancellation]CancellationToken cancellationToken)
+    public async IAsyncEnumerable<PerfIssueItem> GetAllIssueItems(bool? activeState, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await foreach(PerfIssueRegisterEntry entry in GetAllPerfIssuesAsync(cancellationToken).ConfigureAwait(false))
+        await foreach (PerfIssueRegisterEntry entry in GetAllPerfIssuesAsync(cancellationToken).ConfigureAwait(false))
         {
-            if(activeState is null || entry.IsActive == activeState)
+            if (activeState is null || entry.IsActive == activeState)
             {
-                foreach(string typeCode in entry.SupportedTypes)
+                foreach (string typeCode in entry.SupportedTypes)
                 {
-                    PerfIssueItem newItem = new PerfIssueItem(entry, typeCode);
+                    PerfIssueItem newItem = await _issueItemFactory.CreateAsync(entry, typeCode, cancellationToken);
                     yield return newItem;
                 }
             }
@@ -210,9 +213,9 @@ public class IssueService
         int maxId = 0;
         await foreach (PerfIssue issue in GetRegisteredIssuesAsync(cancellationToken))
         {
-            if (issue.Id > maxId)
+            if (issue.IssueId > maxId)
             {
-                maxId = issue.Id;
+                maxId = issue.IssueId;
             }
         }
         return maxId + 1;

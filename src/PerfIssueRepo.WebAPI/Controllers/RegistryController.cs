@@ -44,7 +44,7 @@ public class RegistryController : ControllerBase
         try
         {
             PerfIssueRegisterEntry result = await _issueService.RegisterNewIssueAsync(newItem, cancellationToken).ConfigureAwait(false);
-            return CreatedAtAction(nameof(Get), new { issueId = result.Id }, result);
+            return CreatedAtAction(nameof(Get), new { issueId = result.IssueId }, result);
         }
         catch (InvalidOperationException)
         {

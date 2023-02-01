@@ -17,7 +17,12 @@ builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
 });
 
 // Add services to the container.
-builder.Services.AddSingleton<IssueService>();
+builder.Services.AddTransient<IssueService>();
+builder.Services.AddTransient<IssueTypeCodeService>();
+
+builder.Services.TryAddPerfIssueTypeFillers();
+builder.Services.AddTransient<IssueItemFactory>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
