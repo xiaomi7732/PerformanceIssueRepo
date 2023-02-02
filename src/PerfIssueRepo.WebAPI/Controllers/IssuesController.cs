@@ -17,8 +17,9 @@ public class IssuesController : ControllerBase
     }
 
     [HttpGet]
-    [Route("versions/{specVersion}")]
-    public async Task<ActionResult<IEnumerable<PerfIssueItem>>> Get([FromRoute] string specVersion, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<PerfIssueItem>>> Get(
+        [FromQuery(Name = "spec-version")] string specVersion,
+        CancellationToken cancellationToken)
     {
         try
         {
