@@ -1,22 +1,27 @@
 [
   {
-    "supportedTypes": [
-      "C",
-      "M"
-    ],
-    "isActive": true,
+    "typeCode": "C",
+    "uniqueId": "C0001",
     "issueId": 1,
-    "title": "Allocations in \u0060Equals\u0060/\u0060GetHashCode\u0060",
-    "description": "Hot-path methods like \u0060Equals\u0060/\u0060GetHashCode\u0060 should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while \u0060string.Format\u0060 leads to string allocations.",
+    "title": "Allocations in `Equals`/`GetHashCode`",
+    "description": "Hot-path methods like `Equals`/`GetHashCode` should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while `string.Format` leads to string allocations.",
     "docURL": null,
-    "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. \u0060string.Format\u0060 can be replaced with a comparison of it\u0027s component strings.",
-    "rationale": "{criteria}% of your [issueType] was spent in \u0060{symbol}\u0060, We expected this value to be {relation} {value}%."
+    "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.",
+    "rationale": "{criteria}% of your CPU was spent in `{symbol}`, We expected this value to be {relation} {value}%."
   },
   {
-    "supportedTypes": [
-      "C"
-    ],
-    "isActive": true,
+    "typeCode": "M",
+    "uniqueId": "M0001",
+    "issueId": 1,
+    "title": "Allocations in `Equals`/`GetHashCode`",
+    "description": "Hot-path methods like `Equals`/`GetHashCode` should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while `string.Format` leads to string allocations.",
+    "docURL": null,
+    "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.",
+    "rationale": "{criteria}% of your Memory was spent in `{symbol}`, We expected this value to be {relation} {value}%."
+  },
+  {
+    "typeCode": "C",
+    "uniqueId": "C0002",
     "issueId": 2,
     "title": "Excessive Allocations Due to List/Dictionary Resizing",
     "description": "Too many allocations are being caused by resizing due to calls associated with List/Dictionary resizing.",
