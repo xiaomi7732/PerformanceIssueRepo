@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using PerfIssueRepo.Models;
 using PerfIssueRepo.WebAPI.Services;
@@ -8,13 +9,30 @@ namespace PerfIssueRepo.WebAPI.Controllers;
 [Route("[controller]")]
 public class IssuesController : ControllerBase
 {
-    private readonly IssueService _issueService;
+    private readonly IssueItemService _issueItemService;
 
-    public IssuesController(IssueService issueService)
+    public IssuesController(IssueItemService issueItemService)
     {
-        _issueService = issueService ?? throw new ArgumentNullException(nameof(issueService));
+        _issueItemService = issueItemService ?? throw new ArgumentNullException(nameof(issueItemService));
     }
 
     [HttpGet]
-    public IAsyncEnumerable<PerfIssueItem> Get(CancellationToken cancellationToken) => _issueService.GetAllIssueItems(activeState: true, cancellationToken);
+    [Route("versions/{specVersion}")]
+    public async Task<ActionResult<IEnumerable<PerfIssueItem>>> Get([FromRoute] string specVersion, CancellationToken cancellationToken)
+    {
+        try
+        {
+            IEnumerable<PerfIssueItem> result = await _issueItemService.ListByAsync(specVersion, cancellationToken);
+            return Ok(result);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            string registryUrl = "https://github.com/xiaomi7732/PerformanceIssueRepo/tree/main/specs/registry";
+            return NotFound(new Error
+            {
+                Message = $"Find out all available versions at: {registryUrl}",
+                HelpLink = new Uri(registryUrl),
+            });
+        }
+    }
 }

@@ -10,6 +10,11 @@ builder.Logging.AddSimpleConsole(opt =>
     opt.ColorBehavior = LoggerColorBehavior.Enabled;
 });
 
+builder.Services.AddHttpClient("issue-spec", client =>
+{
+    client.BaseAddress = new Uri("https://raw.githubusercontent.com/xiaomi7732/PerformanceIssueRepo/main/specs/registry/");
+});
+
 builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
 {
     JsonSerializerOptions serializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
@@ -19,6 +24,7 @@ builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
 // Add services to the container.
 builder.Services.AddTransient<IssueService>();
 builder.Services.AddTransient<IssueTypeCodeService>();
+builder.Services.AddTransient<IssueItemService>();
 
 builder.Services.TryAddPerfIssueTypeFillers();
 builder.Services.AddTransient<IssueItemFactory>();
