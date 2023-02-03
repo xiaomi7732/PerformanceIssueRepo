@@ -5,7 +5,7 @@ using PerfIssueRepo.WebAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>{
-    config.WithOrigins("http://localhost:5160");
+    config.WithOrigins("http://localhost:5160").AllowAnyMethod();
 }));
 
 builder.Logging.AddSimpleConsole(opt =>

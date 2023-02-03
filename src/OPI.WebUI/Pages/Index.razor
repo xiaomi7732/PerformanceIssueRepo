@@ -1,5 +1,4 @@
 ﻿@page "/"
-@inject OpenPerformanceIssues.Client.OPIClient _opiClient
 <h1>Open Performance Issue Registry (DRAFT)</h1>
 
 @if (RegisteredItems.Any())
@@ -19,7 +18,7 @@
             <div class="issue-item">
                 <div class='issue-item-title'>Is Active</div>
                 <div>@entry.IsActive</div>
-                <button id='activate-toggle-button'>Press to change</button>
+                <button id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.IssueId)">Press to change</button>
             </div>
 
             <div class="issue-item">
@@ -62,13 +61,4 @@
 else
 {
     <div>No registred entry.</div>
-}
-
-@code {
-    public IEnumerable<PerfIssueRegisterEntry> RegisteredItems { get; set; } = Enumerable.Empty<PerfIssueRegisterEntry>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        RegisteredItems = await _opiClient.ListAllAsync(default);
-    }
 }

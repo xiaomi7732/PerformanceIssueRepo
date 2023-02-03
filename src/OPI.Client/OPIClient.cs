@@ -24,4 +24,19 @@ public class OPIClient
         }
         return result;
     }
+
+    public async Task<PerfIssueRegisterEntry?> ToggleActivateAsync(int issueId, CancellationToken cancellationToken)
+    {
+        string path = $"registry/{issueId}";
+        using (HttpResponseMessage responseMessage = await _httpClient.PatchAsync(path, content: null, cancellationToken))
+        {
+            responseMessage.EnsureSuccessStatusCode();
+            PerfIssueRegisterEntry? result = null;
+            using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync(cancellationToken))
+            {
+                result = await JsonSerializer.DeserializeAsync<PerfIssueRegisterEntry>(responseStream, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+            }
+            return result;
+        }
+    }
 }
