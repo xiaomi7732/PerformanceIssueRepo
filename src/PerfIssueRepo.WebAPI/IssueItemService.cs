@@ -18,7 +18,22 @@ public class IssueItemService
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
     }
 
-    public async Task<IEnumerable<PerfIssueItem>> ListByAsync(string version, CancellationToken cancellationToken)
+    public Task<IEnumerable<PerfIssueItem>> ListByAsync(string version, CancellationToken cancellationToken)
+        => GetAllAsync(version, cancellationToken);
+
+    public async Task<PerfIssueItem?> GetAsync(string version, string uniqueId, CancellationToken cancellationToken)
+    {
+        foreach (PerfIssueItem item in await GetAllAsync(version, cancellationToken).ConfigureAwait(false))
+        {
+            if (string.Equals(item.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase))
+            {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private async Task<IEnumerable<PerfIssueItem>> GetAllAsync(string version, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(version))
         {

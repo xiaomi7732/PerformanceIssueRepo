@@ -36,4 +36,34 @@ public class IssuesController : ControllerBase
             });
         }
     }
+
+    [HttpGet]
+    [Route("{uniqueId}")]
+    public async Task<ActionResult<PerfIssueItem>> GetUnique(
+        [FromQuery(Name = "spec-version")] string specVersion,
+        [FromRoute] string uniqueId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            PerfIssueItem? target = await _issueItemService.GetAsync(specVersion, uniqueId, cancellationToken).ConfigureAwait(false);
+            if (target is null)
+            {
+                return NotFound(new Error
+                {
+                    Message = $"There's no item with unique id {uniqueId} in Registry of version {specVersion}",
+                });
+            }
+            return Ok(target);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            string registryUrl = "https://github.com/xiaomi7732/PerformanceIssueRepo/tree/main/specs/registry";
+            return NotFound(new Error
+            {
+                Message = $"Find out all available versions at: {registryUrl}",
+                HelpLink = new Uri(registryUrl),
+            });
+        }
+    }
 }
