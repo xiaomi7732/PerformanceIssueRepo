@@ -4,6 +4,10 @@ using PerfIssueRepo.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>{
+    config.WithOrigins("http://localhost:5160");
+}));
+
 builder.Logging.AddSimpleConsole(opt =>
 {
     opt.SingleLine = true;
@@ -42,6 +46,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 

@@ -1,0 +1,23 @@
+.card {
+    border: 1px solid whitesmoke;
+    padding: 30px;
+    background-color: white;
+    margin-bottom: 4px;
+}
+
+.issue-item {
+    display: flex;
+    flex-direction: row;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.issue-item-title {
+    font-weight: bold;
+    margin-right: 12px;
+    min-width: 150px;
+}
+
+#activate-toggle-button {
+    margin-left: 4px;
+}
