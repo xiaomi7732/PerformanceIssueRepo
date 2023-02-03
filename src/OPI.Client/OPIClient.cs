@@ -13,17 +13,11 @@ public class OPIClient
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
 
-    public async Task<IEnumerable<PerfIssueRegisterEntry>> ListAllAsync(CancellationToken cancellationToken)
-    {
-        string path = "registry";
-        using Stream stream = await _httpClient.GetStreamAsync(path).ConfigureAwait(false);
-        IEnumerable<PerfIssueRegisterEntry>? result = await JsonSerializer.DeserializeAsync<IEnumerable<PerfIssueRegisterEntry>>(stream, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
-        if (result is null)
-        {
-            return Enumerable.Empty<PerfIssueRegisterEntry>();
-        }
-        return result;
-    }
+    /// <summary>
+    /// List all the normalized issues.
+    /// </summary>
+    public Task<IEnumerable<PerfIssueRegisterEntry>> ListAllAsync(CancellationToken cancellationToken)
+        => ListAllAsync<PerfIssueRegisterEntry>("registry", cancellationToken);
 
     public async Task<PerfIssueRegisterEntry?> ToggleActivateAsync(int issueId, CancellationToken cancellationToken)
     {
@@ -38,5 +32,34 @@ public class OPIClient
             }
             return result;
         }
+    }
+
+    /// <summary>
+    /// List all the issue types.
+    /// </summary>
+    public async Task<Dictionary<string, string>> ListAllIssueTypes(CancellationToken cancellationToken)
+    {
+        string path = "issuetypes";
+        using Stream stream = await _httpClient.GetStreamAsync(path).ConfigureAwait(false);
+        Dictionary<string, string>? result = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+        if (result is null)
+        {
+            return new Dictionary<string, string>();
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Generally return an enumerable of items
+    /// </summary>
+    private async Task<IEnumerable<T>> ListAllAsync<T>(string path, CancellationToken cancellationToken)
+    {
+        using Stream stream = await _httpClient.GetStreamAsync(path).ConfigureAwait(false);
+        IEnumerable<T>? result = await JsonSerializer.DeserializeAsync<IEnumerable<T>>(stream, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+        if (result is null)
+        {
+            return Enumerable.Empty<T>();
+        }
+        return result;
     }
 }

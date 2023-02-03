@@ -13,4 +13,9 @@ using (ServiceProvider provider = serviceCollection.BuildServiceProvider())
     {
         Console.WriteLine(entry.ToString());
     }
+
+    foreach(KeyValuePair<string,string> issueType in await client.ListAllIssueTypes(default))
+    {
+        Console.WriteLine("{0} - {1}", issueType.Key, issueType.Value);
+    }
 }

@@ -52,11 +52,9 @@
                     <div>Not available.</div>
                 }
             </div>
-
-            <div>TODO: Make supported types a component</div>
+            <IssueTypeEditor Title='@("Register types for issue "+ entry.IssueId)' AllCodeTypes="@AllIssueTypes" RegisteredTypes="@entry.SupportedTypes" />
         </div>
     }
-
 }
 else
 {

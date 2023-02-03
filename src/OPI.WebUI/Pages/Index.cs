@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Components;
 using OpenPerformanceIssues.Client;
 using PerfIssueRepo.Models;
@@ -11,9 +12,12 @@ public partial class Index
 
     public IEnumerable<PerfIssueRegisterEntry> RegisteredItems { get; set; } = Enumerable.Empty<PerfIssueRegisterEntry>();
 
+    public IDictionary<string, string>? AllIssueTypes { get; set; } = null;
+
     protected override async Task OnInitializedAsync()
     {
         await ReloadDataAsync();
+        AllIssueTypes = new Dictionary<string, string>(await OpiClient.ListAllIssueTypes(default).ConfigureAwait(false));
     }
 
     public async Task ToggleActivateAsync(int issueId)
