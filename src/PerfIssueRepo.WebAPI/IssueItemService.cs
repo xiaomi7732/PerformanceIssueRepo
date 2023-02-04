@@ -40,7 +40,9 @@ public class IssueItemService
             throw new ArgumentException($"'{nameof(version)}' cannot be null or empty.", nameof(version));
         }
 
-        string url = $"perf-issue.{version}.json";
+        // .../1.0.0-alpha/specs/registry/perf-issue.json
+
+        string url = $"{version}/specs/registry/perf-issue.json";
         HttpClient client = _httpClientFactory.CreateClient("issue-spec");
         IEnumerable<PerfIssueItem>? result = await client.GetFromJsonAsync<IEnumerable<PerfIssueItem>>(url, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
         if (result is null)

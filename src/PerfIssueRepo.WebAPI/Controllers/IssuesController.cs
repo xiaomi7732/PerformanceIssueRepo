@@ -28,10 +28,10 @@ public class IssuesController : ControllerBase
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            string registryUrl = "https://github.com/xiaomi7732/PerformanceIssueRepo/tree/main/specs/registry";
+            string registryUrl = "https://github.com/xiaomi7732/PerformanceIssueRepo/tags";
             return NotFound(new Error
             {
-                Message = $"Find out all available versions at: {registryUrl}",
+                Message = $"Find out all available version tags at: {registryUrl}",
                 HelpLink = new Uri(registryUrl),
             });
         }

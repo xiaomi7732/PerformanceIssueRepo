@@ -16,7 +16,7 @@ builder.Logging.AddSimpleConsole(opt =>
 
 builder.Services.AddHttpClient("issue-spec", client =>
 {
-    client.BaseAddress = new Uri("https://raw.githubusercontent.com/xiaomi7732/PerformanceIssueRepo/main/specs/registry/");
+    client.BaseAddress = new Uri("https://raw.githubusercontent.com/xiaomi7732/PerformanceIssueRepo/");
 });
 
 builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
