@@ -35,6 +35,6 @@ public partial class Index
 
     private async Task ReloadDataAsync()
     {
-        RegisteredItems = (await OpiClient.ListAllAsync(default)).OrderBy(item => item.IssueId);
+        RegisteredItems = (await OpiClient.ListAllRegisteredAsync(default)).OrderBy(item => item.IssueId);
     }
 }

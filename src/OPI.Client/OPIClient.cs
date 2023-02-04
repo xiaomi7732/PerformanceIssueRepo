@@ -13,10 +13,16 @@ public class OPIClient
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
 
+    public Task<IEnumerable<PerfIssueItem>> ListAllAsync(string version, CancellationToken cancellationToken)
+    {
+        string path = $"issues?spec-version={version}";
+        return ListAllAsync<PerfIssueItem>(path, cancellationToken);
+    }
+
     /// <summary>
-    /// List all the normalized issues.
+    /// List all the registered issues.
     /// </summary>
-    public Task<IEnumerable<PerfIssueRegisterEntry>> ListAllAsync(CancellationToken cancellationToken)
+    public Task<IEnumerable<PerfIssueRegisterEntry>> ListAllRegisteredAsync(CancellationToken cancellationToken)
         => ListAllAsync<PerfIssueRegisterEntry>("registry", cancellationToken);
 
     public async Task<PerfIssueRegisterEntry?> ToggleActivateAsync(int issueId, CancellationToken cancellationToken)
