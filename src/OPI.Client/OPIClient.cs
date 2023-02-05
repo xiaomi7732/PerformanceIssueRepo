@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using PerfIssueRepo.Models;
+using OPI.Core.Models;
 
-namespace OpenPerformanceIssues.Client;
+namespace OPI.Client;
 public class OPIClient
 {
     private readonly HttpClient _httpClient;

@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenPerformanceIssues.Client;
-using PerfIssueRepo.Models;
+using OPI.Client;
+using OPI.Core.Models;
 
 IServiceCollection services = new ServiceCollection();
 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using OpenPerformanceIssues.Client;
+using OPI.Client;
 using OPI.WebUI;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

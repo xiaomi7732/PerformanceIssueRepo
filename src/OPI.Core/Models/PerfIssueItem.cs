@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PerfIssueRepo.Models;
+namespace OPI.Core.Models;
 
 public record PerfIssueItem : PerfIssue
 {

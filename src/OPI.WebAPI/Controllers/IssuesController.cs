@@ -1,9 +1,10 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using PerfIssueRepo.Models;
-using PerfIssueRepo.WebAPI.Services;
+using OPI.Core.Models;
+using OPI.WebAPI.HttpModels;
+using OPI.WebAPI.Services;
 
-namespace PerfIssueRepo.WebAPI.Controllers;
+namespace OPI.WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]

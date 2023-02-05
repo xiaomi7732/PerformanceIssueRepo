@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 
-namespace PerfIssueRepo.WebAPI.Services;
+namespace OPI.WebAPI.Services;
 
 public class IssueTypeCodeService
 {

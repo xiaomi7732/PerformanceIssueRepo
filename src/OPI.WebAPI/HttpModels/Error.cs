@@ -1,4 +1,4 @@
-namespace PerfIssueRepo.WebAPI;
+namespace OPI.WebAPI.HttpModels;
 
 internal record Error
 {

@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace PerfIssueRepo.WebAPI.Services;
+namespace OPI.WebAPI.Services;
 
 public class IssueServiceOptions
 {

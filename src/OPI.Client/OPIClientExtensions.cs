@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Mime;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace OpenPerformanceIssues.Client;
+namespace OPI.Client;
 
 public static class OPIClientExtensions
 {

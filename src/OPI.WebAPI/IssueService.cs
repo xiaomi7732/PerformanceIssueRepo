@@ -1,9 +1,9 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using PerfIssueRepo.Models;
+using OPI.Core.Models;
 
-namespace PerfIssueRepo.WebAPI.Services;
+namespace OPI.WebAPI.Services;
 
 public class IssueService
 {

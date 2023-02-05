@@ -1,4 +1,4 @@
-namespace PerfIssueRepo.Models;
+namespace OPI.Core.Models;
 
 public static class IssueType
 {

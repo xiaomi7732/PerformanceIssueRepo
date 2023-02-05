@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PerfIssueRepo.Models;
+namespace OPI.Core.Models;
 
 public record PerfIssueRegisterEntry : PerfIssue
 {

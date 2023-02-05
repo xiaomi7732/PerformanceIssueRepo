@@ -1,6 +1,6 @@
 using System;
 
-namespace PerfIssueRepo.Models;
+namespace OPI.Core.Models;
 
 public abstract record PerfIssue
 {

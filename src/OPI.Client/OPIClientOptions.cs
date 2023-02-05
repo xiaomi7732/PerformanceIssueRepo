@@ -1,4 +1,4 @@
-namespace OpenPerformanceIssues.Client;
+namespace OPI.Client;
 
 public class OPIClientOptions
 {

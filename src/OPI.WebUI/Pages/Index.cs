@@ -1,7 +1,6 @@
-using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Components;
-using OpenPerformanceIssues.Client;
-using PerfIssueRepo.Models;
+using OPI.Client;
+using OPI.Core.Models;
 
 namespace OPI.WebUI.Pages;
 

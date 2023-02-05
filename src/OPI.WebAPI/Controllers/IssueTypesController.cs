@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using PerfIssueRepo.WebAPI.Services;
+using OPI.WebAPI.Services;
 
-namespace PerfIssueRepo.WebAPI.Controllers;
+namespace OPI.WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]

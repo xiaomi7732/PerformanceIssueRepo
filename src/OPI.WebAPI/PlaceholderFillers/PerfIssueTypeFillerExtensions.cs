@@ -1,7 +1,6 @@
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using PerfIssueRepo.Models;
+using OPI.Core.Models;
 
-namespace PerfIssueRepo.WebAPI.Services;
+namespace OPI.WebAPI.Services;
 
 internal static class PerfIssueTypeFillerExtensions
 {

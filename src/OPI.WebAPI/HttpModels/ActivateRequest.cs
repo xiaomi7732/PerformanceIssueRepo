@@ -1,4 +1,4 @@
-namespace PerfIssueRepo.WebAPI.RequestModels;
+namespace OPI.WebAPI.HttpModels;
 
 public record ActivateRequest
 {

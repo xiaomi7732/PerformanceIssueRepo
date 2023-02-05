@@ -1,6 +1,6 @@
-using PerfIssueRepo.Models;
+using OPI.Core.Models;
 
-namespace PerfIssueRepo.WebAPI.Services;
+namespace OPI.WebAPI.Services;
 
 public class IssueItemFactory
 {

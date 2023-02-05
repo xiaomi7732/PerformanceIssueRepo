@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\PerfIssueRepo.Lib\PerfIssueRepo.Lib.csproj" />
+        <ProjectReference Include="../OPI.Core/OPI.Core.csproj" />
         <None Include="../../specs/issue-code.json" CopyToOutputDirectory="PreserveNewest" />
         <None Include="./perf-issue.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>

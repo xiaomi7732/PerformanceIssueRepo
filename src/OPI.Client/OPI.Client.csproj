@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\PerfIssueRepo.Lib\PerfIssueRepo.Lib.csproj" />
+    <ProjectReference Include="../OPI.Core/OPI.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
