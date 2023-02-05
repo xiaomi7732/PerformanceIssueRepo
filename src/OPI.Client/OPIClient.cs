@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Net.Mime;
+using System.Text.Json;
 using OPI.Core.Models;
 
 namespace OPI.Client;
@@ -56,6 +59,22 @@ public class OPIClient
     }
 
     /// <summary>
+    /// Update a performance issue entry
+    /// </summary>
+    public async Task<PerfIssueRegisterEntry?> UpdateEntryAsync(PerfIssueRegisterEntry target, CancellationToken cancellationToken)
+    {
+        string path = "registry";
+        JsonContent body = JsonContent.Create<PerfIssueRegisterEntry>(target, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
+        HttpResponseMessage response = await _httpClient.PutAsync(path, body).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        using (Stream stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
+        {
+            PerfIssueRegisterEntry? result = await JsonSerializer.DeserializeAsync<PerfIssueRegisterEntry>(stream, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+            return result;
+        }
+    }
+
+    /// <summary>
     /// Generally return an enumerable of items
     /// </summary>
     private async Task<IEnumerable<T>> ListAllAsync<T>(string path, CancellationToken cancellationToken)
@@ -68,4 +87,5 @@ public class OPIClient
         }
         return result;
     }
+
 }

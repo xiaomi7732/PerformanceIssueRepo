@@ -5,7 +5,9 @@ using OPI.WebAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>{
-    config.WithOrigins("http://localhost:5160").AllowAnyMethod();
+    config.WithOrigins("http://localhost:5160")
+        .AllowAnyMethod()
+        .WithHeaders("content-type");
 }));
 
 builder.Logging.AddSimpleConsole(opt =>

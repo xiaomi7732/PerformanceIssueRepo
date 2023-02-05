@@ -34,13 +34,32 @@ public partial class Index
 
     public async Task RegisteredTypeChanged((int IssueId, IEnumerable<string> RegisteredTypes) sender)
     {
-        await Task.Yield();
         Console.Write("Issue {0} Registered type changed to: {1}", sender.IssueId, string.Join(',', sender.RegisteredTypes));
+        PerfIssueRegisterEntry? target = RegisteredItems.FirstOrDefault(item => item.IssueId == sender.IssueId);
+        if (target is null)
+        {
+            throw new IndexOutOfRangeException($"Can't find registered issue #{sender.IssueId}");
+        }
+        target = target with
+        {
+            SupportedTypes = sender.RegisteredTypes,
+        };
+
+        // Update
+        PerfIssueRegisterEntry? newItem = await OpiClient.UpdateEntryAsync(target, CancellationToken.None);
+
+        if (newItem is not null)
+        {
+            Console.WriteLine("Is not null");
+
+            await ReloadDataAsync();
+            // Refresh data;
+            StateHasChanged();
+        }
     }
 
     private async Task ReloadDataAsync()
     {
         RegisteredItems = (await OpiClient.ListAllRegisteredAsync(default)).OrderBy(item => item.IssueId);
-        
     }
 }
