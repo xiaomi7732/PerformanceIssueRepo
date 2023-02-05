@@ -9,9 +9,9 @@ namespace OPI.WebAPI.Controllers;
 [Route("[controller]")]
 public class RegistryController : ControllerBase
 {
-    private readonly IssueService _issueService;
+    private readonly IssueRegistryService _issueService;
 
-    public RegistryController(IssueService issueService)
+    public RegistryController(IssueRegistryService issueService)
     {
         _issueService = issueService ?? throw new ArgumentNullException(nameof(issueService));
     }

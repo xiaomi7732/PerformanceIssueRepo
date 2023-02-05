@@ -28,7 +28,7 @@ builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
 });
 
 // Add services to the container.
-builder.Services.AddTransient<IssueService>();
+builder.Services.AddTransient<IssueRegistryService>();
 builder.Services.AddTransient<IssueTypeCodeService>();
 builder.Services.AddTransient<IssueItemService>();
 

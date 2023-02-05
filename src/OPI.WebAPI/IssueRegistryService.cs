@@ -5,18 +5,18 @@ using OPI.Core.Models;
 
 namespace OPI.WebAPI.Services;
 
-public class IssueService
+public class IssueRegistryService
 {
     private readonly IssueServiceOptions _options;
     private readonly IssueItemFactory _issueItemFactory;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly ILogger _logger;
 
-    public IssueService(
+    public IssueRegistryService(
         IOptions<IssueServiceOptions> options,
         IssueItemFactory issueItemFactory,
         JsonSerializerOptions jsonSerializerOptions,
-        ILogger<IssueService> logger)
+        ILogger<IssueRegistryService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _issueItemFactory = issueItemFactory ?? throw new ArgumentNullException(nameof(issueItemFactory));
