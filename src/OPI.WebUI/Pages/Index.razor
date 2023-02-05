@@ -52,7 +52,12 @@
                     <div>Not available.</div>
                 }
             </div>
-            <IssueTypeEditor Title='@("Register types for issue "+ entry.IssueId)' AllCodeTypes="@AllIssueTypes" RegisteredTypes="@entry.SupportedTypes" />
+            <IssueTypeEditor
+                IssueId="@entry.IssueId"
+                Title='@("Register types for issue "+ entry.IssueId)'
+                AllCodeTypes="@AllIssueTypes"
+                RegisteredTypes="@entry.SupportedTypes"
+                RegisteredTypesChanged="RegisteredTypeChanged" />
         </div>
     }
 }

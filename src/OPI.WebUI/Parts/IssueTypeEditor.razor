@@ -10,7 +10,7 @@
             @foreach (IssueTypeCheckboxItem item in CheckboxItems)
             {
                 <div class="checkbox-item">
-                    <input type="checkbox" value="@item.Key" id='@("cbxCode"+item.Key)' @bind="item.IsChecked" />
+                    <input type="checkbox" value="@item.Key" id='@("cbxCode"+item.Key)' @bind="item.IsChecked" @oninput="(e) => CheckboxChanged(item, e)" />
                     <label for='@("cbxCode"+ item.Key)'>@item.Value</label>
                 </div>
             }

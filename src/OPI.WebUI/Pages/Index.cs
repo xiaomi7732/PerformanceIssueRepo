@@ -32,8 +32,15 @@ public partial class Index
         }
     }
 
+    public async Task RegisteredTypeChanged((int IssueId, IEnumerable<string> RegisteredTypes) sender)
+    {
+        await Task.Yield();
+        Console.Write("Issue {0} Registered type changed to: {1}", sender.IssueId, string.Join(',', sender.RegisteredTypes));
+    }
+
     private async Task ReloadDataAsync()
     {
         RegisteredItems = (await OpiClient.ListAllRegisteredAsync(default)).OrderBy(item => item.IssueId);
+        
     }
 }

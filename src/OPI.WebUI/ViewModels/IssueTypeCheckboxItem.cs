@@ -1,4 +1,4 @@
-namespace OPI.WebUI.Parts;
+namespace OPI.WebUI.ViewModels;
 
 public class IssueTypeCheckboxItem
 {
