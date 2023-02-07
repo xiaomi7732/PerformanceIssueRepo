@@ -17,7 +17,10 @@ on:
 
 env:
   APP_LOCATION: "src/OPI.WebUI" # location of your client code
+  APP_ARTIFACT_LOCATION: "/home/runner/.dotnet/app" # location of client code build output
   AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # secret containing deployment token for your static web app
+  DOTNET_VERSION: '7.x'                   # set this to the .NET Core version to use
+  PROJECT: 'src/OPI.WebUI/OPI.WebUI.csproj'
 
 jobs:
   build_and_deploy_job:
