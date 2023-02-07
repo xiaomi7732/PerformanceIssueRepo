@@ -20,6 +20,16 @@
     "rationale": "{criteria}% of your Memory was spent in `{symbol}`, We expected this value to be {relation} {value}%."
   },
   {
+    "typeCode": "T",
+    "uniqueId": "T0001",
+    "issueId": 1,
+    "title": "Allocations in `Equals`/`GetHashCode`",
+    "description": "Hot-path methods like `Equals`/`GetHashCode` should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while `string.Format` leads to string allocations.",
+    "docURL": null,
+    "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.",
+    "rationale": "{criteria}% of your Thread was spent in `{symbol}`, We expected this value to be {relation} {value}%."
+  },
+  {
     "typeCode": "C",
     "uniqueId": "C0002",
     "issueId": 2,
