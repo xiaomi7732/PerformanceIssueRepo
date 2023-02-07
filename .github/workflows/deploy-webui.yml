@@ -58,4 +58,5 @@ jobs:
           skip_app_build: true
           skip_api_build: true
           output_location: ${{env.DOTNET_ROOT}}/app/wwwroot
+          app_artifact_location: ${{env.DOTNET_ROOT}}/app/wwwroot
           ###### End of Repository/Build Configurations ######
