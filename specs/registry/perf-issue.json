@@ -1,42 +1,29 @@
 [
   {
-    "typeCode": "C",
-    "uniqueId": "C0001",
-    "issueId": 1,
+    "permanentId": "a9e711cb-ca1d-4378-b689-92d1b03bc437",
+    "title": "Incorrect Equality Comparison Implementation",
+    "description": "Reflection is being used by Compare/Equality functions. This could be because of a missing `Equals` override or incorrect `IEquatable<T>`/`IEqualityComparer<T>` implementation.",
+    "docURL": null,
+    "recommendation": "This can be fixed by providing the missing `Equals` override or properly implementing the `IEquatable<T>`/`IEqualityComparer<T>` interface.",
+    "rationale": null,
+    "legacyId": "0"
+  },
+  {
+    "permanentId": "68ff5cc5-beaf-4c2e-b8f2-433c48af1708",
     "title": "Allocations in `Equals`/`GetHashCode`",
     "description": "Hot-path methods like `Equals`/`GetHashCode` should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while `string.Format` leads to string allocations.",
     "docURL": null,
     "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.",
-    "rationale": "{criteria}% of your CPU was spent in `{symbol}`, We expected this value to be {relation} {value}%."
+    "rationale": "{criteria}% of your [issueType] was spent in `{symbol}`, We expected this value to be {relation} {value}%.",
+    "legacyId": "1"
   },
   {
-    "typeCode": "M",
-    "uniqueId": "M0001",
-    "issueId": 1,
-    "title": "Allocations in `Equals`/`GetHashCode`",
-    "description": "Hot-path methods like `Equals`/`GetHashCode` should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while `string.Format` leads to string allocations.",
-    "docURL": null,
-    "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.",
-    "rationale": "{criteria}% of your Memory was spent in `{symbol}`, We expected this value to be {relation} {value}%."
-  },
-  {
-    "typeCode": "T",
-    "uniqueId": "T0001",
-    "issueId": 1,
-    "title": "Allocations in `Equals`/`GetHashCode`",
-    "description": "Hot-path methods like `Equals`/`GetHashCode` should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while `string.Format` leads to string allocations.",
-    "docURL": null,
-    "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.",
-    "rationale": "{criteria}% of your Thread was spent in `{symbol}`, We expected this value to be {relation} {value}%."
-  },
-  {
-    "typeCode": "C",
-    "uniqueId": "C0002",
-    "issueId": 2,
+    "permanentId": "68ff5cc5-beaf-4c2e-b8f2-433c48af1708",
     "title": "Excessive Allocations Due to List/Dictionary Resizing",
     "description": "Too many allocations are being caused by resizing due to calls associated with List/Dictionary resizing.",
     "docURL": null,
     "recommendation": "Consider initializing the List/Dictionary with an explicit size if available or can be computed.",
-    "rationale": null
+    "rationale": null,
+    "legacyId": "2"
   }
 ]
