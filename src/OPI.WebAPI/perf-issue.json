@@ -16,7 +16,7 @@
     "description": "Hot-path methods like \u0060Equals\u0060/\u0060GetHashCode\u0060 should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while \u0060string.Format\u0060 leads to string allocations.",
     "docURL": null,
     "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. \u0060string.Format\u0060 can be replaced with a comparison of it\u0027s component strings.",
-    "rationale": "{criteria}% of your [issueType] was spent in \u0060{symbol}\u0060, We expected this value to be {relation} {value}%.",
+    "rationale": "{criteria}% of your {issueCategory} was spent in \u0060{symbol}\u0060, We expected this value to be {relation} {value}%.",
     "legacyId": "1"
   },
   {
