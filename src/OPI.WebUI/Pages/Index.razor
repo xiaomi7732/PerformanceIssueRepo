@@ -11,14 +11,18 @@
                     Issue #
                 </div>
                 <div>
-                    @entry.IssueId
+                    @entry.PermanentId
+                    @if(!string.IsNullOrEmpty(entry.LegacyId))
+                    {
+                        <div>(Legacy id: @entry.LegacyId)</div>
+                    }
                 </div>
             </div>
 
             <div class="issue-item">
                 <div class='issue-item-title'>Is Active</div>
                 <div>@entry.IsActive</div>
-                <button id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.IssueId)">Press to change</button>
+                <button id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Press to change</button>
             </div>
 
             <div class="issue-item">
@@ -52,12 +56,6 @@
                     <div>Not available.</div>
                 }
             </div>
-            <IssueTypeEditor
-                IssueId="@entry.IssueId"
-                Title='@("Register types for issue "+ entry.IssueId)'
-                AllCodeTypes="@AllIssueTypes"
-                RegisteredTypes="@entry.SupportedTypes"
-                RegisteredTypesChanged="RegisteredTypeChanged" />
         </div>
     }
 }

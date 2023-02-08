@@ -28,9 +28,9 @@ public class OPIClient
     public Task<IEnumerable<PerfIssueRegisterEntry>> ListAllRegisteredAsync(CancellationToken cancellationToken)
         => ListAllAsync<PerfIssueRegisterEntry>("registry", cancellationToken);
 
-    public async Task<PerfIssueRegisterEntry?> ToggleActivateAsync(int issueId, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry?> ToggleActivateAsync(Guid issueId, CancellationToken cancellationToken)
     {
-        string path = $"registry/{issueId}";
+        string path = $"registry/{issueId:D}";
         using (HttpResponseMessage responseMessage = await _httpClient.PatchAsync(path, content: null, cancellationToken))
         {
             responseMessage.EnsureSuccessStatusCode();
@@ -46,6 +46,7 @@ public class OPIClient
     /// <summary>
     /// List all the issue types.
     /// </summary>
+    [Obsolete("This API is deprecated.", error: true)]
     public async Task<Dictionary<string, string>> ListAllIssueTypes(CancellationToken cancellationToken)
     {
         string path = "issuetypes";

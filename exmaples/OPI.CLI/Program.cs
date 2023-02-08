@@ -30,7 +30,7 @@ using (ServiceProvider provider = services.BuildServiceProvider())
     if (!string.IsNullOrEmpty(specVersion))
     {
         Console.WriteLine("List all normalized issues with spec-version: {0}", specVersion);
-        foreach (PerfIssueItem item in await client.ListAllAsync("1.0.0-alpha1", default))
+        foreach (PerfIssueItem item in await client.ListAllAsync(specVersion, default))
         {
             Console.WriteLine(item);
         }
@@ -44,12 +44,6 @@ using (ServiceProvider provider = services.BuildServiceProvider())
     foreach (PerfIssueRegisterEntry entry in await client.ListAllRegisteredAsync(default))
     {
         Console.WriteLine(entry);
-    }
-
-    Console.WriteLine("List all issue type Code - Value");
-    foreach (KeyValuePair<string, string> issueType in await client.ListAllIssueTypes(default))
-    {
-        Console.WriteLine("{0} - {1}", issueType.Key, issueType.Value);
     }
 }
 return 0;
