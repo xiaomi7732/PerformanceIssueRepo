@@ -1,22 +1,32 @@
 [
   {
-    "permanentId": "68ff5cc5-beaf-4c2e-b8f2-433c48af1708",
     "isActive": true,
-    "legacyId": "1",
+    "permanentId": "a9e711cb-ca1d-4378-b689-92d1b03bc437",
+    "title": "Incorrect Equality Comparison Implementation",
+    "description": "Reflection is being used by Compare/Equality functions. This could be because of a missing \u0060Equals\u0060 override or incorrect \u0060IEquatable\u003CT\u003E\u0060/\u0060IEqualityComparer\u003CT\u003E\u0060 implementation.",
+    "docURL": null,
+    "recommendation": "This can be fixed by providing the missing \u0060Equals\u0060 override or properly implementing the \u0060IEquatable\u003CT\u003E\u0060/\u0060IEqualityComparer\u003CT\u003E\u0060 interface.",
+    "rationale": null,
+    "legacyId": "0"
+  },
+  {
+    "isActive": true,
+    "permanentId": "68ff5cc5-beaf-4c2e-b8f2-433c48af1708",
     "title": "Allocations in \u0060Equals\u0060/\u0060GetHashCode\u0060",
     "description": "Hot-path methods like \u0060Equals\u0060/\u0060GetHashCode\u0060 should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while \u0060string.Format\u0060 leads to string allocations.",
     "docURL": null,
     "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. \u0060string.Format\u0060 can be replaced with a comparison of it\u0027s component strings.",
-    "rationale": "{criteria}% of your [issueType] was spent in \u0060{symbol}\u0060, We expected this value to be {relation} {value}%."
+    "rationale": "{criteria}% of your [issueType] was spent in \u0060{symbol}\u0060, We expected this value to be {relation} {value}%.",
+    "legacyId": "1"
   },
   {
-    "permanentId": "68ff5cc5-beaf-4c2e-b8f2-433c48af1708",
     "isActive": true,
-    "legacyId": "2",
+    "permanentId": "68ff5cc5-beaf-4c2e-b8f2-433c48af1708",
     "title": "Excessive Allocations Due to List/Dictionary Resizing",
     "description": "Too many allocations are being caused by resizing due to calls associated with List/Dictionary resizing.",
     "docURL": null,
     "recommendation": "Consider initializing the List/Dictionary with an explicit size if available or can be computed.",
-    "rationale": null
+    "rationale": null,
+    "legacyId": "2"
   }
 ]
