@@ -7,11 +7,12 @@ using OPI.Core.Models;
 IServiceCollection services = new ServiceCollection();
 
 string exeDir = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
-IConfiguration configuration =
-    new ConfigurationBuilder()
-        .AddJsonFile(Path.Combine(exeDir, "appsettings.jsonc"))
-        .AddCommandLine(args)
-        .Build();
+
+IConfiguration configuration = BuildConfiguration();
+services.AddSingleton<IConfiguration>(_ =>
+{
+    return BuildConfiguration();
+});
 
 string? endpoint = configuration["Endpoint"];
 if (string.IsNullOrEmpty(endpoint))
@@ -45,5 +46,23 @@ using (ServiceProvider provider = services.BuildServiceProvider())
     {
         Console.WriteLine(entry);
     }
+
+    Console.WriteLine("List available versions for issue registries");
+    foreach (string version in (await client.ListSpecVersionsAsync(default).ConfigureAwait(false)).OrderBy(t => t))
+    {
+        Console.WriteLine(version);
+    }
 }
+
+IConfiguration BuildConfiguration()
+{
+    IConfiguration configuration =
+        new ConfigurationBuilder()
+            .AddJsonFile(Path.Combine(exeDir, "appsettings.jsonc"))
+            .AddCommandLine(args)
+            .Build();
+    return configuration;
+}
+
 return 0;
+

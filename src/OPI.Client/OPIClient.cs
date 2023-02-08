@@ -2,17 +2,26 @@
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Octokit;
 using OPI.Core.Models;
 
 namespace OPI.Client;
 public class OPIClient
 {
     private readonly HttpClient _httpClient;
+    private readonly GitHubClient _gitHubClient;
+    private readonly OPIClientOptions _clientOptions;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public OPIClient(HttpClient httpClient)
+    public OPIClient(
+        HttpClient httpClient,
+        GitHubClient gitHubClient,
+        IOptions<OPIClientOptions> clientOptions)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        _gitHubClient = gitHubClient;
+        _clientOptions = clientOptions?.Value ?? throw new ArgumentNullException(nameof(clientOptions));
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
 
@@ -20,6 +29,16 @@ public class OPIClient
     {
         string path = $"issues?spec-version={version}";
         return ListAllAsync<PerfIssueItem>(path, cancellationToken);
+    }
+
+    public async Task<IEnumerable<string>> ListSpecVersionsAsync(CancellationToken cancellationToken)
+    {
+        return (await _gitHubClient.Repository.GetAllTags(
+            _clientOptions.SpecRepositoryOwner,
+            _clientOptions.SpecRepositoryName).ConfigureAwait(false))
+            .Select(
+                tag => tag.Name
+            );
     }
 
     /// <summary>
@@ -41,22 +60,6 @@ public class OPIClient
             }
             return result;
         }
-    }
-
-    /// <summary>
-    /// List all the issue types.
-    /// </summary>
-    [Obsolete("This API is deprecated.", error: true)]
-    public async Task<Dictionary<string, string>> ListAllIssueTypes(CancellationToken cancellationToken)
-    {
-        string path = "issuetypes";
-        using Stream stream = await _httpClient.GetStreamAsync(path).ConfigureAwait(false);
-        Dictionary<string, string>? result = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
-        if (result is null)
-        {
-            return new Dictionary<string, string>();
-        }
-        return result;
     }
 
     /// <summary>
