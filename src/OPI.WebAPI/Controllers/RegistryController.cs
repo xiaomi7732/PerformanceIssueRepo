@@ -9,27 +9,27 @@ namespace OPI.WebAPI.Controllers;
 [Route("[controller]")]
 public class RegistryController : ControllerBase
 {
-    private readonly IssueRegistryService _issueService;
+    private readonly IssueRegistryService _issueRegistryService;
 
     public RegistryController(IssueRegistryService issueService)
     {
-        _issueService = issueService ?? throw new ArgumentNullException(nameof(issueService));
+        _issueRegistryService = issueService ?? throw new ArgumentNullException(nameof(issueService));
     }
 
     [HttpGet]
     public async IAsyncEnumerable<PerfIssueRegisterEntry> GetAll([EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await foreach (PerfIssueRegisterEntry entry in _issueService.GetRegisteredIssuesAsync(cancellationToken))
+        await foreach (PerfIssueRegisterEntry entry in _issueRegistryService.GetRegisteredIssuesAsync(cancellationToken))
         {
             yield return entry;
         }
     }
 
     [HttpGet]
-    [Route("{issueId}")]
-    public async Task<ActionResult<PerfIssueRegisterEntry>> Get([FromRoute] int issueId, CancellationToken cancellationToken)
+    [Route("{permanentId}")]
+    public async Task<ActionResult<PerfIssueRegisterEntry>> Get([FromRoute] Guid permanentId, CancellationToken cancellationToken)
     {
-        PerfIssueRegisterEntry? result = await _issueService.GetRegisteredItem(issueId, cancellationToken).ConfigureAwait(false);
+        PerfIssueRegisterEntry? result = await _issueRegistryService.GetRegisteredItem(permanentId, cancellationToken).ConfigureAwait(false);
         if (result is null)
         {
             return NotFound();
@@ -42,8 +42,8 @@ public class RegistryController : ControllerBase
     {
         try
         {
-            PerfIssueRegisterEntry result = await _issueService.RegisterNewIssueAsync(newItem, cancellationToken).ConfigureAwait(false);
-            return CreatedAtAction(nameof(Get), new { issueId = result.IssueId }, result);
+            PerfIssueRegisterEntry result = await _issueRegistryService.RegisterNewIssueAsync(newItem, cancellationToken).ConfigureAwait(false);
+            return CreatedAtAction(nameof(Get), new { permanentId = result.PermanentId }, result);
         }
         catch (InvalidOperationException)
         {
@@ -60,7 +60,7 @@ public class RegistryController : ControllerBase
     {
         try
         {
-            PerfIssueRegisterEntry result = await _issueService.UpdateAsync(newItem, cancellationToken).ConfigureAwait(false);
+            PerfIssueRegisterEntry result = await _issueRegistryService.UpdateAsync(newItem, cancellationToken).ConfigureAwait(false);
             return Ok(result);
         }
         catch (IndexOutOfRangeException)
@@ -71,11 +71,11 @@ public class RegistryController : ControllerBase
 
     [HttpPatch()]
     [Route("{issueId}")]
-    public async Task<ActionResult<PerfIssueRegisterEntry>> Activate([FromRoute] int issueId, CancellationToken cancellationToken)
+    public async Task<ActionResult<PerfIssueRegisterEntry>> Activate([FromRoute] Guid issueId, CancellationToken cancellationToken)
     {
         try
         {
-            PerfIssueRegisterEntry? newResult = await _issueService.FlipActivationAsync(issueId, cancellationToken).ConfigureAwait(false);
+            PerfIssueRegisterEntry? newResult = await _issueRegistryService.FlipActivationAsync(issueId, cancellationToken).ConfigureAwait(false);
             if (newResult is null)
             {
                 // Found the item, but no update was needed

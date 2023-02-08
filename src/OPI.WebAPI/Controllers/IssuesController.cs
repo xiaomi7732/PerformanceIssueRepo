@@ -55,7 +55,7 @@ public class IssuesController : ControllerBase
     [Route("{uniqueId}")]
     public async Task<ActionResult<PerfIssueItem>> GetUnique(
         [FromQuery(Name = "spec-version")] string specVersion,
-        [FromRoute] string uniqueId,
+        [FromRoute] Guid uniqueId,
         CancellationToken cancellationToken)
     {
         try

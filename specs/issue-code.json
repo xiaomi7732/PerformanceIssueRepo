@@ -1,8 +1,0 @@
-{
-  "C": "CPU",
-  "M": "Memory",
-  "D": "DiskIO",
-  "N": "Network",
-  "T": "Thread",
-  "O": "OffCPU"
-}
