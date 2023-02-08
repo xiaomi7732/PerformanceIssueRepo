@@ -18,7 +18,7 @@
     "legacyId": "1"
   },
   {
-    "permanentId": "68ff5cc5-beaf-4c2e-b8f2-433c48af1708",
+    "permanentId": "9346bb84-de05-44ca-b2ff-874eda19340e",
     "title": "Excessive Allocations Due to List/Dictionary Resizing",
     "description": "Too many allocations are being caused by resizing due to calls associated with List/Dictionary resizing.",
     "docURL": null,
