@@ -1,0 +1,23 @@
+@page "/Import"
+@using Microsoft.AspNetCore.Components.Forms
+
+<h2>Register in Batch</h2>
+
+<NavLink href="/Manage">Manage</NavLink>
+<NavLink href="/">Issues</NavLink>
+
+<div>
+    <p>Please follow this <code>CSV schema</code> for batch appending: id,issue*,description*,recommendation*,rationale,docUrl.
+    </p>
+    <p>Notice: id in guid will be taken directly, id in form of non-guid would be treated legacy id, and a new guid will be assigned.</p>
+</div>
+
+<div>
+    <EditForm Model="@Content" OnSubmit="@HandleSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputTextArea id="content" @bind-Value="Content.Value"></InputTextArea>
+        <button type="submit">Import</button>
+    </EditForm>
+</div>

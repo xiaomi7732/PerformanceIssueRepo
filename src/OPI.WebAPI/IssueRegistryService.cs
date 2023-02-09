@@ -22,18 +22,6 @@ public class IssueRegistryService
     }
 
     // Logic
-    public async Task<PerfIssueRegisterEntry?> GetRegisteredItem(Guid id, CancellationToken cancellationToken)
-    {
-        await foreach (PerfIssueRegisterEntry item in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
-        {
-            if (item?.PermanentId == id)
-            {
-                return item;
-            }
-        }
-        return null;
-    }
-
     public async Task<PerfIssueRegisterEntry> RegisterNewIssueAsync(PerfIssueRegisterEntry registerEntry, CancellationToken cancellationToken)
     {
         // Any register entry shall have id of zero
@@ -54,6 +42,62 @@ public class IssueRegistryService
 
         await SaveAllPerfIssueAsync(result, cancellationToken).ConfigureAwait(false);
         return registerEntry;
+    }
+
+    // Retrieve
+
+    /// <summary>
+    /// Gets an item by id.
+    /// </summary>
+    public async Task<PerfIssueRegisterEntry?> GetRegisteredItem(Guid id, CancellationToken cancellationToken)
+    {
+        await foreach (PerfIssueRegisterEntry item in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
+        {
+            if (item?.PermanentId == id)
+            {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Gets all registered items.
+    /// </summary>
+    public IAsyncEnumerable<PerfIssueRegisterEntry> GetRegisteredIssuesAsync(CancellationToken cancellationToken)
+    {
+        return GetAllPerfIssuesAsync(cancellationToken);
+    }
+
+
+    // Update
+    /// <summary>
+    /// Updates the perf issue registry entry. Returns the new result.
+    /// Throws IndexOutOfRange exception when not found by id.
+    /// </summary>
+    public async Task<PerfIssueRegisterEntry> UpdateAsync(PerfIssueRegisterEntry newIssueRegistryItem, CancellationToken cancellationToken)
+    {
+        List<PerfIssueRegisterEntry> results = new List<PerfIssueRegisterEntry>();
+        bool found = false;
+        await foreach (PerfIssueRegisterEntry entry in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
+        {
+            if (entry.PermanentId != newIssueRegistryItem.PermanentId)
+            {
+                results.Add(entry);
+                continue;
+            }
+
+            results.Add(newIssueRegistryItem);
+            found = true;
+        }
+
+        if (!found)
+        {
+            throw new IndexOutOfRangeException($"Can't find an entry by id: {newIssueRegistryItem.PermanentId}");
+        }
+
+        await SaveAllPerfIssueAsync(results, cancellationToken).ConfigureAwait(false);
+        return newIssueRegistryItem;
     }
 
     /// <summary>
@@ -92,6 +136,7 @@ public class IssueRegistryService
         return updated;
     }
 
+    // Delete
     public async Task<bool> DeleteAnIssueAsync(Guid permanentId, CancellationToken cancellationToken)
     {
         List<PerfIssueRegisterEntry> itemsToKeep = new List<PerfIssueRegisterEntry>();
@@ -108,40 +153,6 @@ public class IssueRegistryService
             }
         }
         return deleted;
-    }
-
-    /// <summary>
-    /// Updates the perf issue registry entry. Returns the new result.
-    /// Throws IndexOutOfRange exception when not found by id.
-    /// </summary>
-    public async Task<PerfIssueRegisterEntry> UpdateAsync(PerfIssueRegisterEntry newIssueRegistryItem, CancellationToken cancellationToken)
-    {
-        List<PerfIssueRegisterEntry> results = new List<PerfIssueRegisterEntry>();
-        bool found = false;
-        await foreach (PerfIssueRegisterEntry entry in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
-        {
-            if (entry.PermanentId != newIssueRegistryItem.PermanentId)
-            {
-                results.Add(entry);
-                continue;
-            }
-
-            results.Add(newIssueRegistryItem);
-            found = true;
-        }
-
-        if (!found)
-        {
-            throw new IndexOutOfRangeException($"Can't find an entry by id: {newIssueRegistryItem.PermanentId}");
-        }
-
-        await SaveAllPerfIssueAsync(results, cancellationToken).ConfigureAwait(false);
-        return newIssueRegistryItem;
-    }
-
-    public IAsyncEnumerable<PerfIssueRegisterEntry> GetRegisteredIssuesAsync(CancellationToken cancellationToken)
-    {
-        return GetAllPerfIssuesAsync(cancellationToken);
     }
 
     public async IAsyncEnumerable<PerfIssueItem> GetAllIssueItems(bool? activeState, [EnumeratorCancellation] CancellationToken cancellationToken)

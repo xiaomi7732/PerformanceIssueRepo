@@ -88,4 +88,19 @@ public class RegistryController : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpDelete()]
+    [Route("{issueId}")]
+    public async Task<ActionResult> Delete([FromRoute] Guid issueId, CancellationToken cancellationToken)
+    {
+        bool deleted = await _issueRegistryService.DeleteAnIssueAsync(issueId, cancellationToken);
+        if (deleted)
+        {
+            return Ok();
+        }
+        else
+        {
+            return NoContent();
+        }
+    }
 }

@@ -79,6 +79,29 @@ public class OPIClient
     }
 
     /// <summary>
+    /// Registers a new entry
+    /// </summary>
+    /// <param name="newEntry"></param>
+    public async Task RegisterAsync(PerfIssueRegisterEntry newEntry, CancellationToken cancellationToken)
+    {
+        string path = "registry";
+        JsonContent body = JsonContent.Create<PerfIssueRegisterEntry>(newEntry, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
+        HttpResponseMessage response = await _httpClient.PostAsync(path, body, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+    }
+
+    /// <summary>
+    /// Deletes a registered entry
+    /// </summary>
+    public async Task<bool> DeleteAsync(PerfIssueRegisterEntry targetEntry, CancellationToken cancellationToken)
+    {
+        string path = $"registry/{targetEntry.PermanentId:d}";
+        HttpResponseMessage response = await _httpClient.DeleteAsync(path, cancellationToken).ConfigureAwait(false);
+        
+        return response.IsSuccessStatusCode;
+    }
+
+    /// <summary>
     /// Generally return an enumerable of items
     /// </summary>
     private async Task<IEnumerable<T>> ListAllAsync<T>(string path, CancellationToken cancellationToken)
@@ -91,5 +114,4 @@ public class OPIClient
         }
         return result;
     }
-
 }
