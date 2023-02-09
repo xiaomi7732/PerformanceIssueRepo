@@ -15,10 +15,10 @@
                     Issue #
                 </div>
                 <div>
-                    @entry.PermanentId
+                    <span>@entry.PermanentId</span>
                     @if(!string.IsNullOrEmpty(entry.LegacyId))
                     {
-                        <div>(Legacy id: @entry.LegacyId)</div>
+                        <span>&nbsp;(Legacy id: @entry.LegacyId)</span>
                     }
                 </div>
             </div>
