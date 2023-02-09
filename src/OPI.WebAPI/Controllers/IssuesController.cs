@@ -11,7 +11,6 @@ namespace OPI.WebAPI.Controllers;
 public class IssuesController : ControllerBase
 {
     private readonly IssueItemService _issueItemService;
-    private readonly IssueRegistryService _issueRegistryService;
     private readonly ILogger _logger;
 
     public IssuesController(
@@ -20,7 +19,6 @@ public class IssuesController : ControllerBase
         ILogger<IssuesController> logger)
     {
         _issueItemService = issueItemService ?? throw new ArgumentNullException(nameof(issueItemService));
-        _issueRegistryService = issueRegistryService ?? throw new ArgumentNullException(nameof(issueRegistryService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -31,14 +29,7 @@ public class IssuesController : ControllerBase
     {
         try
         {
-            if (string.Equals(specVersion, "latest", StringComparison.OrdinalIgnoreCase))
-            {
-                return Ok(await GeneratePerfIssueItemsAsync(cancellationToken));
-            }
-            else
-            {
-                return Ok(await GetApprovedPerfIssueItemsAsync(specVersion, cancellationToken).ConfigureAwait(false));
-            }
+            return Ok(await GetPerfIssueItemsAsync(specVersion, cancellationToken).ConfigureAwait(false));
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
@@ -81,18 +72,6 @@ public class IssuesController : ControllerBase
         }
     }
 
-    private async Task<IEnumerable<PerfIssueItem>> GeneratePerfIssueItemsAsync(CancellationToken cancellationToken)
-    {
-        List<PerfIssueItem> result = new List<PerfIssueItem>();
-        _logger.LogInformation("Generating issues from registry:");
-        await foreach (PerfIssueItem item in _issueRegistryService.GetAllIssueItems(activeState: true, cancellationToken).ConfigureAwait(false))
-        {
-            result.Add(item);
-        }
-
-        return result;
-    }
-
-    private Task<IEnumerable<PerfIssueItem>> GetApprovedPerfIssueItemsAsync(string specVersion, CancellationToken cancellationToken)
+    private Task<IEnumerable<PerfIssueItem>> GetPerfIssueItemsAsync(string specVersion, CancellationToken cancellationToken)
         => _issueItemService.ListByAsync(specVersion, cancellationToken);
 }
