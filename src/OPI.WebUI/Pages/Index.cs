@@ -13,7 +13,24 @@ public partial class Index
     [Inject]
     private IJSRuntime _jsRuntime { get; set; } = default!;
 
+    private IReadOnlyCollection<PerfIssueRegisterEntry>? _allRegisteredItems;
     public IEnumerable<PerfIssueRegisterEntry> RegisteredItems { get; set; } = Enumerable.Empty<PerfIssueRegisterEntry>();
+
+    private string? _keyword;
+    public string? Keyword
+    {
+        get { return _keyword; }
+        set
+        {
+            Console.WriteLine("Try to set new keyword of: {0}", value);
+            if (!string.Equals(_keyword, value))
+            {
+                _keyword = value;
+                Task.Run(OnKeywordChanged);
+            }
+        }
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,9 +76,43 @@ public partial class Index
         }
     }
 
-    private async Task ReloadDataAsync()
+
+    private async Task OnKeywordChanged()
     {
-        RegisteredItems = (await OpiClient.ListAllRegisteredAsync(default)).OrderBy(item => item.LegacyId);
+        await Task.Yield();
+        FilterData();
+        StateHasChanged();
     }
 
+    private async Task ReloadDataAsync()
+    {
+        _allRegisteredItems = new List<PerfIssueRegisterEntry>((await OpiClient.ListAllRegisteredAsync(default)).OrderBy(item => item.LegacyId?.PadLeft(4))).AsReadOnly();
+        FilterData();
+    }
+
+    private void FilterData()
+    {
+        if(_allRegisteredItems is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(Keyword))
+        {
+            RegisteredItems = _allRegisteredItems;
+        }
+        else
+        {
+            RegisteredItems = _allRegisteredItems.Where(item =>
+            {
+                return (item.LegacyId is not null && item.LegacyId.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
+                    || (item.PermanentId.HasValue && item.PermanentId.Value.ToString("d").Contains(Keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(item.Title) && item.Title.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(item.Description) && item.Description.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
+                    || (item.DocURL is not null && item.DocURL.AbsoluteUri.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(item.Recommendation) && item.Recommendation.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(item.Rationale) && item.Rationale.Contains(Keyword, StringComparison.OrdinalIgnoreCase));
+            });
+        }
+    }
 }

@@ -5,6 +5,11 @@
 <NavLink href="/">Issues</NavLink>
 <NavLink href="/Import">Import</NavLink>
 
+<div>
+    <input class="search-input" type="search" placeholder="Type in keywords to search for a specific registered performance issue."
+        @bind="Keyword"></input>
+</div>
+
 @if (RegisteredItems.Any())
 {
     @foreach (PerfIssueRegisterEntry entry in RegisteredItems)
