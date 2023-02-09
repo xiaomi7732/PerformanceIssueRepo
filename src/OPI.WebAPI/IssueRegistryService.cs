@@ -152,6 +152,9 @@ public class IssueRegistryService
                 itemsToKeep.Add(item);
             }
         }
+
+        // Persistent
+        await SaveAllPerfIssueAsync(itemsToKeep, cancellationToken);
         return deleted;
     }
 
