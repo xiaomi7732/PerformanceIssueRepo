@@ -39,7 +39,6 @@ public partial class IssueBrowser
             if (!string.Equals(_currentView, value, StringComparison.OrdinalIgnoreCase))
             {
                 _currentView = value;
-                StateHasChanged();
             }
         }
     }
@@ -56,7 +55,6 @@ public partial class IssueBrowser
             if (!string.Equals(_pickedVersion, value))
             {
                 _pickedVersion = value;
-                StateHasChanged();
                 Task.Run(OnPickedVersionChanged);
             }
         }
@@ -95,14 +93,12 @@ public partial class IssueBrowser
 
     private async void UpdateJsonView()
     {
+        JsonContent = string.Empty;
         if (!string.IsNullOrEmpty(_pickedVersion))
         {
             JsonContent = await OpiClient.GetAllInJsonStringAsync(_pickedVersion, default).ConfigureAwait(false);
         }
-        else
-        {
-            JsonContent = string.Empty;
-        }
+        StateHasChanged();
     }
 
     private async Task OnKeywordChanged()
