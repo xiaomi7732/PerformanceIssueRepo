@@ -1,3 +1,4 @@
+#nullable disable
 /*
  * NReco CSV library (https://github.com/nreco/csv/)
  * Copyright 2017-2018 Vitaliy Fedorchenko
@@ -140,7 +141,7 @@ namespace NReco.Csv
 			}
 		}
 
-		public string? this[int idx] {
+		public string this[int idx] {
 			get {
 				if (idx < fieldsCount) {
 					var f = fields[idx];

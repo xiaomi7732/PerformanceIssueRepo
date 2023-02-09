@@ -5,86 +5,110 @@
 <NavLink href="/Manage">Manage</NavLink>
 <NavLink href="/Import">Import</NavLink>
 
-
 <div>
-    <div>Pick a spec version:</div>
+    <div id='pickers'>
+        <div id='spec-picker'>
+            <div>Pick a spec version:</div>
+            <div>
+                <select @bind="@PickedVersion" for="specVersion">
+                    <option value="latest">Latest</option>
+                    @foreach (string version in SpecVersionCollection)
+                    {
+                        <option value="@version">@version</option>
+                    }
+                </select>
+            </div>
+        </div>
 
-    <div>
-        <select @bind="@PickedVersion" for="specVersion">
-            <option value="latest">Latest</option>
-            @foreach (string version in SpecVersionCollection)
-            {
-                <option value="@version">@version</option>
-            }
-        </select>
+        <div id='view-picker'>
+            <div>Pick a view:</div>
+            <div>
+                <select @bind="@CurrentView" for="currentView">
+                    <option value="card">Card</option>
+                    <option value="json">Json</option>
+                </select>
+            </div>
+        </div>
     </div>
 
-    <div>
-        <input class="search-input" type="search"
-            placeholder="Type in keywords to search for a specific registered performance issue."
-            @bind="Keyword"></input>
-    </div>
 
-    <div>
-        @if (IssueCollection is null)
-        {
-            <div>Loading ...</div>
-        }
-        else if (IssueCollection.Any())
-        {
-            @foreach (PerfIssueItem entry in IssueCollection)
-            {
-                <div class='card'>
-                    <div class="issue-item">
-                        <div class='issue-item-title'>
-                            Issue #
+    @if (string.Equals(CurrentView, "card", StringComparison.OrdinalIgnoreCase))
+    {
+        <div id='card-view'>
+            <div>
+                <input class="search-input" type="search"
+                    placeholder="Type in keywords to search for a specific registered performance issue."
+                @bind="Keyword"></input>
+            </div>
+
+            <div>
+                @if (IssueCollection is null)
+                {
+                    <div>Loading ...</div>
+                }
+                else if (IssueCollection.Any())
+                {
+                    @foreach (PerfIssueItem entry in IssueCollection)
+                    {
+                        <div class='card'>
+                            <div class="issue-item">
+                                <div class='issue-item-title'>
+                                    Issue #
+                                </div>
+                                <div>
+                                    @entry.PermanentId
+                                    @if (!string.IsNullOrEmpty(entry.LegacyId))
+                                    {
+                                        <div>(Legacy id: @entry.LegacyId)</div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="issue-item">
+                                <div class='issue-item-title'>Title</div>
+                                <div>@entry.Title</div>
+                            </div>
+
+                            <div class="issue-item">
+                                <div class='issue-item-title'>Description</div>
+                                <div>@entry.Description</div>
+                            </div>
+
+                            <div class="issue-item">
+                                <div class='issue-item-title'>Recommendation</div>
+                                <div>@entry.Recommendation</div>
+                            </div>
+
+                            <div class="issue-item">
+                                <div class='issue-item-title'>Rationale</div>
+                                <div>@entry.Rationale</div>
+                            </div>
+
+                            <div class="issue-item">
+                                <div class='issue-item-title'>HelpLink</div>
+                                @if (entry.DocURL is not null)
+                                {
+                                    <div><a href="@entry.DocURL" target="_blank">@entry.DocURL</a></div>
+                                }
+                                else
+                                {
+                                    <div>Not available.</div>
+                                }
+                            </div>
                         </div>
-                        <div>
-                            @entry.PermanentId
-                            @if (!string.IsNullOrEmpty(entry.LegacyId))
-                            {
-                                <div>(Legacy id: @entry.LegacyId)</div>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="issue-item">
-                        <div class='issue-item-title'>Title</div>
-                        <div>@entry.Title</div>
-                    </div>
-
-                    <div class="issue-item">
-                        <div class='issue-item-title'>Description</div>
-                        <div>@entry.Description</div>
-                    </div>
-
-                    <div class="issue-item">
-                        <div class='issue-item-title'>Recommendation</div>
-                        <div>@entry.Recommendation</div>
-                    </div>
-
-                    <div class="issue-item">
-                        <div class='issue-item-title'>Rationale</div>
-                        <div>@entry.Rationale</div>
-                    </div>
-
-                    <div class="issue-item">
-                        <div class='issue-item-title'>HelpLink</div>
-                        @if (entry.DocURL is not null)
-                        {
-                            <div><a href="@entry.DocURL" target="_blank">@entry.DocURL</a></div>
-                        }
-                        else
-                        {
-                            <div>Not available.</div>
-                        }
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div>No registred entry fetched.</div>
-        }
-    </div>
+                    }
+                }
+                else
+                {
+                    <div>No registred entry fetched.</div>
+                }
+            </div>
+        </div>
+    }
+    else if (string.Equals(CurrentView, "json", StringComparison.OrdinalIgnoreCase))
+    {
+        <div id='json-view'>
+            <JsonViewer Title="Json View" Content="@JsonContent" />
+        </div>
+    }
 </div>

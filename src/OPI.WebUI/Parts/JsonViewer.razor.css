@@ -1,0 +1,9 @@
+.json-holder {
+    display: flex;
+    justify-content: stretch;
+}
+
+::deep .json-content
+{
+    width: 100%;
+}

@@ -1,0 +1,29 @@
+@using Microsoft.AspNetCore.Components.Forms
+
+@if (!string.IsNullOrEmpty(Title))
+{
+    <h2>@Title</h2>
+}
+
+@if (Content is null)
+{
+    <div>Loading ...</div>
+}
+else if (Content == string.Empty)
+{
+    <div>No content</div>
+}
+else
+{
+    <div class='json-holder'>
+        <InputTextArea Class='json-content' @bind-Value="@Content" aria-placeholder="Json will be loaded here." rows="20" readonly />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Content { get; set; } = null;
+}

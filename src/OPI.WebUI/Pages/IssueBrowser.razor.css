@@ -28,3 +28,19 @@
     margin-top: 32px;
     margin-bottom: 16px;
 }
+
+#pickers
+{
+    display: flex;
+}
+
+#spec-picker
+{
+    display: flex;
+}
+
+#view-picker
+{
+    margin-left: 16px;
+    display: flex;
+}

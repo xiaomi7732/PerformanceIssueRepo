@@ -14,6 +14,8 @@ public partial class IssueBrowser
     private IReadOnlyCollection<PerfIssueItem>? _loadedIssues = null;
     public IEnumerable<PerfIssueItem>? IssueCollection { get; private set; } = null;
 
+    public string JsonContent { get; set; } = string.Empty;
+
     private string? _keyword;
     public string? Keyword
     {
@@ -24,6 +26,20 @@ public partial class IssueBrowser
             {
                 _keyword = value;
                 Task.Run(OnKeywordChanged);
+            }
+        }
+    }
+
+    private string _currentView = "card";
+    public string CurrentView
+    {
+        get { return _currentView; }
+        set
+        {
+            if (!string.Equals(_currentView, value, StringComparison.OrdinalIgnoreCase))
+            {
+                _currentView = value;
+                StateHasChanged();
             }
         }
     }
@@ -40,7 +56,8 @@ public partial class IssueBrowser
             if (!string.Equals(_pickedVersion, value))
             {
                 _pickedVersion = value;
-                Task.Run(PickedVersionChanged);
+                StateHasChanged();
+                Task.Run(OnPickedVersionChanged);
             }
         }
     }
@@ -54,7 +71,7 @@ public partial class IssueBrowser
         }
     }
 
-    private async Task PickedVersionChanged()
+    private async Task OnPickedVersionChanged()
     {
         try
         {
@@ -65,6 +82,7 @@ public partial class IssueBrowser
             }
             _loadedIssues = new List<PerfIssueItem>(await OpiClient.ListAllAsync(_pickedVersion, default)).AsReadOnly();
             ApplyFilter();
+            UpdateJsonView();
             StateHasChanged();
         }
         catch
@@ -72,6 +90,18 @@ public partial class IssueBrowser
             IssueCollection = Enumerable.Empty<PerfIssueItem>();
             // TODO: Handle this error!
             throw;
+        }
+    }
+
+    private async void UpdateJsonView()
+    {
+        if (!string.IsNullOrEmpty(_pickedVersion))
+        {
+            JsonContent = await OpiClient.GetAllInJsonStringAsync(_pickedVersion, default).ConfigureAwait(false);
+        }
+        else
+        {
+            JsonContent = string.Empty;
         }
     }
 
@@ -84,7 +114,7 @@ public partial class IssueBrowser
 
     private void ApplyFilter()
     {
-        if(_loadedIssues is null)
+        if (_loadedIssues is null)
         {
             return;
         }
