@@ -21,3 +21,10 @@
 #activate-toggle-button {
     margin-left: 4px;
 }
+
+.search-input
+{
+    width: 600px;
+    margin-top: 32px;
+    margin-bottom: 16px;
+}
