@@ -41,6 +41,12 @@ public class OPIClient
             );
     }
 
+    public async Task<string> GetAllInJsonStringAsync(string version, CancellationToken cancellationToken)
+    {
+        string path = $"issues?spec-version={version}";
+        return await _httpClient.GetStringAsync(path, cancellationToken).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// List all the registered issues.
     /// </summary>
@@ -97,7 +103,7 @@ public class OPIClient
     {
         string path = $"registry/{targetEntry.PermanentId:d}";
         HttpResponseMessage response = await _httpClient.DeleteAsync(path, cancellationToken).ConfigureAwait(false);
-        
+
         return response.IsSuccessStatusCode;
     }
 

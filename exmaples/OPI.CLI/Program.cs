@@ -52,6 +52,10 @@ using (ServiceProvider provider = services.BuildServiceProvider())
     {
         Console.WriteLine(version);
     }
+
+    Console.WriteLine("Get spec in json");
+    string result = await client.GetAllInJsonStringAsync("latest", default);
+    Console.WriteLine(result);
 }
 
 IConfiguration BuildConfiguration()
