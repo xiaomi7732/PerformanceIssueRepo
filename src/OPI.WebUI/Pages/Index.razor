@@ -26,7 +26,6 @@
             <div class="issue-item">
                 <div class='issue-item-title'>Is Active</div>
                 <div>@entry.IsActive</div>
-                <button id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Press to change</button>
             </div>
 
             <div class="issue-item">
@@ -61,7 +60,16 @@
                 }
             </div>
 
-            <div>
+            <div class='button-list'>
+                @if(entry.IsActive)
+                {
+                    <button class='button' id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Deactive</button>
+                }
+                else
+                {
+                    <button class='button' id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Active</button>
+                }
+
                 <button class="button" @onclick="()=> DeleteAsync(entry)">Delete</button>
             </div>
         </div>
