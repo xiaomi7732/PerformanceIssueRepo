@@ -11,3 +11,11 @@ h1{
 button{
     cursor: pointer;
 }
+
+.card {
+    border: 1px solid whitesmoke;
+    padding: 30px;
+    background-color: white;
+    margin-bottom: 1px;
+    border-radius: 2px;
+}

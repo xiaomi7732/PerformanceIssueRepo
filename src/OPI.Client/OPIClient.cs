@@ -108,6 +108,24 @@ public class OPIClient
     }
 
     /// <summary>
+    /// Extract substitutes from a given spec or latest.
+    /// </summary>
+    /// <param name="specVersion">The version of the spec.</param>
+    public async Task<IEnumerable<string>> ExtractSubstitutes(string specVersion, CancellationToken cancellationToken)
+    {
+        string path = $"substitutes?spec-version={specVersion}";
+        using (Stream input = await _httpClient.GetStreamAsync(path, cancellationToken))
+        {
+            IEnumerable<string>? result = await JsonSerializer.DeserializeAsync<IEnumerable<string>>(input, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+        return Enumerable.Empty<string>();
+    }
+
+    /// <summary>
     /// Generally return an enumerable of items
     /// </summary>
     private async Task<IEnumerable<T>> ListAllAsync<T>(string path, CancellationToken cancellationToken)

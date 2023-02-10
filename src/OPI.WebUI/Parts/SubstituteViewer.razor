@@ -1,0 +1,22 @@
+@if (!string.IsNullOrEmpty(Title))
+{
+    <h2>@Title</h2>
+}
+
+@if (ExtractedSubstitutes is null)
+{
+    <div>Loading ...</div>
+}
+else if (!ExtractedSubstitutes.Any())
+{
+    <div>No substitues extracted.</div>
+}
+else
+{
+    <div>
+        @foreach (string item in ExtractedSubstitutes)
+        {
+            <div>@item</div>
+        }
+    </div>
+}

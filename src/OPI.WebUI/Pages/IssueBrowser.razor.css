@@ -1,9 +1,15 @@
-.card {
-    border: 1px solid whitesmoke;
-    padding: 30px;
-    background-color: white;
-    margin-bottom: 4px;
+/* Main layout */
+.working-space
+{
+    display: flex;
+    flex-direction: row;
 }
+
+.main-section
+{
+    flex-grow: 5;
+}
+
 
 .issue-item {
     display: flex;
@@ -43,4 +49,11 @@
 {
     margin-left: 16px;
     display: flex;
+}
+
+/* Substitutes */
+#substitute
+{
+    min-width: 150px;
+    padding-left: 32px;
 }

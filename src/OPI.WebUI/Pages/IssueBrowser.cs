@@ -43,6 +43,8 @@ public partial class IssueBrowser
         }
     }
 
+    public IReadOnlyCollection<string>? ExtractedSubstitutes { get; set; } = null;
+
     private string? _pickedVersion = null;
     public string? PickedVersion
     {
@@ -80,7 +82,8 @@ public partial class IssueBrowser
             }
             _loadedIssues = new List<PerfIssueItem>(await OpiClient.ListAllAsync(_pickedVersion, default)).AsReadOnly();
             ApplyFilter();
-            UpdateJsonView();
+            await UpdateJsonViewAsync(cancellationToken: default);
+            await UpdateSubstitutesAsync(cancellationToken: default);
             StateHasChanged();
         }
         catch
@@ -91,14 +94,24 @@ public partial class IssueBrowser
         }
     }
 
-    private async void UpdateJsonView()
+    private async Task UpdateSubstitutesAsync(CancellationToken cancellationToken)
+    {
+        if(string.IsNullOrEmpty(_pickedVersion))
+        {
+            ExtractedSubstitutes = null;
+            return;
+        }
+
+        ExtractedSubstitutes = (await OpiClient.ExtractSubstitutes(_pickedVersion, cancellationToken).ConfigureAwait(false)).OrderBy(item => item,  StringComparer.OrdinalIgnoreCase).ToList().AsReadOnly();
+    }
+
+    private async Task UpdateJsonViewAsync(CancellationToken cancellationToken)
     {
         JsonContent = string.Empty;
         if (!string.IsNullOrEmpty(_pickedVersion))
         {
-            JsonContent = await OpiClient.GetAllInJsonStringAsync(_pickedVersion, default).ConfigureAwait(false);
+            JsonContent = await OpiClient.GetAllInJsonStringAsync(_pickedVersion, cancellationToken).ConfigureAwait(false);
         }
-        StateHasChanged();
     }
 
     private async Task OnKeywordChanged()
