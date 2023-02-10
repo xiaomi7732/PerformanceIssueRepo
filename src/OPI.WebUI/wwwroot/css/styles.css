@@ -19,3 +19,8 @@ button{
     margin-bottom: 1px;
     border-radius: 2px;
 }
+
+.invisible
+{
+    visibility: hidden;
+}

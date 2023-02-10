@@ -9,6 +9,8 @@ public partial class IssueBrowser
     [Inject]
     public OPIClient OpiClient { get; private set; } = default!;
 
+    public bool IsLoading { get; set; }
+
     public IEnumerable<string> SpecVersionCollection { get; private set; } = Enumerable.Empty<string>();
 
     private IReadOnlyCollection<PerfIssueItem>? _loadedIssues = null;
@@ -75,6 +77,9 @@ public partial class IssueBrowser
     {
         try
         {
+            IsLoading = true;
+            StateHasChanged();
+
             if (string.IsNullOrEmpty(_pickedVersion))
             {
                 IssueCollection = Enumerable.Empty<PerfIssueItem>();
@@ -89,20 +94,26 @@ public partial class IssueBrowser
         catch
         {
             IssueCollection = Enumerable.Empty<PerfIssueItem>();
+
             // TODO: Handle this error!
             throw;
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
         }
     }
 
     private async Task UpdateSubstitutesAsync(CancellationToken cancellationToken)
     {
-        if(string.IsNullOrEmpty(_pickedVersion))
+        if (string.IsNullOrEmpty(_pickedVersion))
         {
             ExtractedSubstitutes = null;
             return;
         }
 
-        ExtractedSubstitutes = (await OpiClient.ExtractSubstitutes(_pickedVersion, cancellationToken).ConfigureAwait(false)).OrderBy(item => item,  StringComparer.OrdinalIgnoreCase).ToList().AsReadOnly();
+        ExtractedSubstitutes = (await OpiClient.ExtractSubstitutes(_pickedVersion, cancellationToken).ConfigureAwait(false)).OrderBy(item => item, StringComparer.OrdinalIgnoreCase).ToList().AsReadOnly();
     }
 
     private async Task UpdateJsonViewAsync(CancellationToken cancellationToken)
