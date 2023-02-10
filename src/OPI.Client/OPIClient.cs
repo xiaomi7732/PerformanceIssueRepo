@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
 using OPI.Core.Models;
@@ -11,17 +12,28 @@ public class OPIClient
 {
     private readonly HttpClient _httpClient;
     private readonly GitHubClient _gitHubClient;
+    private readonly ILogger<OPIClient> _logger;
     private readonly OPIClientOptions _clientOptions;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public OPIClient(
         HttpClient httpClient,
         GitHubClient gitHubClient,
-        IOptions<OPIClientOptions> clientOptions)
+        IOptions<OPIClientOptions> clientOptions,
+        ILogger<OPIClient> logger)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _gitHubClient = gitHubClient;
+        _gitHubClient = gitHubClient ?? throw new ArgumentNullException(nameof(gitHubClient));
         _clientOptions = clientOptions?.Value ?? throw new ArgumentNullException(nameof(clientOptions));
+
+        if (_httpClient.BaseAddress is null)
+        {
+            _httpClient.BaseAddress = _clientOptions.BaseUri;
+        }
+        _logger.LogInformation("OPI Backend URI: {backend}", _httpClient.BaseAddress);
+
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
 

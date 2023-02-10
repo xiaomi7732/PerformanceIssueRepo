@@ -8,7 +8,7 @@ namespace OPI.Client;
 
 public static class OPIClientExtensions
 {
-    public static IServiceCollection AddOPIClient(this IServiceCollection services, Uri baseAddress, string optionSectionName = "OPIOptions")
+    public static IServiceCollection AddOPIClient(this IServiceCollection services, Uri? baseAddress = default, string optionSectionName = "OPIOptions")
     {
         services.AddOptions<OPIClientOptions>().Configure<IConfiguration>((opt, configuration) =>
         {
