@@ -10,6 +10,7 @@ public static class RegistryStorageExtensions
             config.GetSection(optionSectionName).Bind(opt);
         });
 
+        services.AddHostedService<BlobContainerCreator>();
         services.TryAddSingleton<RegistryStorageCredential>();
         services.TryAddSingleton<IRegistryBlobClient, RegistryBlobClient>();
 

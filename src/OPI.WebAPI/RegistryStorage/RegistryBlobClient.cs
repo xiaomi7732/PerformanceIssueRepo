@@ -16,7 +16,6 @@ internal sealed class RegistryBlobClient : IRegistryBlobClient
     private readonly BlobServiceClient _blobServiceClient;
     private readonly BlobContainerClient _blobContainerClient;
 
-
     public RegistryBlobClient(
         IOptions<RegistryStorageOptions> options,
         RegistryStorageCredential credential,
@@ -30,8 +29,10 @@ internal sealed class RegistryBlobClient : IRegistryBlobClient
         _blobServiceClient = new BlobServiceClient(_options.BlobServiceUri, _credential);
         _blobContainerClient = _blobServiceClient.GetBlobContainerClient(_options.ContainerName);
         _logger.LogInformation("Checking container exists: {containerName}", _options.ContainerName);
-        _blobContainerClient.CreateIfNotExists();
     }
+
+    public Task CreateContainerIfNotExistsAsync(CancellationToken cancellationToken)
+        => _blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
     public async Task ReplaceAsync(string blobName, Stream data, CancellationToken cancellationToken)
     {
