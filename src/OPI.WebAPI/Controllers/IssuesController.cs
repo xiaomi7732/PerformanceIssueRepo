@@ -72,6 +72,8 @@ public class IssuesController : ControllerBase
         }
     }
 
-    private Task<IEnumerable<PerfIssueItem>> GetPerfIssueItemsAsync(string specVersion, CancellationToken cancellationToken)
-        => _issueItemService.ListByAsync(specVersion, cancellationToken);
+    private async Task<IEnumerable<PerfIssueItem>> GetPerfIssueItemsAsync(string specVersion, CancellationToken cancellationToken)
+    {
+        return (await _issueItemService.ListByAsync(specVersion, cancellationToken)).OrderBy(item => item.LegacyId?.PadLeft(4)).ThenBy(item => item.PermanentId);
+    }
 }

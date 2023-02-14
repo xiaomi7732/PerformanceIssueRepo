@@ -86,13 +86,17 @@ public partial class Index
 
     private async Task ReloadDataAsync()
     {
-        _allRegisteredItems = new List<PerfIssueRegisterEntry>((await OpiClient.ListAllRegisteredAsync(default)).OrderBy(item => item.LegacyId?.PadLeft(4))).AsReadOnly();
+        _allRegisteredItems = (await OpiClient.ListAllRegisteredAsync(default))
+            .OrderBy(item => item.LegacyId?.PadLeft(4))
+            .ThenBy(item => item.PermanentId)
+            .ToList()
+            .AsReadOnly();
         FilterData();
     }
 
     private void FilterData()
     {
-        if(_allRegisteredItems is null)
+        if (_allRegisteredItems is null)
         {
             return;
         }

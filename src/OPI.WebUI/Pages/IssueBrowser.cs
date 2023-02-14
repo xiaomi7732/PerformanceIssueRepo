@@ -85,7 +85,7 @@ public partial class IssueBrowser
                 IssueCollection = Enumerable.Empty<PerfIssueItem>();
                 return;
             }
-            _loadedIssues = new List<PerfIssueItem>(await OpiClient.ListAllAsync(_pickedVersion, default)).AsReadOnly();
+            _loadedIssues = new List<PerfIssueItem>(await OpiClient.ListAllAsync(_pickedVersion, default)).OrderBy(item => item.LegacyId?.PadLeft(4)).ThenBy(item => item.PermanentId).ToList().AsReadOnly();
             ApplyFilter();
             await UpdateJsonViewAsync(cancellationToken: default);
             await UpdateSubstitutesAsync(cancellationToken: default);
