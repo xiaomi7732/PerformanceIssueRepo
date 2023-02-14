@@ -1,22 +1,25 @@
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Microsoft.Extensions.Options;
 using OPI.Core.Models;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace OPI.WebAPI.Services;
 
 public class IssueRegistryService
 {
     private readonly IssueServiceOptions _options;
+    private readonly IRegistryBlobClient _storageClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly ILogger _logger;
 
     public IssueRegistryService(
+        IRegistryBlobClient storageClient,
         IOptions<IssueServiceOptions> options,
         JsonSerializerOptions jsonSerializerOptions,
         ILogger<IssueRegistryService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        _storageClient = storageClient ?? throw new ArgumentNullException(nameof(storageClient));
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -33,14 +36,7 @@ public class IssueRegistryService
             };
         }
 
-        List<PerfIssueRegisterEntry> result = new List<PerfIssueRegisterEntry>();
-        await foreach (PerfIssueRegisterEntry item in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
-        {
-            result.Add(item);
-        }
-        result.Add(registerEntry);
-
-        await SaveAllPerfIssueAsync(result, cancellationToken).ConfigureAwait(false);
+        await SaveRegistryItemAsync(registerEntry, cancellationToken).ConfigureAwait(false);
         return registerEntry;
     }
 
@@ -49,16 +45,9 @@ public class IssueRegistryService
     /// <summary>
     /// Gets an item by id.
     /// </summary>
-    public async Task<PerfIssueRegisterEntry?> GetRegisteredItem(Guid id, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry?> GetRegisteredItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        await foreach (PerfIssueRegisterEntry item in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
-        {
-            if (item?.PermanentId == id)
-            {
-                return item;
-            }
-        }
-        return null;
+        return await GetRegistryEntryAsync(id, cancellationToken);
     }
 
     /// <summary>
@@ -66,7 +55,7 @@ public class IssueRegistryService
     /// </summary>
     public IAsyncEnumerable<PerfIssueRegisterEntry> GetRegisteredIssuesAsync(CancellationToken cancellationToken)
     {
-        return GetAllPerfIssuesAsync(cancellationToken);
+        return GetRegistryEntriesAsync(cancellationToken);
     }
 
 
@@ -77,27 +66,19 @@ public class IssueRegistryService
     /// </summary>
     public async Task<PerfIssueRegisterEntry> UpdateAsync(PerfIssueRegisterEntry newIssueRegistryItem, CancellationToken cancellationToken)
     {
-        List<PerfIssueRegisterEntry> results = new List<PerfIssueRegisterEntry>();
-        bool found = false;
-        await foreach (PerfIssueRegisterEntry entry in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
+        if (newIssueRegistryItem.PermanentId is null || newIssueRegistryItem.PermanentId == Guid.Empty)
         {
-            if (entry.PermanentId != newIssueRegistryItem.PermanentId)
-            {
-                results.Add(entry);
-                continue;
-            }
-
-            results.Add(newIssueRegistryItem);
-            found = true;
+            throw new InvalidOperationException($"Id {Guid.Empty} is invalid.");
         }
 
-        if (!found)
+        PerfIssueRegisterEntry? entry = await GetRegisteredItemAsync(newIssueRegistryItem.PermanentId.Value, cancellationToken).ConfigureAwait(false);
+        if (entry is null)
         {
-            throw new IndexOutOfRangeException($"Can't find an entry by id: {newIssueRegistryItem.PermanentId}");
+            throw new InvalidOperationException($"Target entry by id {newIssueRegistryItem.PermanentId} does not exist.");
         }
 
-        await SaveAllPerfIssueAsync(results, cancellationToken).ConfigureAwait(false);
-        return newIssueRegistryItem;
+        await SaveRegistryItemAsync(entry, cancellationToken);
+        return entry;
     }
 
     /// <summary>
@@ -106,61 +87,26 @@ public class IssueRegistryService
     /// </summary>
     public async Task<PerfIssueRegisterEntry?> FlipActivationAsync(Guid permanentId, CancellationToken cancellationToken)
     {
-        List<PerfIssueRegisterEntry> result = new List<PerfIssueRegisterEntry>();
-        PerfIssueRegisterEntry? updated = null;
-
-        await foreach (PerfIssueRegisterEntry entry in GetRegisteredIssuesAsync(cancellationToken).ConfigureAwait(false))
+        PerfIssueRegisterEntry? entry = await GetRegisteredItemAsync(permanentId, cancellationToken).ConfigureAwait(false);
+        if (entry is null)
         {
-            // No hit;
-            if (entry.PermanentId != permanentId)
-            {
-                result.Add(entry);
-                continue;
-            }
-
-            // Hit;
-            updated = entry with
-            {
-                IsActive = !entry.IsActive,
-            };
-            result.Add(updated);
+            throw new InvalidOperationException($"Target issue by id {permanentId} does not exist.");
         }
-
-        if (updated is null)
-        {
-            throw new IndexOutOfRangeException($"No issue entry found by id of {permanentId}");
-        }
-
-        // Update happened
-        await SaveAllPerfIssueAsync(result, cancellationToken).ConfigureAwait(false);
-        return updated;
+        entry = entry with { IsActive = !entry.IsActive };
+        await SaveRegistryItemAsync(entry, cancellationToken).ConfigureAwait(false);
+        return entry;
     }
 
     // Delete
     public async Task<bool> DeleteAnIssueAsync(Guid permanentId, CancellationToken cancellationToken)
     {
-        List<PerfIssueRegisterEntry> itemsToKeep = new List<PerfIssueRegisterEntry>();
-        bool deleted = false;
-        await foreach (PerfIssueRegisterEntry item in GetAllPerfIssuesAsync(cancellationToken).ConfigureAwait(false))
-        {
-            if (item.PermanentId == permanentId)
-            {
-                deleted = true;
-            }
-            else
-            {
-                itemsToKeep.Add(item);
-            }
-        }
-
-        // Persistent
-        await SaveAllPerfIssueAsync(itemsToKeep, cancellationToken);
-        return deleted;
+        string blobName = new RegistryEntryName(permanentId).Value;
+        return await _storageClient.DeleteIfExistsAsync(blobName, cancellationToken).ConfigureAwait(false);
     }
 
-    public async IAsyncEnumerable<PerfIssueItem> GetAllIssueItems(bool? activeState, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<PerfIssueItem> GetAllIssueItemsAsync(bool? activeState, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        await foreach (PerfIssueRegisterEntry entry in GetAllPerfIssuesAsync(cancellationToken).ConfigureAwait(false))
+        await foreach (PerfIssueRegisterEntry entry in GetRegistryEntriesAsync(cancellationToken).ConfigureAwait(false))
         {
             if (activeState is null || entry.IsActive == activeState)
             {
@@ -171,37 +117,44 @@ public class IssueRegistryService
     }
 
     // Data access below
-    private async IAsyncEnumerable<PerfIssueRegisterEntry> GetAllPerfIssuesAsync([EnumeratorCancellation] CancellationToken cancellationToken)
-    {
-        string filePath = _options.IssueFilePath;
-        if (!File.Exists(filePath))
-        {
-            _logger.LogWarning("Issue repo file doesn't exist. Path: {filePath}", filePath);
-            yield break;
-        }
+    private Task<PerfIssueRegisterEntry> GetRegistryEntryAsync(Guid issueId, CancellationToken cancellationToken)
+        => GetRegistryEntryAsync(new RegistryEntryName(issueId).Value, cancellationToken);
 
-        using (Stream readingStream = File.OpenRead(_options.IssueFilePath))
+    private async IAsyncEnumerable<PerfIssueRegisterEntry> GetRegistryEntriesAsync([EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        await foreach (string blobName in _storageClient.ListBlobsAsync(RegistryEntryName.RegistryEntryPrefix + "/", cancellationToken))
         {
-            await foreach (PerfIssueRegisterEntry? issue in JsonSerializer
-                .DeserializeAsyncEnumerable<PerfIssueRegisterEntry>(readingStream, _jsonSerializerOptions, cancellationToken)
-                .ConfigureAwait(false))
-            {
-                if (issue is null)
-                {
-                    continue;
-                }
-                yield return issue;
-            }
+            yield return await GetRegistryEntryAsync(blobName, cancellationToken);
         }
     }
 
-    private async Task SaveAllPerfIssueAsync(IEnumerable<PerfIssueRegisterEntry> perfIssues, CancellationToken cancellationToken)
+    private async Task<PerfIssueRegisterEntry> GetRegistryEntryAsync(string blobName, CancellationToken cancellationToken)
     {
-        string tempFilePath = Path.GetTempFileName();
-        using (Stream writingStream = File.OpenWrite(tempFilePath))
+        using (MemoryStream memoryStream = new MemoryStream())
         {
-            await JsonSerializer.SerializeAsync(writingStream, perfIssues, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+            await _storageClient.DownloadStreamAsync(blobName, memoryStream, cancellationToken).ConfigureAwait(false);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            PerfIssueRegisterEntry? entry = await JsonSerializer.DeserializeAsync<PerfIssueRegisterEntry>(memoryStream, _jsonSerializerOptions, cancellationToken);
+            if (entry is null)
+            {
+                throw new InvalidCastException($"Can't deserialize blob: {blobName}");
+            }
+            return entry!;
         }
-        File.Move(tempFilePath, _options.IssueFilePath, overwrite: true);
+    }
+
+    internal async Task SaveRegistryItemAsync(PerfIssueRegisterEntry entry, CancellationToken cancellationToken)
+    {
+        if (entry.PermanentId is null)
+        {
+            throw new InvalidOperationException("Can't persistent a perf issue without a durable guid.");
+        }
+
+        using (Stream inputStream = new MemoryStream())
+        {
+            await JsonSerializer.SerializeAsync(inputStream, entry, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+            inputStream.Seek(0, SeekOrigin.Begin);
+            await _storageClient.ReplaceAsync(new RegistryEntryName(entry.PermanentId.Value).Value, inputStream, cancellationToken).ConfigureAwait(false);
+        }
     }
 }

@@ -29,7 +29,7 @@ public class RegistryController : ControllerBase
     [Route("{permanentId}")]
     public async Task<ActionResult<PerfIssueRegisterEntry>> Get([FromRoute] Guid permanentId, CancellationToken cancellationToken)
     {
-        PerfIssueRegisterEntry? result = await _issueRegistryService.GetRegisteredItem(permanentId, cancellationToken).ConfigureAwait(false);
+        PerfIssueRegisterEntry? result = await _issueRegistryService.GetRegisteredItemAsync(permanentId, cancellationToken).ConfigureAwait(false);
         if (result is null)
         {
             return NotFound();

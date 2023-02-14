@@ -6,12 +6,18 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="Azure.Identity" Version="1.8.2" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../OPI.Core/OPI.Core.csproj" />
         <None Include="./perf-issue.json" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="../SPEssentials.Identities/SPEssentials.Identities.csproj" />
     </ItemGroup>
 </Project>

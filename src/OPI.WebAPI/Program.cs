@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging.Console;
+using OPI.WebAPI.RegistryStorage;
 using OPI.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,12 @@ builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
 // Add services to the container.
 builder.Services.AddTransient<IssueRegistryService>();
 builder.Services.AddTransient<IssueItemService>();
+
+#if DEBUG
+builder.Services.AddTransient<LegacyIssueRegistryService>();
+#endif
+
+builder.Services.AddRegistryStorage();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
