@@ -50,7 +50,7 @@ public class IssueItemService
         if (string.Equals(version, "latest", StringComparison.OrdinalIgnoreCase))
         {
             List<PerfIssueItem> items = new List<PerfIssueItem>();
-            await foreach (PerfIssueItem item in _issueRegistryService.GetAllIssueItems(true, cancellationToken))
+            await foreach (PerfIssueItem item in _issueRegistryService.GetAllIssueItemsAsync(true, cancellationToken))
             {
                 items.Add(item);
             }
