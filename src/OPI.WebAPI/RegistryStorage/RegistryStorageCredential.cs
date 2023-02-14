@@ -27,7 +27,6 @@ internal sealed class RegistryStorageCredential : TokenCredential<RegistryBlobCl
                 return new DefaultAzureCredential();
             case CredentialType.ManagedIdentity:
                 return new ManagedIdentityCredential(_options.ClientId);
-            
             case CredentialType.SNICert:
             default:
                 throw new NotSupportedException($"Not supported credential type of {credentialType} for Registry Storage.");

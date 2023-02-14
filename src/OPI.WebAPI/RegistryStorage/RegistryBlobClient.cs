@@ -16,7 +16,6 @@ internal sealed class RegistryBlobClient : IRegistryBlobClient
     private readonly BlobServiceClient _blobServiceClient;
     private readonly BlobContainerClient _blobContainerClient;
 
-
     public RegistryBlobClient(
         IOptions<RegistryStorageOptions> options,
         RegistryStorageCredential credential,
@@ -30,8 +29,10 @@ internal sealed class RegistryBlobClient : IRegistryBlobClient
         _blobServiceClient = new BlobServiceClient(_options.BlobServiceUri, _credential);
         _blobContainerClient = _blobServiceClient.GetBlobContainerClient(_options.ContainerName);
         _logger.LogInformation("Checking container exists: {containerName}", _options.ContainerName);
-        _blobContainerClient.CreateIfNotExists();
     }
+
+    public Task CreateContainerIfNotExistsAsync(CancellationToken cancellationToken)
+        => _blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
     public async Task ReplaceAsync(string blobName, Stream data, CancellationToken cancellationToken)
     {
@@ -56,19 +57,15 @@ internal sealed class RegistryBlobClient : IRegistryBlobClient
     public async IAsyncEnumerable<string> ListBlobsAsync(string prefix, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         _logger.LogInformation("Scanning blob for container: {containerName}, by prefix: {prefix}", _blobContainerClient.Name, prefix);
-        var resultSegment = _blobContainerClient.GetBlobsByHierarchyAsync(prefix: prefix, delimiter: "/").AsPages(default);
+        var resultSegment = _blobContainerClient.GetBlobsAsync(prefix: prefix).AsPages(pageSizeHint: 250);
 
         // Enumerate the blobs returned for each page.
-        await foreach (Page<BlobHierarchyItem> blobPage in resultSegment)
+        await foreach (Page<BlobItem> blobPage in resultSegment)
         {
             // A hierarchical listing may return both virtual directories and blobs.
-            foreach (BlobHierarchyItem item in blobPage.Values)
+            foreach (BlobItem item in blobPage.Values)
             {
-                if (item.IsPrefix)
-                {
-                    continue;
-                }
-                yield return item.Blob.Name;
+                yield return item.Name;
             }
         }
     }
