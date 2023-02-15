@@ -8,18 +8,21 @@ namespace OPI.Client;
 
 public static class OPIClientExtensions
 {
-    public static IServiceCollection AddOPIClient(this IServiceCollection services, Uri? baseAddress = default, string optionSectionName = "OPIOptions")
+    public static IServiceCollection AddOPIClient<THandler>(this IServiceCollection services, Uri? baseAddress = default, string optionSectionName = "OPIOptions")
+        where THandler : DelegatingHandler
     {
         services.AddOptions<OPIClientOptions>().Configure<IConfiguration>((opt, configuration) =>
         {
             configuration.GetSection(optionSectionName).Bind(opt);
         });
 
-        services.AddHttpClient<OPIClient>(opt =>
+        IHttpClientBuilder httpClientBuilder = services.AddHttpClient<OPIClient>(opt =>
         {
             opt.BaseAddress = baseAddress;
             opt.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
         });
+
+        httpClientBuilder.AddHttpMessageHandler<THandler>();
 
         services.AddTransient<GitHubClient>(p =>
         {
