@@ -8,7 +8,12 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-    options.ProviderOptions.DefaultAccessTokenScopes.Add(@"api://549847ed-4e8b-47e3-829d-5e1a381ec08f/.default");
+    string? defaultScope = builder.Configuration.GetSection("OPIOptions")["DefaultScope"];
+    if (string.IsNullOrEmpty(defaultScope))
+    {
+        throw new InvalidOperationException("Default scope for the backend is required.");
+    }
+    options.ProviderOptions.DefaultAccessTokenScopes.Add(defaultScope);
 });
 
 builder.RootComponents.Add<App>("#app");
