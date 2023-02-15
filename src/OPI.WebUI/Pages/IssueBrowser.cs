@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using OPI.Client;
 using OPI.Core.Models;
 
 namespace OPI.WebUI.Pages;
 
+[Authorize]
 public partial class IssueBrowser
 {
     [Inject]

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPI.Core.Models;
 using OPI.WebAPI.Services;
@@ -7,6 +8,7 @@ namespace OPI.WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Roles = "Admin")]
 public class RegistryController : ControllerBase
 {
     private readonly IssueRegistryService _issueRegistryService;

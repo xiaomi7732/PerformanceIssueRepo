@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using NReco.Csv;
 using OPI.Client;
@@ -7,6 +8,7 @@ using OPI.WebUI.ViewModels;
 
 namespace OPI.WebUI.Pages;
 
+[Authorize]
 public partial class BatchRegister
 {
     [Inject]

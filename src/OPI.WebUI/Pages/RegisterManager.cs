@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OPI.Client;
@@ -5,7 +6,8 @@ using OPI.Core.Models;
 
 namespace OPI.WebUI.Pages;
 
-public partial class Index
+[Authorize]
+public partial class RegistryManager
 {
     [Inject]
     public OPIClient OpiClient { get; private set; } = default!;

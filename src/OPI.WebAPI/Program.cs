@@ -1,5 +1,7 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging.Console;
+using Microsoft.Identity.Web;
 using OPI.WebAPI.RegistryStorage;
 using OPI.WebAPI.Services;
 
@@ -8,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>{
     config.WithOrigins("http://localhost:5160", "https://white-bay-0b797e61e.2.azurestaticapps.net")
         .AllowAnyMethod()
-        .WithHeaders("content-type");
+        .WithHeaders("content-type", "authorization");
 }));
 
 builder.Logging.AddSimpleConsole(opt =>
@@ -16,6 +18,9 @@ builder.Logging.AddSimpleConsole(opt =>
     opt.SingleLine = true;
     opt.ColorBehavior = LoggerColorBehavior.Enabled;
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 builder.Services.AddHttpClient("issue-spec", client =>
 {
@@ -56,6 +61,7 @@ app.UseCors();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
