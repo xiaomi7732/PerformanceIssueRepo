@@ -1,0 +1,15 @@
+{
+  "name": "@opi/resx",
+  "version": "0.0.1-alpha.1",
+  "description": "Resx file for Open Performance Issues",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
