@@ -8,24 +8,25 @@ using Octokit;
 using OPI.Core.Models;
 
 namespace OPI.Client;
+
 public class OPIClient
 {
     private readonly HttpClient _httpClient;
-    private readonly GitHubClient _gitHubClient;
+    private readonly IGitHubClient? _gitHubClient;
     private readonly ILogger<OPIClient> _logger;
     private readonly OPIClientOptions _clientOptions;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public OPIClient(
         HttpClient httpClient,
-        GitHubClient gitHubClient,
+        IGitHubClient? gitHubClient,
         IOptions<OPIClientOptions> clientOptions,
         ILogger<OPIClient> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
+        
+        _gitHubClient = gitHubClient;
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _gitHubClient = gitHubClient ?? throw new ArgumentNullException(nameof(gitHubClient));
         _clientOptions = clientOptions?.Value ?? throw new ArgumentNullException(nameof(clientOptions));
 
         if (_httpClient.BaseAddress is null)
@@ -45,6 +46,11 @@ public class OPIClient
 
     public async Task<IEnumerable<string>> ListSpecVersionsAsync(CancellationToken cancellationToken)
     {
+        if(_gitHubClient is null)
+        {
+            throw new InvalidOperationException("GitHub client is missing. Please supply the github client first.");
+        }
+
         return (await _gitHubClient.Repository.GetAllTags(
             _clientOptions.SpecRepositoryOwner,
             _clientOptions.SpecRepositoryName).ConfigureAwait(false))
