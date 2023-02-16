@@ -24,7 +24,7 @@ public static class OPIClientExtensions
 
         httpClientBuilder.AddHttpMessageHandler<THandler>();
 
-        services.AddTransient<GitHubClient>(p =>
+        services.AddTransient<IGitHubClient>(p =>
         {
             return new GitHubClient(new Octokit.ProductHeaderValue("OPI.Client"));
         });
