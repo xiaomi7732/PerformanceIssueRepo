@@ -1,19 +1,19 @@
-﻿using System.Resources;
-using System.Resources.NetStandard;
-using System.Xml;
+﻿using System.Resources.NetStandard;
 using OPI.Core.Models;
 
 namespace OPI.Generators;
 
+
+// TODO: Add prefix to the keys
 public class ResxGenerator
 {
     /// <summary>
-    /// Generates a resx file from a given collection of PerfIssueRegisterEntry.
+    /// Generates a resx file from a given collection of PerfIssueItem.
     /// </summary>
-    /// <param name="entries">The collection of PerfIssueRegisterEntry.</param>
+    /// <param name="entries">The collection of PerfIssueItem.</param>
     /// <param name="outputPath">The output path of the resx file.</param>
     /// <param name="resxSchemaVersion">The schema version of the resx file.</param>
-    public static void Generate(IEnumerable<PerfIssueRegisterEntry> entries, string outputPath, string resxSchemaVersion = "2.0")
+    public static void Generate(IEnumerable<PerfIssueItem> entries, string outputPath, string resxSchemaVersion = "2.0")
     {
         if (entries is null)
         {
@@ -26,24 +26,26 @@ public class ResxGenerator
         }
 
         // Initialize the resource writer
-        ResXResourceWriter writer = new ResXResourceWriter(outputPath);
+        using ResXResourceWriter writer = new ResXResourceWriter(outputPath);
         // Write the schema version
         writer.AddResource("$schema", resxSchemaVersion);
         // Write the entries
-        foreach (PerfIssueRegisterEntry entry in entries)
+        foreach (PerfIssueItem entry in entries)
         {
             // Write the title with key "{PermanentId}.Title"
             writer.AddResource($"{entry.PermanentId}.Title", entry.Title);
             // Write the description with key "{PermanentId}.Description"
             writer.AddResource($"{entry.PermanentId}.Description", entry.Description);
             // Write the doc url with key "{PermanentId}.DocURL"
-            writer.AddResource($"{entry.PermanentId}.DocURL", entry.DocURL?.ToString());
+            if (entry.DocURL is not null)
+            {
+                writer.AddResource($"{entry.PermanentId}.DocURL", entry.DocURL?.AbsoluteUri);
+            }
             // Write the recommendation with key "{PermanentId}.Recommendation"
             writer.AddResource($"{entry.PermanentId}.Recommendation", entry.Recommendation);
             // Write the rationale with key "{PermanentId}.Rationale"
             writer.AddResource($"{entry.PermanentId}.Rationale", entry.Rationale);
         }
         writer.Generate();
-        writer.Close();
     }
 }

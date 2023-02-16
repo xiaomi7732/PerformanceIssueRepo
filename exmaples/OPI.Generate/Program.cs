@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using OPI.Core.Models;
 using OPI.Generators;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -21,17 +20,16 @@ string registryVersion = configuration["registryVersion"] ?? "latest";
 // Get the registry endpoint
 string registryEndpoint = configuration["registryEndpoint"] ?? "https://opir-test.azurewebsites.net/issues";
 
-
+// Reference OPI.CLient - Add DI container
 // Make get request to registry endpoint and get returned json
-Func<PerfIssueRegisterEntry[]> GetRegistryJson = () =>
+Func<PerfIssueItem[]> GetRegistryJson = () =>
 {
     Console.WriteLine("Getting registry json from " + registryEndpoint + "?spec-version=" + registryVersion);
     string json = new HttpClient().GetStringAsync(registryEndpoint + "?spec-version=" + registryVersion).Result ?? throw new ArgumentNullException(nameof(json));
     // Deserialize json into PerfIssueRegisterEntry
-    PerfIssueRegisterEntry[] entries = JsonSerializer.Deserialize<PerfIssueRegisterEntry[]>(json, new JsonSerializerOptions
+    PerfIssueItem[] entries = JsonSerializer.Deserialize<PerfIssueItem[]>(json, new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        // Create encoder that encodes backticks
         Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin)
     });
 
@@ -42,7 +40,7 @@ Func<PerfIssueRegisterEntry[]> GetRegistryJson = () =>
 // Generate command for resx
 Action ResXGenerator = () =>
 {
-    PerfIssueRegisterEntry[] entries = GetRegistryJson();
+    PerfIssueItem[] entries = GetRegistryJson();
     string resxSchemaVersion = configuration["resxSchemaVersion"] ?? "2.0";
     ResxGenerator.Generate(entries, outputPath, resxSchemaVersion);
     Console.WriteLine("Wrote resx file to " + outputPath);
@@ -53,6 +51,5 @@ if (generatorType.ToLower() == "resx")
 {
     ResXGenerator();
 }
-
 
 return 0;
