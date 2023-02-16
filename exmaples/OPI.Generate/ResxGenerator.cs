@@ -13,7 +13,7 @@ public class ResxGenerator
     /// <param name="entries">The collection of PerfIssueItem.</param>
     /// <param name="outputPath">The output path of the resx file.</param>
     /// <param name="resxSchemaVersion">The schema version of the resx file.</param>
-    public static void Generate(IEnumerable<PerfIssueItem> entries, string outputPath, string resxSchemaVersion = "2.0")
+    public static void Generate(IEnumerable<PerfIssueItem> entries, string outputPath, string resxSchemaVersion = "2.0", string prefix = "")
     {
         if (entries is null)
         {
@@ -47,5 +47,11 @@ public class ResxGenerator
             writer.AddResource($"{entry.PermanentId}.Rationale", entry.Rationale);
         }
         writer.Generate();
+    }
+
+    private static string GetKey(string permanentId, string key, string prefix)
+    {
+        prefix = string.IsNullOrWhiteSpace(prefix) ? string.Empty : $"{prefix}.";
+        return $"{prefix}{permanentId}.{key}";
     }
 }

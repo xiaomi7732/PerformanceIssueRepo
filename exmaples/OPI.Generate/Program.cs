@@ -19,6 +19,8 @@ string outputPath = configuration["output"] ?? throw new ArgumentNullException(n
 string registryVersion = configuration["registryVersion"] ?? "latest";
 // Get the registry endpoint
 string registryEndpoint = configuration["registryEndpoint"] ?? "https://opir-test.azurewebsites.net/issues";
+// Get the optional prefix
+string prefix = configuration["prefix"] ?? string.Empty;
 
 // Reference OPI.CLient - Add DI container
 // Make get request to registry endpoint and get returned json
@@ -42,7 +44,7 @@ Action ResXGenerator = () =>
 {
     PerfIssueItem[] entries = GetRegistryJson();
     string resxSchemaVersion = configuration["resxSchemaVersion"] ?? "2.0";
-    ResxGenerator.Generate(entries, outputPath, resxSchemaVersion);
+    ResxGenerator.Generate(entries, outputPath, resxSchemaVersion, prefix);
     Console.WriteLine("Wrote resx file to " + outputPath);
 };
 
