@@ -11,5 +11,8 @@
     "generate-resx": "dotnet run --project ..\\..\\..\\exmaples\\OPI.Generate\\ -- --type resx --output ..\\..\\..\\packages\\npm\\resx\\OPIResources-1.0.0-alpha5.resx --registryVersion 1.0.0-alpha5"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.17.8"
+  }
 }
