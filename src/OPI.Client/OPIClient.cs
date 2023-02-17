@@ -38,6 +38,8 @@ public class OPIClient
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
 
+    public Uri? Endpoint => _httpClient.BaseAddress;
+
     public Task<IEnumerable<PerfIssueItem>> ListAllAsync(string version, CancellationToken cancellationToken)
     {
         string path = $"issues?spec-version={version}";

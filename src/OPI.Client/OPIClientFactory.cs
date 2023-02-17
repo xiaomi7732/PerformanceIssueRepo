@@ -1,5 +1,3 @@
-using System.Net.Http.Headers;
-using System.Net.Mime;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -52,6 +50,7 @@ public sealed class OPIClientFactory : IDisposable
 
     public void Dispose()
     {
-        _httpClient.Dispose();
+        _httpClient?.Dispose();
+        _httpClient = null;
     }
 }
