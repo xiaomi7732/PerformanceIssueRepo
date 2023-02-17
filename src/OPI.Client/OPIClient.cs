@@ -24,7 +24,7 @@ public class OPIClient
         ILogger<OPIClient> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        
+
         _gitHubClient = gitHubClient;
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _clientOptions = clientOptions?.Value ?? throw new ArgumentNullException(nameof(clientOptions));
@@ -46,7 +46,7 @@ public class OPIClient
 
     public async Task<IEnumerable<string>> ListSpecVersionsAsync(CancellationToken cancellationToken)
     {
-        if(_gitHubClient is null)
+        if (_gitHubClient is null)
         {
             throw new InvalidOperationException("GitHub client is missing. Please supply the github client first.");
         }
@@ -141,6 +141,15 @@ public class OPIClient
             }
         }
         return Enumerable.Empty<string>();
+    }
+
+    /// <summary>
+    /// Append access token for the http client
+    /// </summary>
+    /// <param name="accessToken"></param>
+    public void UseAccessToken(string accessToken)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
     }
 
     /// <summary>

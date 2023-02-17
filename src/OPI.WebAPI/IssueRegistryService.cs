@@ -77,8 +77,8 @@ public class IssueRegistryService
             throw new InvalidOperationException($"Target entry by id {newIssueRegistryItem.PermanentId} does not exist.");
         }
 
-        await SaveRegistryItemAsync(entry, cancellationToken);
-        return entry;
+        await SaveRegistryItemAsync(newIssueRegistryItem, cancellationToken);
+        return newIssueRegistryItem;
     }
 
     /// <summary>
