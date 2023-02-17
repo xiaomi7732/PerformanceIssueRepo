@@ -3,8 +3,9 @@ using OPI.Core.Models;
 
 namespace OPI.Generators;
 
-
-// TODO: Add prefix to the keys
+/// <summary>
+/// Generates a resx file from a given collection of PerfIssueItem.
+/// </summary>
 public class ResxGenerator
 {
     /// <summary>
@@ -33,24 +34,29 @@ public class ResxGenerator
         foreach (PerfIssueItem entry in entries)
         {
             // Write the title with key "{PermanentId}.Title"
-            writer.AddResource($"{entry.PermanentId}.Title", entry.Title);
+            writer.AddResource(ResxGenerator.GetKey(entry.PermanentId, "Title", prefix), entry.Title);
             // Write the description with key "{PermanentId}.Description"
-            writer.AddResource($"{entry.PermanentId}.Description", entry.Description);
+            writer.AddResource(ResxGenerator.GetKey(entry.PermanentId, "Description", prefix), entry.Description);
             // Write the doc url with key "{PermanentId}.DocURL"
             if (entry.DocURL is not null)
             {
-                writer.AddResource($"{entry.PermanentId}.DocURL", entry.DocURL?.AbsoluteUri);
+                writer.AddResource(ResxGenerator.GetKey(entry.PermanentId, "DocURL", prefix), entry.DocURL?.AbsoluteUri);
             }
             // Write the recommendation with key "{PermanentId}.Recommendation"
-            writer.AddResource($"{entry.PermanentId}.Recommendation", entry.Recommendation);
+            writer.AddResource(ResxGenerator.GetKey(entry.PermanentId, "Recommendation", prefix), entry.Recommendation);
             // Write the rationale with key "{PermanentId}.Rationale"
-            writer.AddResource($"{entry.PermanentId}.Rationale", entry.Rationale);
+            writer.AddResource(ResxGenerator.GetKey(entry.PermanentId, "Rationale", prefix), entry.Rationale);
         }
         writer.Generate();
     }
 
-    private static string GetKey(string permanentId, string key, string prefix)
+    private static string GetKey(Guid? permanentId, string key, string prefix)
     {
+        if (permanentId is null)
+        {
+            throw new ArgumentNullException(nameof(permanentId));
+        }
+
         prefix = string.IsNullOrWhiteSpace(prefix) ? string.Empty : $"{prefix}.";
         return $"{prefix}{permanentId}.{key}";
     }

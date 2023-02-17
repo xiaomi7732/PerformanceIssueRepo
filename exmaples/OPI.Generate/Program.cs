@@ -9,8 +9,6 @@ using System.Text.Unicode;
 IConfiguration configuration = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
-// Log the configuration
-Console.WriteLine("Configuration: " + JsonSerializer.Serialize(configuration.AsEnumerable()));
 // Get type of the generator
 string generatorType = configuration["type"] ?? throw new ArgumentNullException(nameof(generatorType));
 // Get the output path
@@ -26,8 +24,9 @@ string prefix = configuration["prefix"] ?? string.Empty;
 // Make get request to registry endpoint and get returned json
 Func<PerfIssueItem[]> GetRegistryJson = () =>
 {
-    Console.WriteLine("Getting registry json from " + registryEndpoint + "?spec-version=" + registryVersion);
-    string json = new HttpClient().GetStringAsync(registryEndpoint + "?spec-version=" + registryVersion).Result ?? throw new ArgumentNullException(nameof(json));
+    string fullRegistryEndpoint = $"{registryEndpoint}?spec-version={registryVersion}";
+    Console.WriteLine($"Getting registry json from {fullRegistryEndpoint}");
+    string json = new HttpClient().GetStringAsync(fullRegistryEndpoint).Result ?? throw new ArgumentNullException(nameof(json));
     // Deserialize json into PerfIssueRegisterEntry
     PerfIssueItem[] entries = JsonSerializer.Deserialize<PerfIssueItem[]>(json, new JsonSerializerOptions
     {
@@ -45,7 +44,7 @@ Action ResXGenerator = () =>
     PerfIssueItem[] entries = GetRegistryJson();
     string resxSchemaVersion = configuration["resxSchemaVersion"] ?? "2.0";
     ResxGenerator.Generate(entries, outputPath, resxSchemaVersion, prefix);
-    Console.WriteLine("Wrote resx file to " + outputPath);
+    Console.WriteLine($"Wrote resx file to {outputPath}");
 };
 
 // Generate based on type
