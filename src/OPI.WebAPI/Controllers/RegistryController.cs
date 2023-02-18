@@ -12,8 +12,8 @@ namespace OPI.WebAPI.Controllers;
 public class RegistryController : ControllerBase
 {
     private readonly IssueRegistryService _issueRegistryService;
-
-    public RegistryController(IssueRegistryService issueService)
+    public RegistryController(
+        IssueRegistryService issueService)
     {
         _issueRegistryService = issueService ?? throw new ArgumentNullException(nameof(issueService));
     }
