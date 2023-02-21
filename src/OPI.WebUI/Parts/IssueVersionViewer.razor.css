@@ -1,0 +1,16 @@
+.title
+{
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.version-list
+{
+    display: flex;
+}
+
+.version-item
+{
+    margin-right: 4px;
+    white-space: nowrap;
+}

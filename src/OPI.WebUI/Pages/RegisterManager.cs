@@ -16,7 +16,7 @@ public partial class RegistryManager
     private IJSRuntime _jsRuntime { get; set; } = default!;
 
     private IReadOnlyCollection<PerfIssueRegisterEntry>? _allRegisteredItems;
-    public IEnumerable<PerfIssueRegisterEntry> RegisteredItems { get; set; } = Enumerable.Empty<PerfIssueRegisterEntry>();
+    public IEnumerable<PerfIssueRegisterEntry>? RegisteredItems { get; set; } = null;
 
     private string? _keyword;
     public string? Keyword

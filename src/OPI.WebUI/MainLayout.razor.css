@@ -1,0 +1,8 @@
+#header {
+    display: flex;
+    align-content: flex-start;
+}
+
+#title {
+    flex-grow: 100;
+}

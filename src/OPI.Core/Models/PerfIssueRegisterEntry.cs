@@ -1,6 +1,8 @@
+using System;
+
 namespace OPI.Core.Models;
 
-public record PerfIssueRegisterEntry : PerfIssue
+public record PerfIssueRegisterEntry : PerfIssue, ITrackable
 {
     /// <summary>
     /// Default constructor is required to keep deserialization work.
@@ -29,4 +31,9 @@ public record PerfIssueRegisterEntry : PerfIssue
     }
 
     public bool IsActive { get; init; }
+
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? LastModifiedAt { get; set; }
+    public string? CreatedBy { get; set; }
+    public string? LastModifiedBy { get; set; }
 }

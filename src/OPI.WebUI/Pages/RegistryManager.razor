@@ -6,11 +6,14 @@
 <NavLink href="/Import">Import</NavLink>
 
 <div>
-    <input class="search-input" type="search" placeholder="Type in keywords to search for a specific registered performance issue."
-        @bind="Keyword"></input>
+    <input class="search-input" type="search"
+        placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"></input>
 </div>
-
-@if (RegisteredItems.Any())
+@if (RegisteredItems is null)
+{
+    <div>Loading ...</div>
+}
+else if (RegisteredItems.Any())
 {
     @foreach (PerfIssueRegisterEntry entry in RegisteredItems)
     {
@@ -21,7 +24,7 @@
                 </div>
                 <div>
                     <span>@entry.PermanentId</span>
-                    @if(!string.IsNullOrEmpty(entry.LegacyId))
+                    @if (!string.IsNullOrEmpty(entry.LegacyId))
                     {
                         <span>&nbsp;(Legacy id: @entry.LegacyId)</span>
                     }
@@ -65,14 +68,24 @@
                 }
             </div>
 
+            <div>
+                <IssueVersionViewer Issue="@entry" />
+            </div>
+
+            <div>
+                <TrackableViewer Trackable="@entry" />
+            </div>
+
             <div class='button-list'>
-                @if(entry.IsActive)
+                @if (entry.IsActive)
                 {
-                    <button class='button' id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Deactive</button>
+                    <button class='button' id='activate-toggle-button'
+            @onclick="() => ToggleActivateAsync(entry.PermanentId)">Deactive</button>
                 }
                 else
                 {
-                    <button class='button' id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Active</button>
+                    <button class='button' id='activate-toggle-button'
+            @onclick="() => ToggleActivateAsync(entry.PermanentId)">Active</button>
                 }
 
                 <button class="button" @onclick="()=> DeleteAsync(entry)">Delete</button>

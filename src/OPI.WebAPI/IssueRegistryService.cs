@@ -10,17 +10,20 @@ public class IssueRegistryService
     private readonly IssueServiceOptions _options;
     private readonly IRegistryBlobClient _storageClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger _logger;
 
     public IssueRegistryService(
         IRegistryBlobClient storageClient,
         IOptions<IssueServiceOptions> options,
         JsonSerializerOptions jsonSerializerOptions,
+        IHttpContextAccessor httpContextAccessor,
         ILogger<IssueRegistryService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _storageClient = storageClient ?? throw new ArgumentNullException(nameof(storageClient));
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
+        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -36,6 +39,7 @@ public class IssueRegistryService
             };
         }
 
+        registerEntry = registerEntry.TrackCreate(_httpContextAccessor);
         await SaveRegistryItemAsync(registerEntry, cancellationToken).ConfigureAwait(false);
         return registerEntry;
     }
@@ -77,7 +81,7 @@ public class IssueRegistryService
             throw new InvalidOperationException($"Target entry by id {newIssueRegistryItem.PermanentId} does not exist.");
         }
 
-        await SaveRegistryItemAsync(newIssueRegistryItem, cancellationToken);
+        await SaveRegistryItemAsync(newIssueRegistryItem.TrackUpdate(_httpContextAccessor), cancellationToken);
         return newIssueRegistryItem;
     }
 
@@ -93,6 +97,7 @@ public class IssueRegistryService
             throw new InvalidOperationException($"Target issue by id {permanentId} does not exist.");
         }
         entry = entry with { IsActive = !entry.IsActive };
+        entry = entry.TrackUpdate(_httpContextAccessor);
         await SaveRegistryItemAsync(entry, cancellationToken).ConfigureAwait(false);
         return entry;
     }

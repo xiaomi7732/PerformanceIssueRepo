@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using OPI.Client;
 using OPI.WebUI;
+using OPI.WebUI.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -22,6 +23,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Backend URL is overwritten by options pattern.
 builder.Services.AddTransient<CustomAuthorizationMessageHandler>();
 builder.Services.AddOPIClient<CustomAuthorizationMessageHandler>();
+
+builder.Services.AddSingleton<IssueVersionService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<CSVReaderFactory>();

@@ -1,0 +1,23 @@
+.container
+{
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+}
+
+.title
+{
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.item-section
+{
+    display: flex;
+    flex-direction: row;
+}
+
+.value
+{
+    margin-right: 8px;
+}
