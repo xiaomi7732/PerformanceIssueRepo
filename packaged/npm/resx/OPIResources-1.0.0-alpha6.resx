@@ -71,7 +71,7 @@
     <value>This can be fixed by providing the missing `Equals` override or properly implementing the `IEquatable&lt;T&gt;`/`IEqualityComparer&lt;T&gt;` interface.</value>
   </data>
   <data name="a9e711cb-ca1d-4378-b689-92d1b03bc437.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="68ff5cc5-beaf-4c2e-b8f2-433c48af1708.Title" xml:space="preserve">
     <value>Allocations in `Equals`/`GetHashCode`</value>
@@ -83,7 +83,7 @@
     <value>This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.</value>
   </data>
   <data name="68ff5cc5-beaf-4c2e-b8f2-433c48af1708.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="9346bb84-de05-44ca-b2ff-874eda19340e.Title" xml:space="preserve">
     <value>Excessive Allocations Due to List/Dictionary Resizing</value>
@@ -95,7 +95,7 @@
     <value>Consider initializing the List/Dictionary with an explicit size if available or can be computed.</value>
   </data>
   <data name="9346bb84-de05-44ca-b2ff-874eda19340e.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="9095c47b-63d2-447a-ac64-7d6740226546.Title" xml:space="preserve">
     <value>Excessive Allocations of Dictionaries/Lists/StringBuilder/HashSet Types</value>
@@ -107,7 +107,7 @@
     <value>This can be fixed by reusing instances of these types instead of allocating a new one every time.</value>
   </data>
   <data name="9095c47b-63d2-447a-ac64-7d6740226546.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="3095f90e-3f92-4868-a30e-d645a4be2395.Title" xml:space="preserve">
     <value>Inefficient String Concatenation</value>
@@ -119,7 +119,7 @@
     <value>Consider using cheaper alternatives such as `String.Join` or a `StringBuilder` instead.</value>
   </data>
   <data name="3095f90e-3f92-4868-a30e-d645a4be2395.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="4a8a2a45-6f67-474e-b307-79d8b507d466.Title" xml:space="preserve">
     <value>Heap Allocations Due to Tuples</value>
@@ -131,7 +131,7 @@
     <value>Consider replacing `Tuple` with `ValueTuple`, which are structs and are no allocated on the Heap.</value>
   </data>
   <data name="4a8a2a45-6f67-474e-b307-79d8b507d466.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="d77d16b3-5af1-4b51-8d99-bc75c0b088a8.Title" xml:space="preserve">
     <value>High CPU Costs Due to Expensive Methods</value>
@@ -143,7 +143,7 @@
     <value>Consider caching the results of these methods.</value>
   </data>
   <data name="d77d16b3-5af1-4b51-8d99-bc75c0b088a8.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="63a56899-bfd2-4cf5-aae4-a781df3799e8.Title" xml:space="preserve">
     <value>`CopyTo` Taking Too Much CPU</value>
@@ -155,7 +155,7 @@
     <value>Consider increasing the buffer size supplied to the `CopyTo` method.</value>
   </data>
   <data name="63a56899-bfd2-4cf5-aae4-a781df3799e8.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="f7d870e1-c929-49fa-a59f-bf8e034edeb1.Title" xml:space="preserve">
     <value>`Activator.CreateInstance` Taking Too Much CPU</value>
@@ -167,7 +167,7 @@
     <value>Consider using alternatives such as passing in an allocation delegate, compiled lambdas or emitting IL.</value>
   </data>
   <data name="f7d870e1-c929-49fa-a59f-bf8e034edeb1.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="82a95bad-3d44-4d94-8075-449394c1859d.Title" xml:space="preserve">
     <value>`Regex.IsMatch` Taking Too Much CPU</value>
@@ -179,7 +179,7 @@
     <value>Consider using a compiled regex using `RegexOptions.Compiled` or compiling to assembly using `RegexOptions.CompileToAssembly`.</value>
   </data>
   <data name="82a95bad-3d44-4d94-8075-449394c1859d.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="3252749a-c8cf-4055-9a66-c0ba16f7703c.Title" xml:space="preserve">
     <value>Excessive Allocations Due to `System.Stream.ReadByte()`/`System.Stream.WriteByte()`</value>
@@ -191,7 +191,7 @@
     <value>Make sure you are not missing overrides of `ReadByte`/`WriteByte` when deriving `System.Stream` and using a cached buffer.</value>
   </data>
   <data name="3252749a-c8cf-4055-9a66-c0ba16f7703c.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="3c56330d-ca86-4ea6-a7a4-c97c9e08418d.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.Count()` Taking Too Much CPU/Memory</value>
@@ -205,7 +205,7 @@ Other options are to use `List&lt;T&gt;` to get access to `Count` property, or c
 Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enumerable is non-empty.</value>
   </data>
   <data name="3c56330d-ca86-4ea6-a7a4-c97c9e08418d.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="a41d3cf0-29c2-41bc-a01a-6e38d77db0ad.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.ElementAt()` Taking Too Much CPU/Memory</value>
@@ -217,7 +217,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider using `List&lt;T&gt;` as it has constant access to elements by index.</value>
   </data>
   <data name="a41d3cf0-29c2-41bc-a01a-6e38d77db0ad.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="991d40cb-6bf7-46ba-97d4-3b460273a659.Title" xml:space="preserve">
     <value>`List&lt;T&gt;.Contains()` Taking Up Too Much CPU</value>
@@ -229,7 +229,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider using a `HashSet&lt;T&gt;` instead of a `List&lt;T&gt;` or maintaining one in addition to the `List`.</value>
   </data>
   <data name="991d40cb-6bf7-46ba-97d4-3b460273a659.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="9e7e6b7d-c3a7-4b07-81ef-ed305b58d22f.Title" xml:space="preserve">
     <value>`ContainsKey` Taking Too Much CPU</value>
@@ -241,7 +241,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider replacing `Dictionary&lt;K, V&gt;.ContainsKey()` and lookup with `Dictionary&lt;K, V&gt;.TryGetValue()`, which is more optimal as it avoids the double cost of checking if a key exists in the `Dictionary` and then accessing the corresponding value, and instead gets both results in a single call.</value>
   </data>
   <data name="9e7e6b7d-c3a7-4b07-81ef-ed305b58d22f.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="210fc8b5-d654-4813-b44f-296c4f6a2df7.Title" xml:space="preserve">
     <value>`ConcurrentDictionary&lt;K, V&gt;.Count` Taking Too Much CPU</value>
@@ -253,7 +253,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider keeping a cached local count and updating it using `Interlocked.Increment`/`Decrement`.</value>
   </data>
   <data name="210fc8b5-d654-4813-b44f-296c4f6a2df7.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="2e20ddea-ae18-465c-b74e-3df385578ad6.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.OrderBy().FirstOrDefault()` Taking Too Much CPU/Memory</value>
@@ -265,7 +265,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>This can be done in O(N) by simply iterating over the enumerable and getting the smallest/largest element or using `MinBy`/`MaxBy` on the `IEnumerable&lt;T&gt;`.</value>
   </data>
   <data name="2e20ddea-ae18-465c-b74e-3df385578ad6.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="23a5db7d-682e-42f7-928d-abb061a755cc.Title" xml:space="preserve">
     <value>`Array.Reverse()` Taking Too Much CPU/Memory Due to Boxing</value>
@@ -277,7 +277,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider implementing your own reverse function.</value>
   </data>
   <data name="23a5db7d-682e-42f7-928d-abb061a755cc.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="3f51a46a-39c3-462e-ab77-f3f15ca60f1f.Title" xml:space="preserve">
     <value>Lock Contention in `TraceSource.TraceData()`</value>
@@ -289,7 +289,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Avoid using `TraceSource.TraceData()`, or make sure all listeners are thread-safe to turn off locking.</value>
   </data>
   <data name="3f51a46a-39c3-462e-ab77-f3f15ca60f1f.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="d19b35dd-29e6-4a1a-9576-864123829a05.Title" xml:space="preserve">
     <value>Unnecessary String Allocations and CPU Usage Due to `String.Split()`</value>
@@ -301,7 +301,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider using cheaper alternatives.</value>
   </data>
   <data name="d19b35dd-29e6-4a1a-9576-864123829a05.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="7538665d-770d-40fb-851e-2c133f8ef4ed.Title" xml:space="preserve">
     <value>Expensive `IEnumerable&lt;T&gt;.ToList()` in Getter</value>
@@ -313,7 +313,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider memoizing the results of `ToList` to make the getter as cheap as possible.</value>
   </data>
   <data name="7538665d-770d-40fb-851e-2c133f8ef4ed.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="2efbfd50-159a-42f7-88b9-4e5ad37de914.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.ToList()` Taking Too Much CPU/Memory</value>
@@ -325,7 +325,7 @@ Use `IEnumerable&lt;T&gt;.Any()` if count is only used to check whether the enum
     <value>Consider using `List&lt;T&gt;` from the start to avoid expensive calls to ToList(). Also, verify that `IEnumerable&lt;T&gt;.ToList()` isn't being called for a single enumeration, which can be accomplished simply by enumerating over the `IEnumerable&lt;T&gt;`.</value>
   </data>
   <data name="2efbfd50-159a-42f7-88b9-4e5ad37de914.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="889dd9ee-4eb0-43d0-9817-e10991ab4665.Title" xml:space="preserve">
     <value>Unnecessary Allocations and CPU Cost Due to Boxing</value>
@@ -338,7 +338,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>It is best to avoid using value types in situations where they must be boxed a high number of times, for example in non-generic collections classes such as `Collections.ArrayList`. You can avoid boxing of value types by using generic collections such as `List&lt;T&gt;`.</value>
   </data>
   <data name="889dd9ee-4eb0-43d0-9817-e10991ab4665.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="dfebc4ff-775b-406e-a365-5e225d6a52ee.Title" xml:space="preserve">
     <value>Too Much Exception Handling</value>
@@ -350,7 +350,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Investigate why so many exceptions are being thrown, as this may be due to an underlying bug.</value>
   </data>
   <data name="dfebc4ff-775b-406e-a365-5e225d6a52ee.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="cfe41042-b355-46b6-8933-32e6d378dd00.Title" xml:space="preserve">
     <value>Garbage Collection Showing Up in CPU Trace</value>
@@ -362,7 +362,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Look at the allocation data and your code to make sure there are no unnecessary allocations.</value>
   </data>
   <data name="cfe41042-b355-46b6-8933-32e6d378dd00.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="cf44c716-6455-4dc0-9fa4-343a212444e1.Title" xml:space="preserve">
     <value>`X509Certificate.X509Chain.Build` Taking Too Much CPU</value>
@@ -374,7 +374,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider using a newer version of .NET (&gt;5), which caches the chain result so that it is not built on each request. Also, if you are using containers, consider switching to Windows containers as they have faster X509 chain building.</value>
   </data>
   <data name="cf44c716-6455-4dc0-9fa4-343a212444e1.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="4810b7ad-dcb2-483a-b6af-6bf7562b1fe6.Title" xml:space="preserve">
     <value>Lock Contention Appearing in CPU Trace</value>
@@ -386,7 +386,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider options like reducing lock granularity, using a lock-free library or re-writing the code such that it doesn't require a lock.</value>
   </data>
   <data name="4810b7ad-dcb2-483a-b6af-6bf7562b1fe6.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="cfa35fd6-1c4a-411a-9e56-d4b6989e1b73.Title" xml:space="preserve">
     <value>Active Directory Taking Too Much CPU/Memory</value>
@@ -398,7 +398,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider switching from Active Directory Authentication Library (ADAL) to Microsoft Authentication Library (MSAL).</value>
   </data>
   <data name="cfa35fd6-1c4a-411a-9e56-d4b6989e1b73.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="bb77a27d-7115-415d-9205-d1efde790f78.Title" xml:space="preserve">
     <value>String.ToLower() Taking Too Much CPU/Memory</value>
@@ -410,7 +410,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider using CaseInsensitive comparisons or caching the results of ToLower.</value>
   </data>
   <data name="bb77a27d-7115-415d-9205-d1efde790f78.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="cdf08e8f-36e5-4024-9110-7b887ba6f112.Title" xml:space="preserve">
     <value>Inefficient `String.SubString()`</value>
@@ -422,7 +422,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider using cheaper alternatives such as `String.AsSpan()`.</value>
   </data>
   <data name="cdf08e8f-36e5-4024-9110-7b887ba6f112.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="86763918-4391-47e7-ab4d-e83b1b06066a.Title" xml:space="preserve">
     <value>Calls To Static Regex Functions Causing Contention</value>
@@ -434,7 +434,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider creating an instance of the `Regex` and call the member method `IsMatch`\`Match`\`Split` instead of calling the static variants.</value>
   </data>
   <data name="86763918-4391-47e7-ab4d-e83b1b06066a.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="7c07a45a-9234-419d-95d1-6b3b77d38219.Title" xml:space="preserve">
     <value>Excessive Calls to `Enum.ToString()`</value>
@@ -446,7 +446,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider caching `Enum.ToString()` results in a dictionary.</value>
   </data>
   <data name="7c07a45a-9234-419d-95d1-6b3b77d38219.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="c96149cd-8d3c-4f09-9854-76ed3f5405ae.Title" xml:space="preserve">
     <value>High CPU/Memory Costs Due to Logging</value>
@@ -458,7 +458,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Check logging levels and reduce the volume of logs in production. Consider tweaking level for each category. Also consider high performance logging (Reference: https://aka.ms/AAfkq94).</value>
   </data>
   <data name="c96149cd-8d3c-4f09-9854-76ed3f5405ae.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="51eb34e8-6c6b-4442-952f-c53e4a97f67f.Title" xml:space="preserve">
     <value>Too Much CPU/Memory Taken by LINQ Query Chaining `IEnumerable&lt;T&gt;.Where()` and `IEnumerable&lt;T&gt;.Count()`</value>
@@ -470,7 +470,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider condensing the chain of `IEnumerable&lt;T&gt;.Where(&lt;lambda function&gt;).Count()` to simply a `IEnumerable&lt;T&gt;.Count(&lt;lambda function&gt;)`.</value>
   </data>
   <data name="51eb34e8-6c6b-4442-952f-c53e4a97f67f.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="867032d6-7d2d-4edd-9f6c-fa132ca45fdd.Title" xml:space="preserve">
     <value>Excessive Allocations of `KeyVaultClient` Type</value>
@@ -482,7 +482,7 @@ Boxing and unboxing are computationally expensive processes. When a value type i
     <value>Consider reusing `KeyVaultClient` instances.</value>
   </data>
   <data name="867032d6-7d2d-4edd-9f6c-fa132ca45fdd.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="93f5643f-7bb6-45f0-947e-73f48e27c8da.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.Any()` Taking Too Much CPU/Memory</value>
@@ -496,7 +496,7 @@ In case of nested LINQ expressions, make sure that same computations are not bei
 If possible, hoist them to the outermost loop where they can be computed.</value>
   </data>
   <data name="93f5643f-7bb6-45f0-947e-73f48e27c8da.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="233a5e73-1b97-4b8f-bdce-7ff32a19ae0a.Title" xml:space="preserve">
     <value>`Dictionary&lt;K, V&gt;.FindEntry()` Taking Too Much CPU</value>
@@ -509,7 +509,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
 If this is occurring, consider using a ConcurrentDictionary instead or appropriate lock protection.</value>
   </data>
   <data name="233a5e73-1b97-4b8f-bdce-7ff32a19ae0a.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="9887cafc-662a-4535-8507-cbc350e8b63b.Title" xml:space="preserve">
     <value>`Newtonsoft.Json.JsonConvert.SerializeObject()` Taking Too Much CPU/Memory</value>
@@ -525,7 +525,7 @@ If you have .NET 5 SDK or above, consider switching to `System.Text.Json` to use
 Please note that when using `System.Text.Json`, if you need to use `JsonSerializerOptions` repeatedly with the same options, consider reusing the same `JsonSerializerOptions` instance for each call to Serialize/Deserialize. Since the instance is thread-safe and immutable after the first serialization or deserialization, it's safe to use the same instance.</value>
   </data>
   <data name="9887cafc-662a-4535-8507-cbc350e8b63b.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="cbf057a5-f58e-4b9d-bdb1-a15941bde5bc.Title" xml:space="preserve">
     <value>`Newtonsoft.Json.JsonConvert.DeserializeObject()` Taking Too Much CPU/Memory</value>
@@ -541,7 +541,7 @@ If you have .NET 5 SDK or above, consider switching to `System.Text.Json` to use
 Please note that when using `System.Text.Json`, if you need to use `JsonSerializerOptions` repeatedly with the same options, consider reusing the same `JsonSerializerOptions` instance for each call to Serialize/Deserialize. Since the instance is thread-safe and immutable after the first serialization or deserialization, it's safe to use the same instance.</value>
   </data>
   <data name="cbf057a5-f58e-4b9d-bdb1-a15941bde5bc.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="4b8e9c5d-34b7-480b-8393-4cb74a0afcf7.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.Single()` Taking Too Much CPU/Memory</value>
@@ -555,7 +555,7 @@ In case of nested LINQ expressions, make sure that same computations are not bei
 If possible, hoist them to the outermost loop where they can be computed.</value>
   </data>
   <data name="4b8e9c5d-34b7-480b-8393-4cb74a0afcf7.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="67b8a6d1-1a2c-4c1a-bf9c-9f5778f69dee.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.FirstOrDefault()` Taking Too Much CPU/Memory</value>
@@ -569,7 +569,7 @@ In case of nested LINQ expressions, make sure that same computations are not bei
 If possible, hoist them to the outermost loop where they can be computed.</value>
   </data>
   <data name="67b8a6d1-1a2c-4c1a-bf9c-9f5778f69dee.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="5586dc2a-8493-4006-8f5c-5dbb00c44229.Title" xml:space="preserve">
     <value>`IEnumerable&lt;T&gt;.Aggregate()` Taking Too Much CPU/Memory</value>
@@ -583,7 +583,7 @@ In case of nested LINQ expressions, make sure that same computations are not bei
 If possible, hoist them to the outermost loop where they can be computed.</value>
   </data>
   <data name="5586dc2a-8493-4006-8f5c-5dbb00c44229.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="e892ab76-8c7a-4203-af18-a7823b31386a.Title" xml:space="preserve">
     <value>`Enumerable&lt;T&gt;.ToArray()` Taking Too Much CPU/Memory</value>
@@ -595,7 +595,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Verify that `Enumerable&lt;T&gt;.ToArray()` isn't being called for a single enumeration, which can be accomplished simply by enumerating over the `Enumerable&lt;T&gt;`.</value>
   </data>
   <data name="e892ab76-8c7a-4203-af18-a7823b31386a.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="1353f344-ea43-44f3-99cf-6ac7e7f7237a.Title" xml:space="preserve">
     <value>`Enumerable&lt;T&gt;.ToDictionary()` Taking Too Much CPU/Memory</value>
@@ -607,7 +607,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Verify that `Enumerable&lt;T&gt;.ToDictionary()` isn't being called for a few look-ups in the resulting `Dictionary&lt;K, V&gt;`. This can instead be accomplished simply by enumerating over the `Enumerable&lt;T&gt;`.</value>
   </data>
   <data name="1353f344-ea43-44f3-99cf-6ac7e7f7237a.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="b9f34b5c-3c92-43ab-aa57-e02c2bcf9ee6.Title" xml:space="preserve">
     <value>`Queryable&lt;T&gt;.FirstOrDefault()` Taking Too Much CPU/Memory</value>
@@ -619,7 +619,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Examine the query and simplify the expression if possible.</value>
   </data>
   <data name="b9f34b5c-3c92-43ab-aa57-e02c2bcf9ee6.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="0be5bb8f-d2a1-403d-94e7-3b0fa4e62ad6.Title" xml:space="preserve">
     <value>`StreamReader.ReadToEnd()` Taking Too Much Memory</value>
@@ -631,7 +631,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>If the underlying stream is expected to be in JSON format, consider using a JSON parser directly over the stream rather than reading to a string and then parsing the resulting string.</value>
   </data>
   <data name="0be5bb8f-d2a1-403d-94e7-3b0fa4e62ad6.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="1eabc3f5-c470-4829-902f-0be5f8a38b66.Title" xml:space="preserve">
     <value>`CompareInfo.IsPrefix()` Taking Too Much CPU</value>
@@ -643,7 +643,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Consider specifying a `StringComparison.Ordinal` comparison with `String.StartsWith`/`String.EndsWith` to avoid doing culture specific string comparisons, which tend to be more expensive.</value>
   </data>
   <data name="1eabc3f5-c470-4829-902f-0be5f8a38b66.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="220f26e5-3670-439f-a197-63897251b4b6.Title" xml:space="preserve">
     <value>`String.IndexOf()` Taking Too Much CPU</value>
@@ -655,7 +655,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Consider specifying a `StringComparison.Ordinal` comparison with `String.IndexOf` to avoid doing culture specific string comparisons, which tend to be more expensive.</value>
   </data>
   <data name="220f26e5-3670-439f-a197-63897251b4b6.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="ef41de0e-0b00-45ff-8f9a-1c7530c06d91.Title" xml:space="preserve">
     <value>`Dictionary&lt;K, V&gt;.Insert()` Taking Too Much CPU Due To `ObjectEqualityComparer`</value>
@@ -667,7 +667,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Avoid using the default object comparer. Consider writing a custom comparer for the Dictionary Key type and specifying it in the Dictionary's constructor. Alternatively, implement `IEquatable&lt;TKey&gt;` on the Key type. Either of these will lead to faster comparisons than the default object comparer.</value>
   </data>
   <data name="ef41de0e-0b00-45ff-8f9a-1c7530c06d91.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="70472c33-0a67-4a1a-a2d5-8284c449a3b7.Title" xml:space="preserve">
     <value>`Dictionary&lt;K, V&gt;.Insert()` Taking Too Much CPU</value>
@@ -679,7 +679,7 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Make sure Dictionary entries are actually being re-used in look-ups.</value>
   </data>
   <data name="70472c33-0a67-4a1a-a2d5-8284c449a3b7.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
   <data name="5e8edd39-27f0-49be-b99c-572b9a4d536b.Title" xml:space="preserve">
     <value>Excessive Allocations of `System.Text.RegularExpressions.Regex`</value>
@@ -691,6 +691,6 @@ If possible, hoist them to the outermost loop where they can be computed.</value
     <value>Avoid creating Regex instances more than once with the same regular expression. If the regular expression is the same each time, then cache a single Regex instance in a static field.</value>
   </data>
   <data name="5e8edd39-27f0-49be-b99c-572b9a4d536b.Rationale" xml:space="preserve">
-    <value>{criteria}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {value}%.</value>
+    <value>{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.</value>
   </data>
 </root>
