@@ -72,6 +72,10 @@ else if (RegisteredItems.Any())
                 <IssueVersionViewer Issue="@entry" />
             </div>
 
+            <div>
+                <TrackableViewer Trackable="@entry" />
+            </div>
+
             <div class='button-list'>
                 @if (entry.IsActive)
                 {
