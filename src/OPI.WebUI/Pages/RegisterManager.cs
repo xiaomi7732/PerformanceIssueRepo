@@ -41,6 +41,8 @@ public partial class RegistryManager
         }
     }
 
+    public int Active { get; private set; }
+    public int InActive { get; private set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,6 +62,18 @@ public partial class RegistryManager
         {
             // Sync it on UI.
             targetVM.IsActive = !targetVM.IsActive;
+            if (targetVM.IsActive)
+            {
+                // new value is active
+                InActive--;
+                Active++;
+            }
+            else
+            {
+                // new value is inactive
+                Active--;
+                InActive++;
+            }
         }
         else
         {
@@ -68,41 +82,35 @@ public partial class RegistryManager
     }
 
     // Deleting
-    public async Task OnDeleteAsync(Guid insightId)
+    public async Task DeleteAsync(IssueRegistryItemViewModel toDelete)
     {
-        Console.WriteLine(nameof(OnDeleteAsync));
-        if (insightId == Guid.Empty)
+        if (toDelete.Model?.PermanentId is null)
         {
             return;
         }
 
-        await DeleteAsync(new PerfIssueRegisterEntry()
-        {
-            PermanentId = insightId,
-        });
-    }
-
-    public async Task DeleteAsync(PerfIssueRegisterEntry toDelete)
-    {
-        if (toDelete?.PermanentId is null)
-        {
-            return;
-        }
-
-        bool confirmed = await _jsRuntime.InvokeAsync<bool>("confirm", $"Are you sure to delete registered issue by id: {toDelete.PermanentId}?");
+        bool confirmed = await _jsRuntime.InvokeAsync<bool>("confirm", $"Are you sure to delete registered issue by id: {toDelete.Model.PermanentId}?");
 
         if (!confirmed)
         {
             return;
         }
 
-        if (await OpiClient.DeleteAsync(toDelete, default).ConfigureAwait(false))
+        PerfIssueRegisterEntry deleteTarget = new PerfIssueRegisterEntry()
         {
-            IssueRegistryItemViewModel? targetViewModel = RegisteredItems.FirstOrDefault(item => string.Equals(item.InsightIdString, toDelete.PermanentId.Value.ToString("D")));
-            if (targetViewModel is not null)
+            PermanentId = toDelete.Model.PermanentId.Value,
+        };
+        if (await OpiClient.DeleteAsync(deleteTarget, default).ConfigureAwait(false))
+        {
+            if (toDelete.IsActive)
             {
-                RegisteredItems.Remove(targetViewModel);
+                Active--;
             }
+            else
+            {
+                InActive--;
+            }
+            RegisteredItems.Remove(toDelete);
         }
     }
 
@@ -111,10 +119,11 @@ public partial class RegistryManager
     /// <summary>
     /// Cancel the newly added item from the UI.
     /// </summary>
-    public async Task OnCancelAddAsync(IssueRegistryItemViewModel target)
+    public Task OnCancelAddAsync(IssueRegistryItemViewModel target)
     {
         RegisteredItems.Remove(target);
         Console.WriteLine("Added cancelled.");
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -171,6 +180,7 @@ public partial class RegistryManager
         try
         {
             newEntry = await OpiClient.RegisterAsync(newEntry, default);
+
             if (newEntry.PermanentId is null)
             {
                 throw new InvalidCastException("New item permanent id can't be null.");
@@ -181,6 +191,15 @@ public partial class RegistryManager
             newItemSpec.Model.CreatedBy = newEntry.CreatedBy;
             newItemSpec.Model.LastModifiedAt = newEntry.LastModifiedAt;
             newItemSpec.Model.LastModifiedBy = newEntry.LastModifiedBy;
+
+            if (newItemSpec.IsActive)
+            {
+                Active++;
+            }
+            else
+            {
+                InActive++;
+            }
         }
         catch (HttpRequestException ex)
         {
@@ -203,6 +222,9 @@ public partial class RegistryManager
             .ThenBy(item => item.PermanentId)
             .ToList()
             .AsReadOnly();
+
+        Active = _allRegisteredItems.Count(item => item.IsActive);
+        InActive = _allRegisteredItems.Count(item => !item.IsActive);
         FilterData();
     }
 

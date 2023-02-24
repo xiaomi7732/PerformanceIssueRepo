@@ -7,7 +7,14 @@
 
 <div>
     <input class="search-input" type="search"
-        placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword" @bind:event="oninput"></input>
+        placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"
+        @bind:event="oninput"></input>
+</div>
+<div>
+    <div>
+        <span>Active:</span><span>@Active</span>&nbsp;
+        <span>Inactive:</span><span>@InActive</span>
+    </div>
 </div>
 <div>
     <button @onclick="AddNewItemAsync">+ Add new item</button>
@@ -20,11 +27,8 @@ else if (RegisteredItems.Any())
 {
     @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
     {
-        <RegistryEntryViewer ViewModel="@entry"
-            ToggleActivateCallback="ToggleActivateAsync"
-            CancelAddCallback="OnCancelAddAsync"
-            DeleteItemCallback="OnDeleteAsync"
-            SubmitAddedCallback="OnSubmitAddAsync" />
+        <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
+    CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync" />
     }
 }
 else

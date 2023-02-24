@@ -28,7 +28,7 @@ public partial class RegistryEntryViewer
     public EventCallback<IssueRegistryItemViewModel> ToggleActivateCallback { get; set; }
 
     [Parameter]
-    public EventCallback<Guid> DeleteItemCallback { get; set; }
+    public EventCallback<IssueRegistryItemViewModel> DeleteItemCallback { get; set; }
 
     [Parameter]
     public EventCallback<IssueRegistryItemViewModel> CancelAddCallback { get; set; }
@@ -73,7 +73,7 @@ public partial class RegistryEntryViewer
             return;
         }
 
-        await DeleteItemCallback.InvokeAsync(ViewModel.Model.PermanentId.Value);
+        await DeleteItemCallback.InvokeAsync(ViewModel);
     }
 
     public async Task CancelAddAsync()
