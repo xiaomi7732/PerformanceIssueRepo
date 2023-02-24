@@ -5,7 +5,7 @@
     "description": "Reflection is being used by Compare/Equality functions. This could be because of a missing `Equals` override or incorrect `IEquatable<T>`/`IEqualityComparer<T>` implementation.",
     "docURL": null,
     "recommendation": "This can be fixed by providing the missing `Equals` override or properly implementing the `IEquatable<T>`/`IEqualityComparer<T>` interface.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "0"
   },
   {
@@ -14,7 +14,7 @@
     "description": "Hot-path methods like `Equals`/`GetHashCode` should be kept allocation free. LINQ methods tend to allocate enumerators on the Heap, while `string.Format` leads to string allocations.",
     "docURL": null,
     "recommendation": "This can be fixed by removing calls to such methods. LINQ queries can be unrolled into loops. `string.Format` can be replaced with a comparison of it's component strings.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "1"
   },
   {
@@ -23,7 +23,7 @@
     "description": "Too many allocations are being caused by resizing due to calls associated with List/Dictionary resizing.",
     "docURL": null,
     "recommendation": "Consider initializing the List/Dictionary with an explicit size if available or can be computed.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "2"
   },
   {
@@ -32,7 +32,7 @@
     "description": "Too much CPU is spent in allocations of types like List, StringBuilder, Dictionary, HashSet etc., which can be reused.",
     "docURL": null,
     "recommendation": "This can be fixed by reusing instances of these types instead of allocating a new one every time.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "3"
   },
   {
@@ -41,7 +41,7 @@
     "description": "Excessive string concatenation is causing lots of allocations and CPU consumption.",
     "docURL": null,
     "recommendation": "Consider using cheaper alternatives such as `String.Join` or a `StringBuilder` instead.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "4"
   },
   {
@@ -50,7 +50,7 @@
     "description": "Tuples in C# are classes so they need to be allocated on the Heap. As a result, `Dictionary<K, V>.FindEntry()` seems to be causing allocations.",
     "docURL": null,
     "recommendation": "Consider replacing `Tuple` with `ValueTuple`, which are structs and are no allocated on the Heap.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "5"
   },
   {
@@ -59,7 +59,7 @@
     "description": "Expensive methods such as `ConcurrentDictionary<T1, T2>.GetKeys()`, `Process.ProcessName`, `DateTime.Now`, `System.Type.GetType()`, `GetCustomAttributes()`, etc. are consuming a lot of CPU.",
     "docURL": null,
     "recommendation": "Consider caching the results of these methods.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "6"
   },
   {
@@ -68,7 +68,7 @@
     "description": "`CopyTo` is taking a lot of CPU. This may be because of the buffer size being too small.",
     "docURL": null,
     "recommendation": "Consider increasing the buffer size supplied to the `CopyTo` method.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "7"
   },
   {
@@ -77,7 +77,7 @@
     "description": "`Activator.CreateInstance` takes up a lot of CPU because it is implemented using Reflection.",
     "docURL": null,
     "recommendation": "Consider using alternatives such as passing in an allocation delegate, compiled lambdas or emitting IL.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "8"
   },
   {
@@ -86,7 +86,7 @@
     "description": "`Regex.IsMatch` is taking up a lot of CPU.",
     "docURL": null,
     "recommendation": "Consider using a compiled regex using `RegexOptions.Compiled` or compiling to assembly using `RegexOptions.CompileToAssembly`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "9"
   },
   {
@@ -95,7 +95,7 @@
     "description": "When deriving from `System.Stream`, the default implementations of `ReadByte`/`WriteByte` would be used unless overridden. These methods allocate a single byte array upon each run, which can lead to a lot of Heap allocations.",
     "docURL": null,
     "recommendation": "Make sure you are not missing overrides of `ReadByte`/`WriteByte` when deriving `System.Stream` and using a cached buffer.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "10"
   },
   {
@@ -104,7 +104,7 @@
     "description": "Calling `IEnumerable<T>.Count()`, causes the entire enumerable to be enumerated. This can lead to multiple enumeration if `IEnumerable<T>.Count()` is called on the same enumerable from multiple locations.",
     "docURL": null,
     "recommendation": "Make sure the same enumerable is not being enumerated on multiple times. If more than one calls are found and the enumerable doesn't change between successive calls to `Count()`, consider caching and re-using the results.\nOther options are to use `List<T>` to get access to `Count` property, or check if the enumerable is an `ICollection<T>` underneath to avoid having to call `ToList()`.\nUse `IEnumerable<T>.Any()` if count is only used to check whether the enumerable is non-empty.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "11"
   },
   {
@@ -113,7 +113,7 @@
     "description": "`ElementAt` iterates over the entire enumerable to find the element at a specific index.",
     "docURL": null,
     "recommendation": "Consider using `List<T>` as it has constant access to elements by index.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "12"
   },
   {
@@ -122,7 +122,7 @@
     "description": "`List<T>.Contains()` needs to iterate over the `List` to check if an element exists, which tends to be O(N) in the worst case.",
     "docURL": null,
     "recommendation": "Consider using a `HashSet<T>` instead of a `List<T>` or maintaining one in addition to the `List`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "13"
   },
   {
@@ -131,7 +131,7 @@
     "description": "Using `Dictionary<K, V>.ContainsKey()` along with a `Dictionary` lookup can lead to double dictionary lookup anti-pattern.",
     "docURL": null,
     "recommendation": "Consider replacing `Dictionary<K, V>.ContainsKey()` and lookup with `Dictionary<K, V>.TryGetValue()`, which is more optimal as it avoids the double cost of checking if a key exists in the `Dictionary` and then accessing the corresponding value, and instead gets both results in a single call.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "14"
   },
   {
@@ -140,7 +140,7 @@
     "description": "`ConcurrentDictionary<K, V>.Count` takes a lock and calling it too frequently can cause CPU bottlenecks.",
     "docURL": null,
     "recommendation": "Consider keeping a cached local count and updating it using `Interlocked.Increment`/`Decrement`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "15"
   },
   {
@@ -149,7 +149,7 @@
     "description": "LINQ query `IEnumerable<T>.OrderBy().FirstOrDefault()` sorts the entire enumerable only to get the smallest/largest element, which can be very slow because of having O(N*log(N)) complexity.",
     "docURL": null,
     "recommendation": "This can be done in O(N) by simply iterating over the enumerable and getting the smallest/largest element or using `MinBy`/`MaxBy` on the `IEnumerable<T>`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "16"
   },
   {
@@ -158,7 +158,7 @@
     "description": "`Array.Reverse` is a non-generic method and is implemented using boxing.",
     "docURL": null,
     "recommendation": "Consider implementing your own reverse function.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "17"
   },
   {
@@ -167,7 +167,7 @@
     "description": "`TraceSource.TraceData()` is taking up a lot of CPU due to lock contention.",
     "docURL": null,
     "recommendation": "Avoid using `TraceSource.TraceData()`, or make sure all listeners are thread-safe to turn off locking.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "18"
   },
   {
@@ -176,7 +176,7 @@
     "description": "`String.Split()` can lead to unnecessary string allocations and CPU usage.",
     "docURL": null,
     "recommendation": "Consider using cheaper alternatives.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "19"
   },
   {
@@ -185,7 +185,7 @@
     "description": "An expensive call to `IEnumerable<T>.ToList()` is being made from a getter.",
     "docURL": null,
     "recommendation": "Consider memoizing the results of `ToList` to make the getter as cheap as possible.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "20"
   },
   {
@@ -194,7 +194,7 @@
     "description": "A lot of CPU or Memory is being spent in `IEnumerable<T>.ToList()`.",
     "docURL": null,
     "recommendation": "Consider using `List<T>` from the start to avoid expensive calls to ToList(). Also, verify that `IEnumerable<T>.ToList()` isn't being called for a single enumeration, which can be accomplished simply by enumerating over the `IEnumerable<T>`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "21"
   },
   {
@@ -203,7 +203,7 @@
     "description": "Boxing is used to store value types in the garbage-collected heap. Boxing is an implicit conversion of a value type to the type object or to any interface type implemented by this value type. Boxing a value type allocates an object instance on the heap and copies the value into the new object.\nBoxing and unboxing are computationally expensive processes. When a value type is boxed, a new object must be allocated and constructed. To a lesser degree, the cast required for unboxing is also expensive computationally.",
     "docURL": null,
     "recommendation": "It is best to avoid using value types in situations where they must be boxed a high number of times, for example in non-generic collections classes such as `Collections.ArrayList`. You can avoid boxing of value types by using generic collections such as `List<T>`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "22"
   },
   {
@@ -212,7 +212,7 @@
     "description": "CPU Bottlenecks are showing up due to excessive exception handling.",
     "docURL": null,
     "recommendation": "Investigate why so many exceptions are being thrown, as this may be due to an underlying bug.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "23"
   },
   {
@@ -221,7 +221,7 @@
     "description": "Induced Garbage Collection (GC) is showing up as a bottleneck in CPU trace.",
     "docURL": null,
     "recommendation": "Look at the allocation data and your code to make sure there are no unnecessary allocations.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "24"
   },
   {
@@ -230,7 +230,7 @@
     "description": "`X509Chain.Build` is called on each request, instead of being cached.",
     "docURL": null,
     "recommendation": "Consider using a newer version of .NET (>5), which caches the chain result so that it is not built on each request. Also, if you are using containers, consider switching to Windows containers as they have faster X509 chain building.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "25"
   },
   {
@@ -239,7 +239,7 @@
     "description": "Lock contention occurs when a thread waits for a lock while another thread possesses that lock. Contentious locks can be bad for your application's throughput and lead to scalability issues.",
     "docURL": null,
     "recommendation": "Consider options like reducing lock granularity, using a lock-free library or re-writing the code such that it doesn't require a lock.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "26"
   },
   {
@@ -248,7 +248,7 @@
     "description": "Active Directory is causing CPU bottlenecks and allocations.",
     "docURL": null,
     "recommendation": "Consider switching from Active Directory Authentication Library (ADAL) to Microsoft Authentication Library (MSAL).",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "27"
   },
   {
@@ -257,7 +257,7 @@
     "description": "ToLower is taking a lot of CPU/Memory. This may be because of repeat calls to ToLower on the same set of strings.",
     "docURL": null,
     "recommendation": "Consider using CaseInsensitive comparisons or caching the results of ToLower.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "28"
   },
   {
@@ -266,7 +266,7 @@
     "description": "Excessive `String.SubString()` is causing lots of allocations and CPU consumption.",
     "docURL": null,
     "recommendation": "Consider using cheaper alternatives such as `String.AsSpan()`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "29"
   },
   {
@@ -275,7 +275,7 @@
     "description": "Static Regex calls are causing contention in the Regex cache.",
     "docURL": null,
     "recommendation": "Consider creating an instance of the `Regex` and call the member method `IsMatch`\\`Match`\\`Split` instead of calling the static variants.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "30"
   },
   {
@@ -284,7 +284,7 @@
     "description": "Excessive `Enum.ToString()` causing lots of allocations.",
     "docURL": null,
     "recommendation": "Consider caching `Enum.ToString()` results in a dictionary.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "31"
   },
   {
@@ -293,7 +293,7 @@
     "description": "Too much CPU/Memory is being spent in logging.",
     "docURL": null,
     "recommendation": "Check logging levels and reduce the volume of logs in production. Consider tweaking level for each category. Also consider high performance logging (Reference: https://aka.ms/AAfkq94).",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "32"
   },
   {
@@ -302,7 +302,7 @@
     "description": "Nested `Where` calls would lead to multiple passes over the enumerable leading to unnecessary CPU usage as well as iterator allocations.",
     "docURL": null,
     "recommendation": "Consider condensing the chain of `IEnumerable<T>.Where(<lambda function>).Count()` to simply a `IEnumerable<T>.Count(<lambda function>)`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "33"
   },
   {
@@ -311,7 +311,7 @@
     "description": "Too many allocations of type `KeyVaultClient`, which need not be re-allocated if an instance pointing to the same Key Vault already exists.",
     "docURL": null,
     "recommendation": "Consider reusing `KeyVaultClient` instances.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "34"
   },
   {
@@ -320,7 +320,7 @@
     "description": "A lot of CPU or Memory is being consumed by `IEnumerable<T>.Any()` calls.",
     "docURL": null,
     "recommendation": "Consider unrolling the LINQ expression to use an explicit for-loop.\nIn case of nested LINQ expressions, make sure that same computations are not being repeated unnecessarily.\nIf possible, hoist them to the outermost loop where they can be computed.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "35"
   },
   {
@@ -329,7 +329,7 @@
     "description": "A lot of exclusive CPU time is being spent in `Dictionary<K, V>.FindEntry()` calls.",
     "docURL": null,
     "recommendation": "This often happens when a Dictionary gets corrupted due to unguarded concurrent writes.\nIf this is occurring, consider using a ConcurrentDictionary instead or appropriate lock protection.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "36"
   },
   {
@@ -338,7 +338,7 @@
     "description": "A lot of CPU and memory are being spent on calls to `Newtonsoft.Json.JsonConvert.SerializeObject()`.",
     "docURL": null,
     "recommendation": "Make sure you're not recreating a `ContractResolver` every time you use `JsonSerializer`. Instead, you should create the contract resolver once and reuse it. Please note that if you are not using an explicit contract resolver, then a shared internal instance is automatically used when serializing and deserializing.\n\nIf you have .NET 5 SDK or above, consider switching to `System.Text.Json` to use source generation, regardless of the .NET version you target. Source generation allows for the inspection of serializable types to be done at compile time instead of needing to use reflection at runtime and is, therefore, able to provide much better performance.\n\nPlease note that when using `System.Text.Json`, if you need to use `JsonSerializerOptions` repeatedly with the same options, consider reusing the same `JsonSerializerOptions` instance for each call to Serialize/Deserialize. Since the instance is thread-safe and immutable after the first serialization or deserialization, it's safe to use the same instance.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "37"
   },
   {
@@ -347,7 +347,7 @@
     "description": "A lot of CPU and memory are being spent on calls to `Newtonsoft.Json.JsonConvert.DeserializeObject()`.",
     "docURL": null,
     "recommendation": "Make sure you're not recreating a `ContractResolver` every time you use `JsonSerializer`. Instead, you should create the contract resolver once and reuse it. Please note that if you are not using an explicit contract resolver, then a shared internal instance is automatically used when serializing and deserializing.\n\nIf you have .NET 5 SDK or above, consider switching to `System.Text.Json` to use source generation, regardless of the .NET version you target. Source generation allows for the inspection of serializable types to be done at compile time instead of needing to use reflection at runtime and is, therefore, able to provide much better performance.\n\nPlease note that when using `System.Text.Json`, if you need to use `JsonSerializerOptions` repeatedly with the same options, consider reusing the same `JsonSerializerOptions` instance for each call to Serialize/Deserialize. Since the instance is thread-safe and immutable after the first serialization or deserialization, it's safe to use the same instance.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "38"
   },
   {
@@ -356,7 +356,7 @@
     "description": "A lot of CPU or Memory is being consumed by `IEnumerable<T>.Single()` calls.",
     "docURL": null,
     "recommendation": "Consider unrolling the LINQ expression to use an explicit for-loop.\nIn case of nested LINQ expressions, make sure that same computations are not being repeated unnecessarily.\nIf possible, hoist them to the outermost loop where they can be computed.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "39"
   },
   {
@@ -365,7 +365,7 @@
     "description": "A lot of CPU or Memory is being consumed by `IEnumerable<T>.FirstOrDefault()` calls.",
     "docURL": null,
     "recommendation": "Consider unrolling the LINQ expression to use an explicit for-loop.\nIn case of nested LINQ expressions, make sure that same computations are not being repeated unnecessarily.\nIf possible, hoist them to the outermost loop where they can be computed.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "40"
   },
   {
@@ -374,7 +374,7 @@
     "description": "A lot of CPU or Memory is being consumed by `IEnumerable<T>.Aggregate()` calls.",
     "docURL": null,
     "recommendation": "Consider unrolling the LINQ expression to use an explicit for-loop.\nIn case of nested LINQ expressions, make sure that same computations are not being repeated unnecessarily.\nIf possible, hoist them to the outermost loop where they can be computed.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "41"
   },
   {
@@ -383,7 +383,7 @@
     "description": "A lot of CPU or Memory is being spent in `Enumerable<T>.ToArray()`.",
     "docURL": null,
     "recommendation": "Verify that `Enumerable<T>.ToArray()` isn't being called for a single enumeration, which can be accomplished simply by enumerating over the `Enumerable<T>`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "42"
   },
   {
@@ -392,7 +392,7 @@
     "description": "A lot of CPU or Memory is being spent in `Enumerable<T>.ToDictionary()`.",
     "docURL": null,
     "recommendation": "Verify that `Enumerable<T>.ToDictionary()` isn't being called for a few look-ups in the resulting `Dictionary<K, V>`. This can instead be accomplished simply by enumerating over the `Enumerable<T>`.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "43"
   },
   {
@@ -401,7 +401,7 @@
     "description": "A lot of CPU or Memory is being spent in `Queryable<T>.FirstOrDefault()`.",
     "docURL": null,
     "recommendation": "Examine the query and simplify the expression if possible.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "44"
   },
   {
@@ -410,7 +410,7 @@
     "description": "A lot of Memory is being consumed by `StreamReader.ReadToEnd()`.",
     "docURL": null,
     "recommendation": "If the underlying stream is expected to be in JSON format, consider using a JSON parser directly over the stream rather than reading to a string and then parsing the resulting string.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "45"
   },
   {
@@ -419,7 +419,7 @@
     "description": "A lot of CPU is being spent doing culture specific comparisons within calls to `CompareInfo.IsPrefix()`.",
     "docURL": null,
     "recommendation": "Consider specifying a `StringComparison.Ordinal` comparison with `String.StartsWith`/`String.EndsWith` to avoid doing culture specific string comparisons, which tend to be more expensive.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "46"
   },
   {
@@ -428,7 +428,7 @@
     "description": "A lot of CPU is being spent doing culture specific comparisons within calls to `String.IndexOf()`.",
     "docURL": null,
     "recommendation": "Consider specifying a `StringComparison.Ordinal` comparison with `String.IndexOf` to avoid doing culture specific string comparisons, which tend to be more expensive.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "47"
   },
   {
@@ -437,7 +437,7 @@
     "description": "A lot of CPU is being spent on calls to `Dictionary<K, V>.Insert()`.",
     "docURL": null,
     "recommendation": "Avoid using the default object comparer. Consider writing a custom comparer for the Dictionary Key type and specifying it in the Dictionary's constructor. Alternatively, implement `IEquatable<TKey>` on the Key type. Either of these will lead to faster comparisons than the default object comparer.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "48"
   },
   {
@@ -446,7 +446,7 @@
     "description": "A lot of CPU is being spent on calls to `Dictionary<K, V>.Insert()`.",
     "docURL": null,
     "recommendation": "Make sure Dictionary entries are actually being re-used in look-ups.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "49"
   },
   {
@@ -455,7 +455,7 @@
     "description": "A lot of memory is spent in allocations of type `System.Text.RegularExpressions.Regex`.",
     "docURL": null,
     "recommendation": "Avoid creating Regex instances more than once with the same regular expression. If the regular expression is the same each time, then cache a single Regex instance in a static field.",
-    "rationale": "{value}% of your {issueCategory} was spent in `{symbol}`, We expected this value to be {relation} {criteria}%.",
+    "rationale": "{value}% of your {issueCategory} was spent in `{function}`, We expected this value to be {relation} {criteria}%.",
     "legacyId": "50"
   }
 ]
