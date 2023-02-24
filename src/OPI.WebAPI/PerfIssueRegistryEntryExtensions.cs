@@ -4,12 +4,14 @@ namespace OPI.WebAPI;
 
 internal static class PerfIssueRegistryEntryExtensions
 {
-    public static PerfIssueRegisterEntry TrackUpdate(this PerfIssueRegisterEntry entry, IHttpContextAccessor httpContextAccessor)
+    public static PerfIssueRegisterEntry TrackUpdate(this PerfIssueRegisterEntry entry, ITrackable existingTrackable, IHttpContextAccessor httpContextAccessor)
     {
         return Track(httpContextAccessor, (userName, utcNow) =>
         {
             entry = entry with
             {
+                CreatedBy = existingTrackable.CreatedBy,
+                CreatedAt = existingTrackable.CreatedAt,
                 LastModifiedAt = utcNow,
                 LastModifiedBy = userName,
             };

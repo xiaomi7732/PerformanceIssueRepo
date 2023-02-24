@@ -27,8 +27,14 @@ else if (RegisteredItems.Any())
 {
     @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
     {
-        <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
-    CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync" />
+        <RegistryEntryViewer ViewModel="@entry"
+            ToggleActivateCallback="ToggleActivateAsync"
+            CancelAddCallback="OnCancelAddAsync"
+            DeleteItemCallback="DeleteAsync"
+            SubmitAddedCallback="OnSubmitAddAsync"
+            CancelEditCallback="OnCancelEditAsync"
+            SubmitEditCallback="OnSubmitEditAsync"
+        />
     }
 }
 else

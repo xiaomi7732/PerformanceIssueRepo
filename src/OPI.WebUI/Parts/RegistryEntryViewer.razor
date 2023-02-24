@@ -4,16 +4,24 @@
 {
     <div>Loading ...</div>
 }
-else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add || @ViewModel.DisplayMode ==
+IssueRegistryItemDisplayMode.Edit)
 {
     <div class='card card-with-preview'>
-        <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidAddSubmit">
+        <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmit">
             <DataAnnotationsValidator />
 
             <div class="issue-item">
                 <label class='issue-item-title' for="insightId">Insight Id:</label>
-                <InputText class="id-input" id="insightId" @bind-Value="ViewModel.InsightIdString" />
-                <button type='button' @onclick='GenerateNewGuid'>New Guid</button>
+                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+                {
+                    <InputText class="id-input" id="insightId" @bind-Value="ViewModel.InsightIdString" />
+                    <button type='button' @onclick='GenerateNewGuid'>New Guid</button>
+                }
+                else
+                {
+                    <div id='insightId'>@ViewModel.InsightIdString</div>
+                }
             </div>
 
             <div class='issue-item'>
@@ -55,65 +63,76 @@ else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
 
             <div class='button-list'>
                 <button class='button' type="submit">Submit</button>
-                <button class="button" type='button' @onclick="CancelAddAsync">Cancel</button>
+                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+                {
+                    <button class="button" type='button' @onclick="CancelAddAsync">Cancel</button>
+                }
+                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
+                {
+                    <button class="button" type='button' @onclick="CancelEditAsync">Cancel</button>
+                }
             </div>
         </EditForm>
 
-        <div class='item-preview'>
-            <h2>
-                Preview
-            </h2>
-            <div class="issue-item">
-                <div class='issue-item-title'>
-                    Issue #
+        @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+        {
+
+            <div class='item-preview'>
+                <h2>
+                    Preview
+                </h2>
+                <div class="issue-item">
+                    <div class='issue-item-title'>
+                        Issue #
+                    </div>
+                    <div>
+                        <span>@ViewModel.InsightIdString</span>
+
+                    </div>
                 </div>
+
+                <div class="issue-item">
+                    <div class='issue-item-title'>Is Active</div>
+                    <div>@ViewModel.IsActive</div>
+                </div>
+
+                <div class="issue-item">
+                    <div class='issue-item-title'>Title</div>
+                    <div>@ViewModel.Title</div>
+                </div>
+
+                <div class="issue-item">
+                    <div class='issue-item-title'>Description</div>
+                    <div>@ViewModel.Description</div>
+                </div>
+
+                <div class="issue-item">
+                    <div class='issue-item-title'>Recommendation</div>
+                    <div>@ViewModel.Recommendation</div>
+                </div>
+
+                <div class="issue-item">
+                    <div class='issue-item-title'>Rationale</div>
+                    <div>@ViewModel.Rationale</div>
+                </div>
+
+                <div class="issue-item">
+                    <div class='issue-item-title'>HelpLink</div>
+                    @if (ViewModel.HelpLink is not null)
+                    {
+                        <div><a href="@ViewModel.HelpLink" target="_blank">@ViewModel.HelpLink</a></div>
+                    }
+                    else
+                    {
+                        <div>Not available.</div>
+                    }
+                </div>
+
                 <div>
-                    <span>@ViewModel.InsightIdString</span>
-
+                    <TrackableViewer Trackable="@ViewModel.Model" />
                 </div>
             </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Is Active</div>
-                <div>@ViewModel.IsActive</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Title</div>
-                <div>@ViewModel.Title</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Description</div>
-                <div>@ViewModel.Description</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Recommendation</div>
-                <div>@ViewModel.Recommendation</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Rationale</div>
-                <div>@ViewModel.Rationale</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>HelpLink</div>
-                @if (ViewModel.HelpLink is not null)
-                {
-                    <div><a href="@ViewModel.HelpLink" target="_blank">@ViewModel.HelpLink</a></div>
-                }
-                else
-                {
-                    <div>Not available.</div>
-                }
-            </div>
-
-            <div>
-                <TrackableViewer Trackable="@ViewModel.Model" />
-            </div>
-        </div>
+        }
     </div>
 }
 else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
@@ -195,6 +214,7 @@ else
             }
 
             <button class="button" @onclick="async ()=> await DeleteItemAsync()">Delete</button>
+            <button class="button" type='button' @onclick='EnterEditMode'>Edit</button>
         </div>
     </div>
 }

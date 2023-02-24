@@ -81,7 +81,8 @@ public class IssueRegistryService
             throw new InvalidOperationException($"Target entry by id {newIssueRegistryItem.PermanentId} does not exist.");
         }
 
-        await SaveRegistryItemAsync(newIssueRegistryItem.TrackUpdate(_httpContextAccessor), cancellationToken);
+        newIssueRegistryItem = newIssueRegistryItem.TrackUpdate(entry, _httpContextAccessor);
+        await SaveRegistryItemAsync(newIssueRegistryItem, cancellationToken);
         return newIssueRegistryItem;
     }
 
@@ -97,7 +98,7 @@ public class IssueRegistryService
             throw new InvalidOperationException($"Target issue by id {permanentId} does not exist.");
         }
         entry = entry with { IsActive = !entry.IsActive };
-        entry = entry.TrackUpdate(_httpContextAccessor);
+        entry = entry.TrackUpdate(entry, _httpContextAccessor);
         await SaveRegistryItemAsync(entry, cancellationToken).ConfigureAwait(false);
         return entry;
     }

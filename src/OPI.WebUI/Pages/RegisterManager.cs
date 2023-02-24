@@ -74,6 +74,12 @@ public partial class RegistryManager
                 Active--;
                 InActive++;
             }
+
+            if(targetVM.Model is not null)
+            {
+                targetVM.Model.LastModifiedAt = result.LastModifiedAt;
+                targetVM.Model.LastModifiedBy = result.LastModifiedBy;
+            }
         }
         else
         {
@@ -160,23 +166,7 @@ public partial class RegistryManager
             return;
         }
 
-        Guid.TryParse(newItemSpec.InsightIdString, out Guid newId);
-        Guid? newNullableId = newId == Guid.Empty ? null : newId;
-
-        Uri.TryCreate(newItemSpec.HelpLink, UriKind.Absolute, out Uri? helpLink);
-
-        PerfIssueRegisterEntry newEntry = new PerfIssueRegisterEntry()
-        {
-            PermanentId = newNullableId,
-            LegacyId = newItemSpec.LegacyId,
-            IsActive = newItemSpec.IsActive,
-            Title = newItemSpec.Title,
-            Description = newItemSpec.Description,
-            Recommendation = newItemSpec.Description,
-            Rationale = newItemSpec.Rationale,
-            DocURL = helpLink,
-        };
-
+        PerfIssueRegisterEntry newEntry = newItemSpec.ToRegistryEntry();
         try
         {
             newEntry = await OpiClient.RegisterAsync(newEntry, default);
@@ -204,6 +194,53 @@ public partial class RegistryManager
         catch (HttpRequestException ex)
         {
             await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
+        }
+    }
+
+    // Editing
+    public Task OnCancelEditAsync(IssueRegistryItemViewModel target)
+    {
+        Console.WriteLine(nameof(OnCancelEditAsync));
+        if (target?.Model is null)
+        {
+            Console.WriteLine("Target?.Model is null");
+            return Task.CompletedTask;
+        }
+
+        // Restore values before editing
+        target.UpdateBy(target.Model);
+        target.DisplayMode = IssueRegistryItemDisplayMode.Read;
+
+        Console.WriteLine("Edit cancelled.");
+        return Task.CompletedTask;
+    }
+
+    public async Task OnSubmitEditAsync(IssueRegistryItemViewModel target)
+    {
+        if(target is null)
+        {
+            Console.WriteLine("Nothing to submit for editing.");
+            return;
+        }
+
+        PerfIssueRegisterEntry newEntry = target.ToRegistryEntry();
+        PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(newEntry, default);
+
+        if(result is null)
+        {
+            // Update failed.
+            await _jsRuntime.InvokeVoidAsync("alert", $"Failed editing item by id: {target.InsightIdString}");
+            return;
+        }
+
+        // Succeeded.
+        target.DisplayMode = IssueRegistryItemDisplayMode.Read;
+        
+        // Update tracking info.
+        if(target.Model is not null)
+        {
+            target.Model.LastModifiedAt = result.LastModifiedAt;
+            target.Model.LastModifiedBy = result.LastModifiedBy;
         }
     }
 

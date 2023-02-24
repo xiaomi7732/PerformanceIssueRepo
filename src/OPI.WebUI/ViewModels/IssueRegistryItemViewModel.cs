@@ -8,16 +8,47 @@ public class IssueRegistryItemViewModel
     public PerfIssueRegisterEntry? Model { get; }
     public IssueRegistryItemViewModel(PerfIssueRegisterEntry model)
     {
-        Model = model ?? throw new ArgumentNullException(nameof(model));
+        Model = model?? throw new ArgumentNullException(nameof(model));
+        UpdateBy(model);
+    }
 
-        InsightIdString = model.PermanentId.HasValue ? model.PermanentId.Value.ToString("D") : string.Empty;
-        IsActive = model.IsActive;
-        LegacyId = model.LegacyId;
-        Title = model.Title;
-        Description = model.Description;
-        HelpLink = model.DocURL?.AbsoluteUri;
-        Recommendation = model.Recommendation;
-        Rationale = model.Rationale;
+    public void UpdateBy(PerfIssueRegisterEntry entry)
+    {
+        if (entry is null)
+        {
+            throw new ArgumentNullException(nameof(entry));
+        }
+
+        InsightIdString = entry.PermanentId.HasValue ? entry.PermanentId.Value.ToString("D") : string.Empty;
+        IsActive = entry.IsActive;
+        LegacyId = entry.LegacyId;
+        Title = entry.Title;
+        Description = entry.Description;
+        HelpLink = entry.DocURL?.AbsoluteUri;
+        Recommendation = entry.Recommendation;
+        Rationale = entry.Rationale;
+    }
+
+    public PerfIssueRegisterEntry ToRegistryEntry()
+    {
+        Guid.TryParse(InsightIdString, out Guid newId);
+        Guid? newNullableId = newId == Guid.Empty ? null : newId;
+
+        Uri.TryCreate(HelpLink, UriKind.Absolute, out Uri? helpLink);
+
+        PerfIssueRegisterEntry newEntry = new PerfIssueRegisterEntry()
+        {
+            PermanentId = newNullableId,
+            LegacyId = LegacyId,
+            IsActive = IsActive,
+            Title = Title,
+            Description = Description,
+            Recommendation = Description,
+            Rationale = Rationale,
+            DocURL = helpLink,
+        };
+
+        return newEntry;
     }
 
     public IssueRegistryItemDisplayMode DisplayMode { get; set; } = IssueRegistryItemDisplayMode.Read;
@@ -55,15 +86,15 @@ public class IssueRegistryItemViewModel
     public string? LegacyId { get; set; }
 
     [Required]
-    public string Title { get; set; }
+    public string Title { get; set; } = default!;
 
     [Required]
-    public string Description { get; set; }
+    public string Description { get; set; } = default!;
 
     public string? HelpLink { get; set; }
 
     [Required]
-    public string Recommendation { get; set; }
+    public string Recommendation { get; set; } = default!;
 
     public string? Rationale { get; set; }
 }
