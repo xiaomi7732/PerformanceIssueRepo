@@ -108,12 +108,18 @@ public class OPIClient
     /// Registers a new entry
     /// </summary>
     /// <param name="newEntry"></param>
-    public async Task RegisterAsync(PerfIssueRegisterEntry newEntry, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry> RegisterAsync(PerfIssueRegisterEntry newEntry, CancellationToken cancellationToken)
     {
         string path = "registry";
         JsonContent body = JsonContent.Create<PerfIssueRegisterEntry>(newEntry, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
         HttpResponseMessage response = await _httpClient.PostAsync(path, body, cancellationToken).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
+        PerfIssueRegisterEntry? result = await response.Content.ReadFromJsonAsync<PerfIssueRegisterEntry>(_jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+        if(result is null)
+        {
+            throw new InvalidOperationException("Result object is expected, null returned.");
+        }
+        return result;
     }
 
     /// <summary>

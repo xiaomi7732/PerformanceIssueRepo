@@ -7,90 +7,24 @@
 
 <div>
     <input class="search-input" type="search"
-        placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"></input>
+        placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword" @bind:event="oninput"></input>
 </div>
-@if (RegisteredItems is null)
+<div>
+    <button @onclick="AddNewItemAsync">+ Add new item</button>
+</div>
+@if (!Initialized)
 {
     <div>Loading ...</div>
 }
 else if (RegisteredItems.Any())
 {
-    @foreach (PerfIssueRegisterEntry entry in RegisteredItems)
+    @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
     {
-        <div class='card'>
-            <div class="issue-item">
-                <div class='issue-item-title'>
-                    Issue #
-                </div>
-                <div>
-                    <span>@entry.PermanentId</span>
-                    @if (!string.IsNullOrEmpty(entry.LegacyId))
-                    {
-                        <span>&nbsp;(Legacy id: @entry.LegacyId)</span>
-                    }
-                </div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Is Active</div>
-                <div>@entry.IsActive</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Title</div>
-                <div>@entry.Title</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Description</div>
-                <div>@entry.Description</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Recommendation</div>
-                <div>@entry.Recommendation</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Rationale</div>
-                <div>@entry.Rationale</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>HelpLink</div>
-                @if (entry.DocURL is not null)
-                {
-                    <div><a href="@entry.DocURL" target="_blank">@entry.DocURL</a></div>
-                }
-                else
-                {
-                    <div>Not available.</div>
-                }
-            </div>
-
-            <div>
-                <IssueVersionViewer Issue="@entry" />
-            </div>
-
-            <div>
-                <TrackableViewer Trackable="@entry" />
-            </div>
-
-            <div class='button-list'>
-                @if (entry.IsActive)
-                {
-                    <button class='button' id='activate-toggle-button'
-            @onclick="() => ToggleActivateAsync(entry.PermanentId)">Deactive</button>
-                }
-                else
-                {
-                    <button class='button' id='activate-toggle-button'
-            @onclick="() => ToggleActivateAsync(entry.PermanentId)">Active</button>
-                }
-
-                <button class="button" @onclick="()=> DeleteAsync(entry)">Delete</button>
-            </div>
-        </div>
+        <RegistryEntryViewer ViewModel="@entry"
+            ToggleActivateCallback="ToggleActivateAsync"
+            CancelAddCallback="OnCancelAddAsync"
+            DeleteItemCallback="OnDeleteAsync"
+            SubmitAddedCallback="OnSubmitAddAsync" />
     }
 }
 else

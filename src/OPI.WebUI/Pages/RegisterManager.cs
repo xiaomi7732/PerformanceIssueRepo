@@ -1,8 +1,11 @@
+using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.WebUI.ViewModels;
 
 namespace OPI.WebUI.Pages;
 
@@ -15,8 +18,13 @@ public partial class RegistryManager
     [Inject]
     private IJSRuntime _jsRuntime { get; set; } = default!;
 
+    [Inject]
+    private AuthenticationStateProvider _authContext { get; set; } = default!;
+
     private IReadOnlyCollection<PerfIssueRegisterEntry>? _allRegisteredItems;
-    public IEnumerable<PerfIssueRegisterEntry>? RegisteredItems { get; set; } = null;
+    public ObservableCollection<IssueRegistryItemViewModel> RegisteredItems { get; } = new ObservableCollection<IssueRegistryItemViewModel>();
+
+    public bool Initialized { get; private set; }
 
     private string? _keyword;
     public string? Keyword
@@ -37,30 +45,46 @@ public partial class RegistryManager
     protected override async Task OnInitializedAsync()
     {
         await ReloadDataAsync();
+        Initialized = true;
     }
 
-    public async Task ToggleActivateAsync(Guid? issueId)
+    public async Task ToggleActivateAsync(IssueRegistryItemViewModel targetVM)
     {
-        if (issueId is null)
+        if (targetVM?.Model?.PermanentId is null)
         {
-            // Must have a valid id to toggle the change.
             return;
         }
 
-        PerfIssueRegisterEntry? result = await OpiClient.ToggleActivateAsync(issueId.Value, cancellationToken: default);
+        PerfIssueRegisterEntry? result = await OpiClient.ToggleActivateAsync(targetVM.Model.PermanentId.Value, cancellationToken: default);
         if (result is not null)
         {
-            await ReloadDataAsync();
+            // Sync it on UI.
+            targetVM.IsActive = !targetVM.IsActive;
         }
         else
         {
-            // TODO: Output error;
+            await _jsRuntime.InvokeVoidAsync("alert", $"Failed toggling active value for item: {targetVM.Model.PermanentId}");
         }
+    }
+
+    // Deleting
+    public async Task OnDeleteAsync(Guid insightId)
+    {
+        Console.WriteLine(nameof(OnDeleteAsync));
+        if (insightId == Guid.Empty)
+        {
+            return;
+        }
+
+        await DeleteAsync(new PerfIssueRegisterEntry()
+        {
+            PermanentId = insightId,
+        });
     }
 
     public async Task DeleteAsync(PerfIssueRegisterEntry toDelete)
     {
-        if (toDelete is null)
+        if (toDelete?.PermanentId is null)
         {
             return;
         }
@@ -74,20 +98,120 @@ public partial class RegistryManager
 
         if (await OpiClient.DeleteAsync(toDelete, default).ConfigureAwait(false))
         {
-            await ReloadDataAsync();
+            IssueRegistryItemViewModel? targetViewModel = RegisteredItems.FirstOrDefault(item => string.Equals(item.InsightIdString, toDelete.PermanentId.Value.ToString("D")));
+            if (targetViewModel is not null)
+            {
+                RegisteredItems.Remove(targetViewModel);
+            }
         }
     }
 
+    // Adding
 
+    /// <summary>
+    /// Cancel the newly added item from the UI.
+    /// </summary>
+    public async Task OnCancelAddAsync(Guid target)
+    {
+        await Task.Yield();
+        List<IssueRegistryItemViewModel> toCancel = new List<IssueRegistryItemViewModel>();
+        foreach (IssueRegistryItemViewModel entryViewModel in RegisteredItems)
+        {
+            if (entryViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+            {
+                toCancel.Add(entryViewModel);
+            }
+        }
+
+        foreach (IssueRegistryItemViewModel toCancelItem in toCancel)
+        {
+            RegisteredItems.Remove(toCancelItem);
+        }
+
+        Console.WriteLine("Added cancelled.");
+    }
+
+    /// <summary>
+    /// Add a new item onto the UI for the user to fill up the form.
+    /// </summary>
+    public async Task AddNewItemAsync()
+    {
+        if (RegisteredItems is null)
+        {
+            return;
+        }
+
+        PerfIssueRegisterEntry newModel = new PerfIssueRegisterEntry()
+        {
+            PermanentId = Guid.NewGuid(),
+            CreatedBy = (await _authContext.GetAuthenticationStateAsync())?.User?.Identity?.Name,
+        };
+
+        IssueRegistryItemViewModel newViewModel = new IssueRegistryItemViewModel(newModel)
+        {
+            DisplayMode = IssueRegistryItemDisplayMode.Add,
+        };
+        RegisteredItems.Insert(0, newViewModel);
+    }
+
+    /// <summary>
+    /// Submit the new item to the backend for persistent.
+    /// </summary>
+    public async Task OnSubmitAddAsync(IssueRegistryItemViewModel newItemSpec)
+    {
+        Console.WriteLine(nameof(OnSubmitAddAsync));
+        if (newItemSpec?.Model is null)
+        {
+            return;
+        }
+
+        Guid.TryParse(newItemSpec.InsightIdString, out Guid newId);
+        Guid? newNullableId = newId == Guid.Empty ? null : newId;
+
+        Uri.TryCreate(newItemSpec.HelpLink, UriKind.Absolute, out Uri? helpLink);
+
+        PerfIssueRegisterEntry newEntry = new PerfIssueRegisterEntry()
+        {
+            PermanentId = newNullableId,
+            LegacyId = newItemSpec.LegacyId,
+            IsActive = newItemSpec.IsActive,
+            Title = newItemSpec.Title,
+            Description = newItemSpec.Description,
+            Recommendation = newItemSpec.Description,
+            Rationale = newItemSpec.Rationale,
+            DocURL = helpLink,
+        };
+
+        try
+        {
+            newEntry = await OpiClient.RegisterAsync(newEntry, default);
+            if (newEntry.PermanentId is null)
+            {
+                throw new InvalidCastException("New item permanent id can't be null.");
+            }
+            newItemSpec.InsightIdString = newEntry.PermanentId.Value.ToString("D");
+            newItemSpec.DisplayMode = IssueRegistryItemDisplayMode.Read;
+            newItemSpec.Model.CreatedAt = newEntry.CreatedAt;
+            newItemSpec.Model.CreatedBy = newEntry.CreatedBy;
+            newItemSpec.Model.LastModifiedAt = newEntry.LastModifiedAt;
+            newItemSpec.Model.LastModifiedBy = newEntry.LastModifiedBy;
+        }
+        catch (HttpRequestException ex)
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
+        }
+    }
+
+    // Filter
     private async Task OnKeywordChanged()
     {
         await Task.Yield();
         FilterData();
-        StateHasChanged();
     }
 
     private async Task ReloadDataAsync()
     {
+        Console.WriteLine(nameof(ReloadDataAsync));
         _allRegisteredItems = (await OpiClient.ListAllRegisteredAsync(default))
             .OrderBy(item => item.LegacyId?.PadLeft(4))
             .ThenBy(item => item.PermanentId)
@@ -103,13 +227,12 @@ public partial class RegistryManager
             return;
         }
 
-        if (string.IsNullOrEmpty(Keyword))
+        RegisteredItems.Clear();
+        IEnumerable<PerfIssueRegisterEntry> filteredResult = _allRegisteredItems;
+
+        if (!string.IsNullOrEmpty(Keyword))
         {
-            RegisteredItems = _allRegisteredItems;
-        }
-        else
-        {
-            RegisteredItems = _allRegisteredItems.Where(item =>
+            filteredResult = filteredResult.Where(item =>
             {
                 return (item.LegacyId is not null && item.LegacyId.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
                     || (item.PermanentId.HasValue && item.PermanentId.Value.ToString("d").Contains(Keyword, StringComparison.OrdinalIgnoreCase))
@@ -119,6 +242,11 @@ public partial class RegistryManager
                     || (!string.IsNullOrEmpty(item.Recommendation) && item.Recommendation.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
                     || (!string.IsNullOrEmpty(item.Rationale) && item.Rationale.Contains(Keyword, StringComparison.OrdinalIgnoreCase));
             });
+        }
+
+        foreach (IssueRegistryItemViewModel item in filteredResult.Select(item => new IssueRegistryItemViewModel(item)))
+        {
+            RegisteredItems.Add(item);
         }
     }
 }
