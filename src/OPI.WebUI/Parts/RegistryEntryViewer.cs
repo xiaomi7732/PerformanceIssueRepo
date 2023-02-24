@@ -31,7 +31,7 @@ public partial class RegistryEntryViewer
     public EventCallback<Guid> DeleteItemCallback { get; set; }
 
     [Parameter]
-    public EventCallback<Guid> CancelAddCallback { get; set; }
+    public EventCallback<IssueRegistryItemViewModel> CancelAddCallback { get; set; }
 
     [Parameter]
     public EventCallback<IssueRegistryItemViewModel> SubmitAddedCallback { get; set; }
@@ -78,10 +78,10 @@ public partial class RegistryEntryViewer
 
     public async Task CancelAddAsync()
     {
-        if (ViewModel?.Model?.PermanentId is null)
+        if (ViewModel is null)
         {
             return;
         }
-        await CancelAddCallback.InvokeAsync(ViewModel.Model.PermanentId.Value);
+        await CancelAddCallback.InvokeAsync(ViewModel);
     }
 }

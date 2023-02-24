@@ -111,23 +111,9 @@ public partial class RegistryManager
     /// <summary>
     /// Cancel the newly added item from the UI.
     /// </summary>
-    public async Task OnCancelAddAsync(Guid target)
+    public async Task OnCancelAddAsync(IssueRegistryItemViewModel target)
     {
-        await Task.Yield();
-        List<IssueRegistryItemViewModel> toCancel = new List<IssueRegistryItemViewModel>();
-        foreach (IssueRegistryItemViewModel entryViewModel in RegisteredItems)
-        {
-            if (entryViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
-            {
-                toCancel.Add(entryViewModel);
-            }
-        }
-
-        foreach (IssueRegistryItemViewModel toCancelItem in toCancel)
-        {
-            RegisteredItems.Remove(toCancelItem);
-        }
-
+        RegisteredItems.Remove(target);
         Console.WriteLine("Added cancelled.");
     }
 
