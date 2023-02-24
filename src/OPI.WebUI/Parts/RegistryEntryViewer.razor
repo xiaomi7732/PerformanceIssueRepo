@@ -74,65 +74,61 @@ IssueRegistryItemDisplayMode.Edit)
             </div>
         </EditForm>
 
-        @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
-        {
-
-            <div class='item-preview'>
-                <h2>
-                    Preview
-                </h2>
-                <div class="issue-item">
-                    <div class='issue-item-title'>
-                        Issue #
-                    </div>
-                    <div>
-                        <span>@ViewModel.InsightIdString</span>
-
-                    </div>
+        <div class='item-preview'>
+            <h2>
+                Preview
+            </h2>
+            <div class="issue-item">
+                <div class='issue-item-title'>
+                    Issue #
                 </div>
-
-                <div class="issue-item">
-                    <div class='issue-item-title'>Is Active</div>
-                    <div>@ViewModel.IsActive</div>
-                </div>
-
-                <div class="issue-item">
-                    <div class='issue-item-title'>Title</div>
-                    <div>@ViewModel.Title</div>
-                </div>
-
-                <div class="issue-item">
-                    <div class='issue-item-title'>Description</div>
-                    <div>@ViewModel.Description</div>
-                </div>
-
-                <div class="issue-item">
-                    <div class='issue-item-title'>Recommendation</div>
-                    <div>@ViewModel.Recommendation</div>
-                </div>
-
-                <div class="issue-item">
-                    <div class='issue-item-title'>Rationale</div>
-                    <div>@ViewModel.Rationale</div>
-                </div>
-
-                <div class="issue-item">
-                    <div class='issue-item-title'>HelpLink</div>
-                    @if (ViewModel.HelpLink is not null)
-                    {
-                        <div><a href="@ViewModel.HelpLink" target="_blank">@ViewModel.HelpLink</a></div>
-                    }
-                    else
-                    {
-                        <div>Not available.</div>
-                    }
-                </div>
-
                 <div>
-                    <TrackableViewer Trackable="@ViewModel.Model" />
+                    <span>@ViewModel.InsightIdString</span>
+
                 </div>
             </div>
-        }
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Is Active</div>
+                <div>@ViewModel.IsActive</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Title</div>
+                <div>@ViewModel.Title</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Description</div>
+                <div>@ViewModel.Description</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Recommendation</div>
+                <div>@ViewModel.Recommendation</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Rationale</div>
+                <div>@ViewModel.Rationale</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>HelpLink</div>
+                @if (ViewModel.HelpLink is not null)
+                {
+                    <div><a href="@ViewModel.HelpLink" target="_blank">@ViewModel.HelpLink</a></div>
+                }
+                else
+                {
+                    <div>Not available.</div>
+                }
+            </div>
+
+            <div>
+                <TrackableViewer Trackable="@ViewModel.Model" />
+            </div>
+        </div>
     </div>
 }
 else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
