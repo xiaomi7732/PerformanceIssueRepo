@@ -52,7 +52,7 @@ public class IssueVersionService
                 yield return specVersion;
             }
         }
-        _cache.Add(key, existInVersions);
+        _cache.TryAdd(key, existInVersions);
     }
 
     private async Task<IEnumerable<string>> GetAvailableVersionsAsync(CancellationToken cancellationToken)

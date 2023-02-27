@@ -10,8 +10,12 @@
             <div class='item-section'>
                 <div class='title'>Create by</div>
                 <div class='value'>@Trackable.CreatedBy</div>
-                <div class='title'>Create at</div>
-                <div class='value'>@Trackable.CreatedAt</div>
+
+                @if (Trackable.CreatedAt is not null)
+                {
+                    <div class='title'>Create at</div>
+                    <div class='value'>@Trackable.CreatedAt.Value.ToLocalTime()</div>
+                }
             </div>
         }
 
@@ -24,8 +28,12 @@
             <div class='item-section'>
                 <div class='title'>Last Modified by</div>
                 <div class='value'>@Trackable.LastModifiedBy</div>
-                <div class='title'>Last Modified at</div>
-                <div class='value'>@Trackable.LastModifiedAt</div>
+
+                @if (Trackable.LastModifiedAt is not null)
+                {
+                    <div class='title'>Last Modified at</div>
+                    <div class='value'>@Trackable.LastModifiedAt.Value.ToLocalTime()</div>
+                }
             </div>
         }
     </div>

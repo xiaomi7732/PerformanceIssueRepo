@@ -1,0 +1,65 @@
+.issue-item {
+    display: flex;
+    flex-direction: row;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.issue-item-title {
+    font-weight: bold;
+    margin-right: 12px;
+    min-width: 150px;
+}
+
+#activate-toggle-button {
+    margin-left: 4px;
+}
+
+.button {
+    min-width: 120px;
+    margin-right: 16px;
+}
+
+.button-list {
+    margin-top: 32px;
+}
+
+.card-with-preview
+{
+    display: flex;
+    flex-direction: row;
+}
+
+.card-with-preview .item-preview
+{
+    margin-left: 32px;
+    background-color: wheat;
+    padding: 16px;
+}
+
+::deep .id-input {
+    width: 280px;
+}
+
+::deep .title-input {
+    width: 560px;
+}
+
+::deep .description-input {
+    width: 800px;
+    height: 40px;
+}
+
+::deep .recommendation-input {
+    width: 800px;
+    height: 40px;
+}
+
+::deep .rationale-input {
+    width: 800px;
+    height: 40px;
+}
+
+::deep .help-link-input {
+    width: 800px;
+}

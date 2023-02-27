@@ -1,0 +1,216 @@
+@using Microsoft.AspNetCore.Components.Forms
+
+@if (@ViewModel is null)
+{
+    <div>Loading ...</div>
+}
+else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add || @ViewModel.DisplayMode ==
+IssueRegistryItemDisplayMode.Edit)
+{
+    <div class='card card-with-preview'>
+        <EditForm EditContext="@_editContext" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="issue-item">
+                <label class='issue-item-title' for="insightId">Insight Id:</label>
+                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+                {
+                    <InputText class="id-input" id="insightId" @bind-Value="ViewModel.InsightIdString" />
+                    <button type='button' @onclick='GenerateNewGuid'>New Guid</button>
+                }
+                else
+                {
+                    <div id='insightId'>@ViewModel.InsightIdString</div>
+                }
+            </div>
+
+            <div class='issue-item'>
+                <label class='issue-item-title' for='isActive'>Is Active:</label>
+                <InputCheckbox id="isActive" @bind-Value="ViewModel.IsActive" />
+            </div>
+
+            <div class='issue-item'>
+                <label class='issue-item-title' for='title'>Title</label>
+                <InputText class='title-input' id="title" @bind-Value="ViewModel.Title" />
+            </div>
+
+            <div class='issue-item'>
+                <label class='issue-item-title' for='description'>Description:</label>
+                <InputTextArea class='description-input' id="description" @bind-Value="ViewModel.Description" />
+            </div>
+
+            <div class='issue-item'>
+                <label class='issue-item-title' for='recommendation'>Recommendation:</label>
+                <InputTextArea class='recommendation-input' id="recommendation" @bind-Value="ViewModel.Recommendation" />
+            </div>
+
+            <div class='issue-item'>
+                <label class='issue-item-title' for='rationale'>Rationale:</label>
+                <InputTextArea class='rationale-input' id="rationale" @bind-Value="ViewModel.Rationale" />
+            </div>
+
+            <div class='issue-item'>
+                <label class='issue-item-title' for='helpLink'>Help Link:</label>
+                <InputText class='help-link-input' id="helpLink" @bind-Value="ViewModel.HelpLink" />
+            </div>
+
+            <div class='issue-item'>
+                <label class='issue-item-title' for='legacyId'>Legacy Id:</label>
+                <InputText id="legacyId" @bind-Value="ViewModel.LegacyId" />
+            </div>
+
+            <ValidationSummary />
+
+            <div class='button-list'>
+                <button class='button' type="submit">Submit</button>
+                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+                {
+                    <button class="button" type='button' @onclick="CancelAddAsync">Cancel</button>
+                }
+                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
+                {
+                    <button class="button" type='button' @onclick="CancelEditAsync">Cancel</button>
+                }
+            </div>
+        </EditForm>
+
+        <div class='item-preview'>
+            <h2>
+                Preview
+            </h2>
+            <div class="issue-item">
+                <div class='issue-item-title'>
+                    Issue #
+                </div>
+                <div>
+                    <span>@ViewModel.InsightIdString</span>
+
+                </div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Is Active</div>
+                <div>@ViewModel.IsActive</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Title</div>
+                <div>@ViewModel.Title</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Description</div>
+                <div>@ViewModel.Description</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Recommendation</div>
+                <div>@ViewModel.Recommendation</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>Rationale</div>
+                <div>@ViewModel.Rationale</div>
+            </div>
+
+            <div class="issue-item">
+                <div class='issue-item-title'>HelpLink</div>
+                @if (ViewModel.HelpLink is not null)
+                {
+                    <div><a href="@ViewModel.HelpLink" target="_blank">@ViewModel.HelpLink</a></div>
+                }
+                else
+                {
+                    <div>Not available.</div>
+                }
+            </div>
+
+            <div>
+                <TrackableViewer Trackable="@ViewModel.Model" />
+            </div>
+        </div>
+    </div>
+}
+else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
+{
+    <div>Editing item: @ViewModel.InsightIdString</div>
+}
+else
+{
+    // Read/Card view
+    <div class='card'>
+        <div class="issue-item">
+            <div class='issue-item-title'>
+                Issue #
+            </div>
+            <div>
+                <span>@ViewModel.InsightIdString</span>
+                @if (!string.IsNullOrEmpty(ViewModel.LegacyId))
+                {
+                    <span>&nbsp;(Legacy id: @ViewModel.LegacyId)</span>
+                }
+            </div>
+        </div>
+
+        <div class="issue-item">
+            <div class='issue-item-title'>Is Active</div>
+            <div>@ViewModel.IsActive</div>
+        </div>
+
+        <div class="issue-item">
+            <div class='issue-item-title'>Title</div>
+            <div>@ViewModel.Title</div>
+        </div>
+
+        <div class="issue-item">
+            <div class='issue-item-title'>Description</div>
+            <div>@ViewModel.Description</div>
+        </div>
+
+        <div class="issue-item">
+            <div class='issue-item-title'>Recommendation</div>
+            <div>@ViewModel.Recommendation</div>
+        </div>
+
+        <div class="issue-item">
+            <div class='issue-item-title'>Rationale</div>
+            <div>@ViewModel.Rationale</div>
+        </div>
+
+        <div class="issue-item">
+            <div class='issue-item-title'>HelpLink</div>
+            @if (ViewModel.HelpLink is not null)
+            {
+                <div><a href="@ViewModel.HelpLink" target="_blank">@ViewModel.HelpLink</a></div>
+            }
+            else
+            {
+                <div>Not available.</div>
+            }
+        </div>
+
+        <div>
+            <IssueVersionViewer Issue="@ViewModel.Model" />
+        </div>
+
+        <div>
+            <TrackableViewer Trackable="@ViewModel.Model" />
+        </div>
+
+        <div class='button-list'>
+            @if (ViewModel.IsActive)
+            {
+                <button class='button' id='activate-toggle-button'
+            @onclick="async () => await ToggleActivateAsync()">Deactive</button>
+            }
+            else
+            {
+                <button class='button' id='activate-toggle-button'
+            @onclick="async () => await ToggleActivateAsync()">Active</button>
+            }
+
+            <button class="button" @onclick="async ()=> await DeleteItemAsync()">Delete</button>
+            <button class="button" type='button' @onclick='EnterEditMode'>Edit</button>
+        </div>
+    </div>
+}
