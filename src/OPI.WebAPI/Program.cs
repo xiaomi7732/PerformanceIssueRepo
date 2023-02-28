@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Identity.Web;
+using OPI.WebAPI;
 using OPI.WebAPI.RegistryStorage;
 using OPI.WebAPI.Services;
 
@@ -16,6 +17,8 @@ builder.Logging.AddSimpleConsole(opt =>
     opt.UseUtcTimestamp = true;
     opt.SingleLine = true;
 });
+
+builder.Services.AddHealthChecks().AddCheck<SimpleHealthCheck>(nameof(SimpleHealthCheck));
 
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>
 {
@@ -76,5 +79,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/healthz");
 
 app.Run();
