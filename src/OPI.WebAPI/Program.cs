@@ -20,6 +20,9 @@ builder.Logging.AddSimpleConsole(opt =>
 
 builder.Services.AddHealthChecks().AddCheck<SimpleHealthCheck>(nameof(SimpleHealthCheck));
 
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddServiceProfiler();
+
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>
 {
     config.WithOrigins("http://localhost:5160", "https://white-bay-0b797e61e.2.azurestaticapps.net")
