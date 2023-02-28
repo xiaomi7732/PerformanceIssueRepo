@@ -1,3 +1,5 @@
+using Azure.Identity;
+
 namespace OPI.WebAPI.RegistryStorage;
 
 internal class BlobContainerCreator : BackgroundService
@@ -16,8 +18,15 @@ internal class BlobContainerCreator : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Ensure blob container exists");
-        await _registryBlobClient.CreateContainerIfNotExistsAsync(stoppingToken).ConfigureAwait(false);
-        _logger.LogInformation("Ensured blob container exists");
+        try
+        {
+            _logger.LogInformation("Ensure blob container exists");
+            await _registryBlobClient.CreateContainerIfNotExistsAsync(stoppingToken).ConfigureAwait(false);
+            _logger.LogInformation("Ensured blob container exists");
+        }
+        catch (CredentialUnavailableException ex)
+        {
+            _logger.LogError(ex, "Token credential does not exist. Is Managed Identity configured correctly?");
+        }
     }
 }
