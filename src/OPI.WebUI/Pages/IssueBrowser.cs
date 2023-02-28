@@ -1,15 +1,13 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using OPI.Client;
 using OPI.Core.Models;
 
 namespace OPI.WebUI.Pages;
 
-[Authorize]
 public partial class IssueBrowser
 {
     [Inject]
-    public OPIClient OpiClient { get; private set; } = default!;
+    public IAnonymousOPIClient OpiClient { get; private set; } = default!;
 
     public bool IsLoading { get; set; }
 

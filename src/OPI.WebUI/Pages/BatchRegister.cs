@@ -12,7 +12,7 @@ namespace OPI.WebUI.Pages;
 public partial class BatchRegister
 {
     [Inject]
-    public OPIClient OpiClient { get; private set; } = default!;
+    public IAuthorizedOPIClient OpiClient { get; private set; } = default!;
 
     [Inject]
     public CSVReaderFactory CsvReaderFactory { get; private set; } = default!;

@@ -25,7 +25,7 @@ PublicClientApplicationOptions options = new PublicClientApplicationOptions()
     TenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47",
 };
 
-string accessToken = await SignInUserAndGetTokenUsingMSAL(options, new[] { "api://549847ed-4e8b-47e3-829d-5e1a381ec08f/.default" });    // opi-webapi
+string accessToken = await SignInUserAndGetTokenUsingMSAL(options, new[] { "api://5fba0a18-7118-4762-b8c5-f406244e164f/.default" });    // opi-webapi
 Console.WriteLine("Access token: {0}", accessToken);
 
 OPIClient client = OPIClientFactory.Instance.Create(new Uri(endpoint));
