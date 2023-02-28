@@ -7,7 +7,18 @@ using OPI.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>{
+builder.Logging.AddSimpleConsole(opt =>
+{
+    opt.ColorBehavior = LoggerColorBehavior.Disabled;
+#if (DEBUG)
+    opt.ColorBehavior = LoggerColorBehavior.Enabled;
+#endif
+    opt.UseUtcTimestamp = true;
+    opt.SingleLine = true;
+});
+
+builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>
+{
     config.WithOrigins("http://localhost:5160", "https://white-bay-0b797e61e.2.azurestaticapps.net")
         .AllowAnyMethod()
         .WithHeaders("content-type", "authorization");
