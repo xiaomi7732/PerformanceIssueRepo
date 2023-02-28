@@ -37,16 +37,26 @@ public class OPIClient : IAuthorizedOPIClient
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
 
-    public string? Name { get; set; }
+    /// <summary>
+    /// Gets the base address of the http requests.
+    /// </summary>
+    public Uri? BaseAddress => _httpClient.BaseAddress;
 
-    public Uri? Endpoint => _httpClient.BaseAddress;
-
+    /// <summary>
+    /// List all the performance issues of a given spec version.
+    /// When latest is used, generate the issue list by the latest items in the registry.
+    /// </summary>
     public Task<IEnumerable<PerfIssueItem>> ListAllAsync(string version, CancellationToken cancellationToken)
     {
         string path = $"issues?spec-version={version}";
         return ListAllAsync<PerfIssueItem>(path, cancellationToken);
     }
 
+    /// <summary>
+    /// List all spec versions tagged on GitHub.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<IEnumerable<string>> ListSpecVersionsAsync(CancellationToken cancellationToken)
     {
         if (_gitHubClient is null)
@@ -62,6 +72,9 @@ public class OPIClient : IAuthorizedOPIClient
             );
     }
 
+    /// <summary>
+    /// Gets all issues in form of Json string.
+    /// </summary>
     public async Task<string> GetAllInJsonStringAsync(string version, CancellationToken cancellationToken)
     {
         string path = $"issues?spec-version={version}";

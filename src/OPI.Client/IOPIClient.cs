@@ -4,7 +4,7 @@ namespace OPI.Client;
 
 public interface IAnonymousOPIClient
 {
-    Uri? Endpoint { get; }
+    Uri? BaseAddress { get; }
 
     Task<IEnumerable<string>> ExtractSubstitutes(string specVersion, CancellationToken cancellationToken);
     Task<string> GetAllInJsonStringAsync(string version, CancellationToken cancellationToken);
