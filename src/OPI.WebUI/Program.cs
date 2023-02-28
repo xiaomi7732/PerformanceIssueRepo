@@ -21,8 +21,17 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Backend URL is overwritten by options pattern.
+builder.Services.AddOPIOptions();
+
+// Register an authenticated client
+string authOpiClientName="opi-client-auth";
 builder.Services.AddTransient<CustomAuthorizationMessageHandler>();
-builder.Services.AddOPIClient<CustomAuthorizationMessageHandler>();
+builder.Services.AddHttpClient(authOpiClientName).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
+builder.Services.AddAuthenticatedOPIClient(authOpiClientName);
+
+// Register an anonymous client
+string anonymousOpiClientName="opi-client-anonymous";
+builder.Services.AddAnonymousOPIClient(anonymousOpiClientName);
 
 builder.Services.AddSingleton<IssueVersionService>();
 

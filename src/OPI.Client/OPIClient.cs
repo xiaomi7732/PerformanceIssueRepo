@@ -9,11 +9,11 @@ using OPI.Core.Models;
 
 namespace OPI.Client;
 
-public class OPIClient
+public class OPIClient : IAuthorizedOPIClient
 {
     private readonly HttpClient _httpClient;
     private readonly IGitHubClient? _gitHubClient;
-    private readonly ILogger<OPIClient> _logger;
+    private readonly ILogger _logger;
     private readonly OPIClientOptions _clientOptions;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
@@ -24,7 +24,6 @@ public class OPIClient
         ILogger<OPIClient> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
         _gitHubClient = gitHubClient;
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _clientOptions = clientOptions?.Value ?? throw new ArgumentNullException(nameof(clientOptions));
@@ -37,6 +36,8 @@ public class OPIClient
 
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
+
+    public string? Name { get; set; }
 
     public Uri? Endpoint => _httpClient.BaseAddress;
 
@@ -115,7 +116,7 @@ public class OPIClient
         HttpResponseMessage response = await _httpClient.PostAsync(path, body, cancellationToken).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         PerfIssueRegisterEntry? result = await response.Content.ReadFromJsonAsync<PerfIssueRegisterEntry>(_jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
-        if(result is null)
+        if (result is null)
         {
             throw new InvalidOperationException("Result object is expected, null returned.");
         }

@@ -6,13 +6,13 @@ namespace OPI.WebUI.Services;
 
 public class IssueVersionService
 {
-    private readonly OPIClient _opiClient;
+    private readonly IAnonymousOPIClient _opiClient;
     private readonly ILogger _logger;
     private Dictionary<Guid, IEnumerable<string>> _cache;
     private IEnumerable<string>? _availableVersions;
 
     public IssueVersionService(
-        OPIClient opiClient,
+        IAnonymousOPIClient opiClient,
         ILogger<IssueVersionService> logger)
     {
         _opiClient = opiClient ?? throw new ArgumentNullException(nameof(opiClient));

@@ -13,7 +13,7 @@ namespace OPI.WebUI.Pages;
 public partial class RegistryManager
 {
     [Inject]
-    public OPIClient OpiClient { get; private set; } = default!;
+    public IAuthorizedOPIClient OpiClient { get; private set; } = default!;
 
     [Inject]
     private IJSRuntime _jsRuntime { get; set; } = default!;
