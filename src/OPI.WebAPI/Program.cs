@@ -25,7 +25,7 @@ builder.Services.AddServiceProfiler();
 
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>
 {
-    config.WithOrigins("http://localhost:5160", "https://white-bay-0b797e61e.2.azurestaticapps.net")
+    config.WithOrigins("http://localhost:5160", "https://white-bay-0b797e61e.2.azurestaticapps.net", "https://purple-beach-00e7e341e.2.azurestaticapps.net")
         .AllowAnyMethod()
         .WithHeaders("content-type", "authorization");
 }));
