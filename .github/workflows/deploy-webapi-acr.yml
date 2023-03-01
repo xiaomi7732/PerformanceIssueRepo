@@ -5,6 +5,8 @@ on:
 
 env:
   IMAGE_NAME: opiapi
+  CONTAINER_APP_NAME: opiapi
+  CONTAINER_APP_RESOURCE_GROUP: opi-dev-westus-002
 
 jobs:
   docker_build_push_acr:
@@ -36,3 +38,16 @@ jobs:
         file: src/dockerfile.webapi
         push: true
         tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: deploy Container App
+      uses: azure/container-apps-deploy-action@v0
+      with:
+        acrName: ${{ secrets.ACR_NAME }}
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.CONTAINER_APP_RESOURCE_GROUP }}
+        imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
