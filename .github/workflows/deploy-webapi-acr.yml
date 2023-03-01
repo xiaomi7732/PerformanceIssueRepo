@@ -35,4 +35,4 @@ jobs:
         context: /src/
         file: /src/dockerfile.webapi
         push: true
-        tags: ${{ secrets.ACR_ENDPOINT }}/{{ env.IMAGE_NAME }}:${{ github.sha }}
+        tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
