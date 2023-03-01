@@ -32,7 +32,7 @@ jobs:
     - name: Build the WebAPI image and push it to ACR
       uses: docker/build-push-action@v4
       with:
-        context: /src/
-        file: /src/dockerfile.webapi
+        context: src/
+        file: src/dockerfile.webapi
         push: true
         tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
