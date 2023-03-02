@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using OPI.Core.Models;
 
 namespace OPI.WebAPI;
@@ -36,12 +37,28 @@ internal static class PerfIssueRegistryEntryExtensions
 
     private static PerfIssueRegisterEntry Track(IHttpContextAccessor httpContextAccessor, Func<string, DateTime, PerfIssueRegisterEntry> tracker)
     {
-        string? userName = httpContextAccessor.HttpContext?.User?.Identity?.Name;
-        if (string.IsNullOrEmpty(userName))
+        if (httpContextAccessor.HttpContext?.User?.Identity is not ClaimsIdentity identity)
+        {
+            throw new InvalidOperationException("Unsupported identity type. Expect it to be claims identity");
+        }
+
+        if (identity is null || !identity.IsAuthenticated)
+        {
+            throw new InvalidOperationException("The request is not authenticated.");
+        }
+
+        Claim? userNameClaim = identity.Claims.FirstOrDefault(c => c.Type == "preferred_username");
+        if (userNameClaim is null)
+        {
+            userNameClaim = identity.Claims.FirstOrDefault(c => c.Type == "name");
+        }
+
+        if (userNameClaim is null)
         {
             throw new InvalidOperationException("User info doesn't exist on the http context.");
         }
 
+        string userName = userNameClaim.Value;
         DateTime utcNow = DateTime.UtcNow;
 
         return tracker(userName, utcNow);
