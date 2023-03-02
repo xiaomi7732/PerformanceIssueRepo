@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using OPI.Client;
 using OPI.WebUI;
 using OPI.WebUI.Services;
@@ -33,6 +34,7 @@ builder.Services.AddAuthenticatedOPIClient(authOpiClientName);
 string anonymousOpiClientName="opi-client-anonymous";
 builder.Services.AddAnonymousOPIClient(anonymousOpiClientName);
 
+builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
 builder.Services.AddSingleton<IssueVersionService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

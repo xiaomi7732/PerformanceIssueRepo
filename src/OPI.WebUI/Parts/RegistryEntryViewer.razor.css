@@ -24,14 +24,12 @@
     margin-top: 32px;
 }
 
-.card-with-preview
-{
+.card-with-preview {
     display: flex;
     flex-direction: row;
 }
 
-.card-with-preview .item-preview
-{
+.card-with-preview .item-preview {
     margin-left: 32px;
     background-color: wheat;
     padding: 16px;
@@ -62,4 +60,19 @@
 
 ::deep .help-link-input {
     width: 800px;
+}
+
+.active-status {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.active-item {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.inactive-item {
+    background-color: var(--accent-color-disabled);
+    color: white;
 }

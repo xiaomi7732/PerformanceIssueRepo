@@ -24,6 +24,41 @@ public partial class RegistryManager
     private IReadOnlyCollection<PerfIssueRegisterEntry>? _allRegisteredItems;
     public ObservableCollection<IssueRegistryItemViewModel> RegisteredItems { get; } = new ObservableCollection<IssueRegistryItemViewModel>();
 
+    private bool _showActiveEntries = true;
+    public bool ShowActiveEntries
+    {
+        get
+        {
+            return _showActiveEntries;
+        }
+        set
+        {
+            if (_showActiveEntries != value)
+            {
+                _showActiveEntries = value;
+                FilterData();
+            }
+        }
+    }
+
+    private bool _showInactiveEntries = true;
+    public bool ShowInactiveEntries
+    {
+        get
+        {
+            return _showInactiveEntries;
+        }
+        set
+        {
+            if (_showInactiveEntries != value)
+            {
+                _showInactiveEntries = value;
+                FilterData();
+            }
+
+        }
+    }
+
     public bool Initialized { get; private set; }
 
     private string? _keyword;
@@ -75,7 +110,7 @@ public partial class RegistryManager
                 InActive++;
             }
 
-            if(targetVM.Model is not null)
+            if (targetVM.Model is not null)
             {
                 targetVM.Model.LastModifiedAt = result.LastModifiedAt;
                 targetVM.Model.LastModifiedBy = result.LastModifiedBy;
@@ -217,7 +252,7 @@ public partial class RegistryManager
 
     public async Task OnSubmitEditAsync(IssueRegistryItemViewModel target)
     {
-        if(target is null)
+        if (target is null)
         {
             Console.WriteLine("Nothing to submit for editing.");
             return;
@@ -226,7 +261,7 @@ public partial class RegistryManager
         PerfIssueRegisterEntry newEntry = target.ToRegistryEntry();
         PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(newEntry, default);
 
-        if(result is null)
+        if (result is null)
         {
             // Update failed.
             await _jsRuntime.InvokeVoidAsync("alert", $"Failed editing item by id: {target.InsightIdString}");
@@ -235,9 +270,9 @@ public partial class RegistryManager
 
         // Succeeded.
         target.DisplayMode = IssueRegistryItemDisplayMode.Read;
-        
+
         // Update tracking info.
-        if(target.Model is not null)
+        if (target.Model is not null)
         {
             target.Model.LastModifiedAt = result.LastModifiedAt;
             target.Model.LastModifiedBy = result.LastModifiedBy;
@@ -287,6 +322,16 @@ public partial class RegistryManager
                     || (!string.IsNullOrEmpty(item.Recommendation) && item.Recommendation.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
                     || (!string.IsNullOrEmpty(item.Rationale) && item.Rationale.Contains(Keyword, StringComparison.OrdinalIgnoreCase));
             });
+        }
+
+        if(!_showActiveEntries)
+        {
+            filteredResult = filteredResult.Where(item => !item.IsActive);
+        }
+
+        if(!_showInactiveEntries)
+        {
+            filteredResult = filteredResult.Where(item => item.IsActive);
         }
 
         foreach (IssueRegistryItemViewModel item in filteredResult.Select(item => new IssueRegistryItemViewModel(item)))

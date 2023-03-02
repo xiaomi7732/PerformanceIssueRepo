@@ -10,6 +10,17 @@
         placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"
         @bind:event="oninput"></input>
 </div>
+<div class='status-filter'>
+    <div>Displays:</div>
+    <div class='status-filter-item active-item'>
+        <input id='cbxShowActive' type='checkbox' @bind='@ShowActiveEntries' />
+        <label for='cbxShowActive'>Active</label>
+    </div>
+    <div class='status-filter-item inactive-item'>
+        <input id='cbxShowInactive' type='checkbox' @bind='@ShowInactiveEntries' />
+        <label for='cbxShowInactive'>Inactive</label>
+    </div>
+</div>
 <div>
     <div>
         <span>Active:</span><span>@Active</span>&nbsp;
@@ -27,14 +38,9 @@ else if (RegisteredItems.Any())
 {
     @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
     {
-        <RegistryEntryViewer ViewModel="@entry"
-            ToggleActivateCallback="ToggleActivateAsync"
-            CancelAddCallback="OnCancelAddAsync"
-            DeleteItemCallback="DeleteAsync"
-            SubmitAddedCallback="OnSubmitAddAsync"
-            CancelEditCallback="OnCancelEditAsync"
-            SubmitEditCallback="OnSubmitEditAsync"
-        />
+        <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
+            CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
+            CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
     }
 }
 else

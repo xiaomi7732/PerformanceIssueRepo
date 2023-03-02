@@ -1,6 +1,33 @@
-.search-input
-{
+.search-input {
     width: 600px;
     margin-top: 32px;
     margin-bottom: 16px;
+}
+
+.status-filter {
+    display: flex;
+    flex-direction: row;
+}
+
+.status-filter-item {
+    margin-left: 8px;
+    margin-right: 8px;
+    padding-left: 4px;
+    padding-right: 8px;
+    display: flex;
+}
+
+.status-filter-item>input,
+label {
+    cursor: pointer;
+}
+
+.active-item {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.inactive-item {
+    background-color: var(--accent-color-disabled);
+    color: white;
 }

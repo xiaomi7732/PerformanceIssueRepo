@@ -131,10 +131,6 @@ IssueRegistryItemDisplayMode.Edit)
         </div>
     </div>
 }
-else if (@ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
-{
-    <div>Editing item: @ViewModel.InsightIdString</div>
-}
 else
 {
     // Read/Card view
@@ -154,7 +150,15 @@ else
 
         <div class="issue-item">
             <div class='issue-item-title'>Is Active</div>
-            <div>@ViewModel.IsActive</div>
+            @if(ViewModel.IsActive)
+            {
+                <div class='active-status active-item'>@ViewModel.IsActive</div>
+            }
+            else
+            {
+                <div class='active-status inactive-item'>@ViewModel.IsActive</div>
+            }
+
         </div>
 
         <div class="issue-item">
