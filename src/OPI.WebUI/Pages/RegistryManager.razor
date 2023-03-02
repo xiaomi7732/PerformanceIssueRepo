@@ -12,11 +12,11 @@
 </div>
 <div class='status-filter'>
     <div>Displays:</div>
-    <div class='status-filter-item'>
+    <div class='status-filter-item active-item'>
         <input id='cbxShowActive' type='checkbox' @bind='@ShowActiveEntries' />
         <label for='cbxShowActive'>Active</label>
     </div>
-    <div class='status-filter-item'>
+    <div class='status-filter-item inactive-item'>
         <input id='cbxShowInactive' type='checkbox' @bind='@ShowInactiveEntries' />
         <label for='cbxShowInactive'>Inactive</label>
     </div>
@@ -39,8 +39,8 @@ else if (RegisteredItems.Any())
     @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
     {
         <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
-    CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
-    CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
+            CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
+            CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
     }
 }
 else
