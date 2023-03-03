@@ -1,0 +1,5 @@
+::deep .edit-area
+{
+    width: 95%;
+    min-height: 400px;
+}

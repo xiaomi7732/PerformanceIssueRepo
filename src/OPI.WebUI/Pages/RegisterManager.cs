@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -13,10 +14,13 @@ namespace OPI.WebUI.Pages;
 public partial class RegistryManager
 {
     [Inject]
-    public IAuthorizedOPIClient OpiClient { get; private set; } = default!;
+    private IAuthorizedOPIClient OpiClient { get; private set; } = default!;
 
     [Inject]
     private IJSRuntime _jsRuntime { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager _navigationManager { get; set; } = default!;
 
     [Inject]
     private AuthenticationStateProvider _authContext { get; set; } = default!;
@@ -81,8 +85,23 @@ public partial class RegistryManager
 
     protected override async Task OnInitializedAsync()
     {
-        await ReloadDataAsync();
-        Initialized = true;
+        try
+        {
+            await ReloadDataAsync();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", "You don't have permission to get the data. Please apply for the proper role. You will be redirect back to the home page.");
+            _navigationManager.NavigateTo("/", true);
+        }
+        catch (Exception ex)
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", "Unknown error happened. Details: " + ex.Message);
+        }
+        finally
+        {
+            Initialized = true;
+        }
     }
 
     public async Task ToggleActivateAsync(IssueRegistryItemViewModel targetVM)
@@ -324,12 +343,12 @@ public partial class RegistryManager
             });
         }
 
-        if(!_showActiveEntries)
+        if (!_showActiveEntries)
         {
             filteredResult = filteredResult.Where(item => !item.IsActive);
         }
 
-        if(!_showInactiveEntries)
+        if (!_showInactiveEntries)
         {
             filteredResult = filteredResult.Where(item => item.IsActive);
         }

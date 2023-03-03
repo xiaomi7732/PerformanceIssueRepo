@@ -8,11 +8,14 @@
 </div>
 
 <div>
-    <EditForm Model="@Content" OnSubmit="@HandleSubmitAsync">
+    <EditForm Model="@Content" OnValidSubmit="@HandleSubmitAsync">
         <DataAnnotationsValidator />
+        <InputTextArea class='edit-area' id="content" @bind-Value="Content.Value"></InputTextArea>
+
         <ValidationSummary />
 
-        <InputTextArea id="content" @bind-Value="Content.Value"></InputTextArea>
-        <button type="submit">Import</button>
+        <div>
+            <button type="submit">Import</button>
+        </div>
     </EditForm>
 </div>
