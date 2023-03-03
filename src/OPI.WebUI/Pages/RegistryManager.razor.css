@@ -7,6 +7,7 @@
 .status-filter {
     display: flex;
     flex-direction: row;
+    margin-bottom: 16px;
 }
 
 .status-filter-item {
@@ -22,8 +23,12 @@ label {
     cursor: pointer;
 }
 
+.operation-buttons{
+    margin-bottom: 16px;
+}
+
 .active-item {
-    background-color: var(--accent-color);
+    background-color: var(--released-color);
     color: white;
 }
 

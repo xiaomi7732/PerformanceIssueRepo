@@ -1,14 +1,9 @@
 @page "/"
 
-<h2>Browse Issue</h2>
-
-<NavLink href="/Manage">Manage</NavLink>
-<NavLink href="/Import">Import</NavLink>
-
-<div>
+<div class='container'>
     <div id='pickers'>
         <div id='spec-picker'>
-            <div>Pick a spec version:</div>
+            <div class='choice-label'>Pick a spec version:</div>
             <div>
                 <select @bind="@PickedVersion" for="specVersion">
                     <option value="latest">Latest</option>
@@ -21,7 +16,7 @@
         </div>
 
         <div id='view-picker'>
-            <div>Pick a view:</div>
+            <div class='choice-label'>Pick a view:</div>
             <div>
                 <select @bind="@CurrentView" for="currentView">
                     <option value="card">Card</option>
