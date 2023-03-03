@@ -1,0 +1,29 @@
+name: PR Build
+on: [push]
+
+env:
+  DOTNET_VERSION: '7.x'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [
+          'src/OPI.Client',
+          'src/OPI.WebAPI',
+          'src/OPI.WebUI'
+        ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore NuGet packages
+        run: dotnet restore ${{ matrix.project }}
+
+      - name: Build
+        run: dotnet build ${{ matrix.project }} --configuration Release --no-restore
