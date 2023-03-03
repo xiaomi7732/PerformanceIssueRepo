@@ -1,5 +1,5 @@
 name: PR Build
-on: [push]
+on: [push, workflow_dispatch]
 
 env:
   DOTNET_VERSION: '7.x'
