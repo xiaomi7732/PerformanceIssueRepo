@@ -1,6 +1,8 @@
+using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using NReco.Csv;
 using OPI.Client;
 using OPI.Core.Models;
@@ -17,6 +19,12 @@ public partial class BatchRegister
     [Inject]
     public CSVReaderFactory CsvReaderFactory { get; private set; } = default!;
 
+    [Inject]
+    private IJSRuntime _jsRuntime { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager _navigationManager { get; set; } = default!;
+
     public BatchContent Content { get; } = new BatchContent();
 
     public IEnumerable<string> ErrorMessages { get; private set; } = Enumerable.Empty<string>();
@@ -28,18 +36,33 @@ public partial class BatchRegister
             return;
         }
 
-        using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(Content.Value)))
-        using (StreamReader inputStream = new StreamReader(memoryStream))
+        try
         {
-            CsvReader reader = CsvReaderFactory.CreateCSVReader(inputStream);
-            while (reader.Read())
+            using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(Content.Value)))
+            using (StreamReader inputStream = new StreamReader(memoryStream))
             {
-                await ProcessLineAsync(reader, default);
+                CsvReader reader = CsvReaderFactory.CreateCSVReader(inputStream);
+                while (reader.Read())
+                {
+                    await ProcessLineAsync(reader, default);
+                }
             }
-        }
 
-        Content.Value = null;
-        StateHasChanged();
+            Content.Value = null;
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", "You don't have permission to get the data. Please apply for the proper role. You will be redirect back to the home page.");
+            _navigationManager.NavigateTo("/", true);
+        }
+        catch (Exception ex)
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", "Unknown error happened. Details: " + ex.Message);
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
     private async Task ProcessLineAsync(CsvReader lineReader, CancellationToken cancellationToken)
