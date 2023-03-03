@@ -1,13 +1,19 @@
 /* Main layout */
-.working-space
-{
+.container {
+    margin-top: 32px;
+}
+
+.working-space {
     display: flex;
     flex-direction: row;
 }
 
-.main-section
-{
+.main-section {
     flex-grow: 5;
+}
+
+.choice-label{
+    margin-right: 8px;
 }
 
 
@@ -28,32 +34,27 @@
     margin-left: 4px;
 }
 
-.search-input
-{
+.search-input {
     width: 600px;
     margin-top: 32px;
     margin-bottom: 16px;
 }
 
-#pickers
-{
+#pickers {
     display: flex;
 }
 
-#spec-picker
-{
+#spec-picker {
     display: flex;
 }
 
-#view-picker
-{
+#view-picker {
     margin-left: 16px;
     display: flex;
 }
 
 /* Substitutes */
-#substitute
-{
+#substitute {
     min-width: 150px;
     padding-left: 32px;
 }

@@ -68,7 +68,7 @@
 }
 
 .active-item {
-    background-color: var(--accent-color);
+    background-color: var(--released-color);
     color: white;
 }
 

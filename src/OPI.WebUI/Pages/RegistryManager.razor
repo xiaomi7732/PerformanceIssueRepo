@@ -1,10 +1,5 @@
 ﻿@page "/Manage"
 
-<h2>Manage Registry</h2>
-
-<NavLink href="/">Issues</NavLink>
-<NavLink href="/Import">Import</NavLink>
-
 <div>
     <input class="search-input" type="search"
         placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"
@@ -14,20 +9,14 @@
     <div>Displays:</div>
     <div class='status-filter-item active-item'>
         <input id='cbxShowActive' type='checkbox' @bind='@ShowActiveEntries' />
-        <label for='cbxShowActive'>Active</label>
+        <label for='cbxShowActive'>Active: <span>@Active</span></label>
     </div>
     <div class='status-filter-item inactive-item'>
         <input id='cbxShowInactive' type='checkbox' @bind='@ShowInactiveEntries' />
-        <label for='cbxShowInactive'>Inactive</label>
+        <label for='cbxShowInactive'>Inactive: <span>@InActive</span></label>
     </div>
 </div>
-<div>
-    <div>
-        <span>Active:</span><span>@Active</span>&nbsp;
-        <span>Inactive:</span><span>@InActive</span>
-    </div>
-</div>
-<div>
+<div class='operation-buttons'>
     <button @onclick="AddNewItemAsync">+ Add new item</button>
 </div>
 @if (!Initialized)
