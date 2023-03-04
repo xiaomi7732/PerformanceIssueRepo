@@ -3,3 +3,8 @@
     width: 95%;
     min-height: 400px;
 }
+
+.description > div
+{
+    margin-bottom: 8px;
+}
