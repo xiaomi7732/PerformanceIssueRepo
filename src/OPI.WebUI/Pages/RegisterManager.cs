@@ -87,7 +87,7 @@ public partial class RegistryManager
     {
         try
         {
-            await ReloadDataAsync();
+            await ReloadDataAsync(default);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
         {
@@ -305,7 +305,7 @@ public partial class RegistryManager
         FilterData();
     }
 
-    private async Task ReloadDataAsync()
+    private async Task ReloadDataAsync(CancellationToken cancellationToken)
     {
         Console.WriteLine(nameof(ReloadDataAsync));
         _allRegisteredItems = (await OpiClient.ListAllRegisteredAsync(default))
@@ -313,6 +313,8 @@ public partial class RegistryManager
             .ThenBy(item => item.PermanentId)
             .ToList()
             .AsReadOnly();
+        
+        ExtractedSubstitutes = (await OpiClient.ExtractSubstitutes("latest", cancellationToken).ConfigureAwait(false)).OrderBy(item => item, StringComparer.OrdinalIgnoreCase).ToList().AsReadOnly();
 
         Active = _allRegisteredItems.Count(item => item.IsActive);
         InActive = _allRegisteredItems.Count(item => !item.IsActive);
@@ -358,4 +360,7 @@ public partial class RegistryManager
             RegisteredItems.Add(item);
         }
     }
+
+    // Substitutes
+    public IReadOnlyCollection<string>? ExtractedSubstitutes { get; set; } = null;
 }
