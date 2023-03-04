@@ -1,17 +1,43 @@
 #header {
     display: flex;
-    align-content: flex-start;
+    flex-direction: column;
+    align-items: stretch;
+    background-color: white;
+    padding-left: 32px;
+    padding-right: 32px;
+    border-bottom: 1px solid rgb(209, 209, 209);
+    box-shadow: 0px 0px 4px #b8b8b8;
+}
+
+.header-description {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.navigation-container {
+    margin-bottom: 16px;
+}
+
+.login-display {
+    align-self: flex-end;
+}
+
+.canvas {
+    background-color: #ededed;
 }
 
 #title {
     flex-grow: 100;
 }
 
-::deep textarea, input {
+::deep textarea,
+::deep input {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    border: 1px solid #b8b8b8;
 }
 
-.background{
-    background-color: #ededed;
+.working-space {
+
     padding: 32px;
 }

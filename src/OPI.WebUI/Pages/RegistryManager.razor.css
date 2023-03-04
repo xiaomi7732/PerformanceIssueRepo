@@ -1,6 +1,5 @@
 .search-input {
     width: 600px;
-    margin-top: 32px;
     margin-bottom: 16px;
 }
 
@@ -35,4 +34,14 @@ label {
 .inactive-item {
     background-color: var(--accent-color-disabled);
     color: white;
+}
+
+.main-area
+{
+    display: flex;
+}
+
+#substitute
+{
+    margin-left: 32px;
 }

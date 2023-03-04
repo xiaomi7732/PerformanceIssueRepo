@@ -25,12 +25,20 @@
 }
 else if (RegisteredItems.Any())
 {
-    @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
-    {
-        <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
+    <div class='main-area'>
+        <div class='registered-items'>
+
+            @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
+            {
+                <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
             CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
             CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
-    }
+            }
+        </div>
+        <div id='substitute'>
+            <SubstituteViewer Title="Substitutes" ExtractedSubstitutes="@ExtractedSubstitutes" />
+        </div>
+    </div>
 }
 else
 {

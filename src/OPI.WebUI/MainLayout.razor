@@ -1,15 +1,24 @@
 ﻿@inherits LayoutComponentBase
-<div class='background'>
+<div class='canvas'>
+
     <div id='header'>
-        <h1 id='title'>Open Performance Issue Registry (DRAFT)</h1>
-        <div id='login-display'>
-            <LoginDisplay />
+        <div class='header-description'>
+            <h1 id='title'>Open Performance Issue Registry (DRAFT)</h1>
+            <div id='login-display'>
+                <LoginDisplay />
+            </div>
+        </div>
+
+        <div class='navigation-container'>
+        <NavMenu />
         </div>
     </div>
 
-    <NavMenu />
+    <div class='working-space'>
 
-    <main>
-        @Body
-    </main>
+
+        <main>
+            @Body
+        </main>
+    </div>
 </div>
