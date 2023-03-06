@@ -4,7 +4,6 @@ public record PerfIssueItem : PerfIssue
 {
     public PerfIssueItem()
     {
-
     }
 
     public PerfIssueItem(PerfIssue spec)
