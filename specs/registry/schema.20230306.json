@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "permanentId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "docURL": {
+            "type": "null"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "legacyId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "permanentId",
+          "title",
+          "description",
+          "recommendation"
+        ]
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "items"
+  ]
+}
