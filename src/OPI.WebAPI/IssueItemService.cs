@@ -9,12 +9,16 @@ public class IssueItemService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IssueRegistryService _issueRegistryService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly ILogger _logger;
 
     public IssueItemService(
         IHttpClientFactory httpClientFactory,
         IssueRegistryService issueRegistryService,
-        JsonSerializerOptions jsonSerializerOptions)
+        JsonSerializerOptions jsonSerializerOptions,
+        ILogger<IssueItemService> logger)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _issueRegistryService = issueRegistryService ?? throw new ArgumentNullException(nameof(issueRegistryService));
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
@@ -62,7 +66,25 @@ public class IssueItemService
         // .../1.0.0-alpha/specs/registry/perf-issue.json
         string url = $"{version}/specs/registry/perf-issue.json";
         HttpClient client = _httpClientFactory.CreateClient("issue-spec");
-        IEnumerable<PerfIssueItem>? result = await client.GetFromJsonAsync<IEnumerable<PerfIssueItem>>(url, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+
+        IEnumerable<PerfIssueItem>? result = null;
+        try
+        {
+            PerfIssueRegistryDocument? document = await client.GetFromJsonAsync<PerfIssueRegistryDocument>(url, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+            result = document?.Items;
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogDebug(ex, "Not able to deserialize PerfIssueRegistryDocument. This should not happen for any version higher than 1.0.0-alpha7.");
+        }
+
+        // This is for backward compatibility for 1.0.0-alpha7 and any versions released before it.
+        if (result is null || !result.Any())
+        {
+            _logger.LogInformation("Try get perf issue item collection without schema.");
+            result = await client.GetFromJsonAsync<IEnumerable<PerfIssueItem>>(url, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+        }
+
         if (result is null)
         {
             return Enumerable.Empty<PerfIssueItem>();
