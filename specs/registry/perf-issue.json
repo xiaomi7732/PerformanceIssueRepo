@@ -15,7 +15,7 @@
       "title": "ThreadPool starvation events detected",
       "description": "ThreadPool starvation occurs when the pool has no available threads to process new work items and it often causes applications to respond slowly.",
       "docURL": "https://learn.microsoft.com/en-us/dotnet/core/diagnostics/debug-threadpool-starvation",
-      "recommendation": "Follow the documentation to locate fix the thread pool starvation issue.",
+      "recommendation": "Follow the documentation to locate and fix the thread pool starvation issue.",
       "rationale": "{value} thread pool starvation events happened. We expect this number to be {relation} than {criteria}.",
       "legacyId": null
     },
