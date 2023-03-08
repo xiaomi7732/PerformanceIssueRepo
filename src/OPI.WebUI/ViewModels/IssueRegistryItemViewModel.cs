@@ -43,7 +43,7 @@ public class IssueRegistryItemViewModel
             IsActive = IsActive,
             Title = Title,
             Description = Description,
-            Recommendation = Description,
+            Recommendation = Recommendation,
             Rationale = Rationale,
             DocURL = helpLink,
         };
