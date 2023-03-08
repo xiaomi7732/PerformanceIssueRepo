@@ -24,14 +24,20 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Backend URL is overwritten by options pattern.
 builder.Services.AddOPIOptions();
 
+// Add json gen options
+builder.Services.AddOptions<JsonGenOptions>().Configure<IConfiguration>((opt, configuration) =>
+{
+    configuration.GetSection("JsonGenOptions").Bind(opt);
+});
+
 // Register an authenticated client
-string authOpiClientName="opi-client-auth";
+string authOpiClientName = "opi-client-auth";
 builder.Services.AddTransient<CustomAuthorizationMessageHandler>();
 builder.Services.AddHttpClient(authOpiClientName).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 builder.Services.AddAuthenticatedOPIClient(authOpiClientName);
 
 // Register an anonymous client
-string anonymousOpiClientName="opi-client-anonymous";
+string anonymousOpiClientName = "opi-client-anonymous";
 builder.Services.AddAnonymousOPIClient(anonymousOpiClientName);
 
 builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
