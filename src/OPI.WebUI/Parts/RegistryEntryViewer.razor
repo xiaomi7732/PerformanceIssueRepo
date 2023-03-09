@@ -62,8 +62,8 @@ IssueRegistryItemDisplayMode.Edit)
             <ValidationSummary />
 
             <hr />
+            <h2>Options:</h2>
             <div class='issue-item'>
-                Options:
                 <div class='issue-item'>
                     <label class='issue-item-title' for='allowsDuplicatedHelpLink'>Allows duplicated help link:</label>
                     <InputCheckbox id="allowsDuplicatedHelpLink" @bind-Value="ViewModel.AllowsDuplicatedHelpDocs" />
@@ -159,7 +159,7 @@ else
 
         <div class="issue-item">
             <div class='issue-item-title'>Is Active</div>
-            @if(ViewModel.IsActive)
+            @if (ViewModel.IsActive)
             {
                 <div class='active-status active-item'>@ViewModel.IsActive</div>
             }

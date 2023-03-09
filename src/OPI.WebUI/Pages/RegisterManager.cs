@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.Core.Validators;
 using OPI.WebAPI.Contracts;
 using OPI.WebUI.ViewModels;
 
@@ -221,10 +222,16 @@ public partial class RegistryManager
             return;
         }
 
-        RegistryEntryRequestData newEntry = newItemSpec.ToRequestData();
+        RegistryEntryRequestData requestData = newItemSpec.ToRequestData();
+
+        if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
+        {
+            return;
+        }
+
         try
         {
-            PerfIssueRegisterEntry newIssue = await OpiClient.RegisterAsync(newEntry, default);
+            PerfIssueRegisterEntry newIssue = await OpiClient.RegisterAsync(requestData, default);
 
             if (newIssue.PermanentId is null)
             {
@@ -279,6 +286,12 @@ public partial class RegistryManager
         }
 
         RegistryEntryRequestData requestData = target.ToRequestData();
+
+        if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
+        {
+            return;
+        }
+
         PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(requestData, default);
 
         if (result is null)
@@ -299,6 +312,27 @@ public partial class RegistryManager
         }
     }
 
+    private async Task<bool> ValidateSubmitAsync(RegistryEntryRequestData requestData, CancellationToken cancellationToken)
+    {
+        if (!requestData.Options.AllowsDuplicatedHelpDocs)
+        {
+            if (_allRegisteredItems is null)
+            {
+                return true;
+            }
+
+            SameHelpLinkValidator helpLinkValidator = new SameHelpLinkValidator(requestData.Data, _allRegisteredItems);
+
+            bool pass = await helpLinkValidator.ValidateAsync(cancellationToken: default);
+            if (!pass)
+            {
+                await _jsRuntime.InvokeVoidAsync("alert", "Are you intend to submit an item with a duplicated help link? Check the proper option if that's the intention. Details: " + helpLinkValidator.Reason);
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Filter
     private async Task OnKeywordChanged()
     {
@@ -314,7 +348,7 @@ public partial class RegistryManager
             .ThenBy(item => item.PermanentId)
             .ToList()
             .AsReadOnly();
-        
+
         ExtractedSubstitutes = (await OpiClient.ExtractSubstitutes("latest", cancellationToken).ConfigureAwait(false)).OrderBy(item => item, StringComparer.OrdinalIgnoreCase).ToList().AsReadOnly();
 
         Active = _allRegisteredItems.Count(item => item.IsActive);
