@@ -34,6 +34,6 @@ jobs:
             push: false
             load: true
             tags: pr/opiapi:latest
-            context: /src
+            context: src
             file: dockerfile.webapi
 
