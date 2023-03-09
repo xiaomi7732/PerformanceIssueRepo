@@ -61,6 +61,15 @@ IssueRegistryItemDisplayMode.Edit)
 
             <ValidationSummary />
 
+            <hr />
+            <div class='issue-item'>
+                Options:
+                <div class='issue-item'>
+                    <label class='issue-item-title' for='allowsDuplicatedHelpLink'>Allows duplicated help link:</label>
+                    <InputCheckbox id="allowsDuplicatedHelpLink" @bind-Value="ViewModel.AllowsDuplicatedHelpDocs" />
+                </div>
+            </div>
+
             <div class='button-list'>
                 <button class='button' type="submit">Submit</button>
                 @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)

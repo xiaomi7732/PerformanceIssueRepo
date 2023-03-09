@@ -1,4 +1,5 @@
 using OPI.Core.Models;
+using OPI.WebAPI.Contracts;
 
 namespace OPI.Client;
 
@@ -16,9 +17,9 @@ public interface IAuthorizedOPIClient : IAnonymousOPIClient
 {
     Task<bool> DeleteAsync(PerfIssueRegisterEntry targetEntry, CancellationToken cancellationToken);
     Task<IEnumerable<PerfIssueRegisterEntry>> ListAllRegisteredAsync(CancellationToken cancellationToken);
-    Task<PerfIssueRegisterEntry> RegisterAsync(PerfIssueRegisterEntry newEntry, CancellationToken cancellationToken);
+    Task<PerfIssueRegisterEntry> RegisterAsync(RegistryEntryRequestData newEntry, CancellationToken cancellationToken);
     Task<PerfIssueRegisterEntry?> ToggleActivateAsync(Guid issueId, CancellationToken cancellationToken);
-    Task<PerfIssueRegisterEntry?> UpdateEntryAsync(PerfIssueRegisterEntry target, CancellationToken cancellationToken);
+    Task<PerfIssueRegisterEntry?> UpdateEntryAsync(RegistryEntryRequestData requestData, CancellationToken cancellationToken);
     void UseAccessToken(string accessToken);
 }
 

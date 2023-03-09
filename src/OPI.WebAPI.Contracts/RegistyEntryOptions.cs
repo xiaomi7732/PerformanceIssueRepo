@@ -1,4 +1,4 @@
-namespace OPI.WebAPI.Services;
+namespace OPI.WebAPI.Contracts;
 
 public record RegistryEntryOptions
 {

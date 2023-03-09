@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.WebAPI.Contracts;
 using OPI.WebUI.ViewModels;
 
 namespace OPI.WebUI.Pages;
@@ -220,23 +221,23 @@ public partial class RegistryManager
             return;
         }
 
-        PerfIssueRegisterEntry newEntry = newItemSpec.ToRegistryEntry();
+        RegistryEntryRequestData newEntry = newItemSpec.ToRequestData();
         try
         {
-            newEntry = await OpiClient.RegisterAsync(newEntry, default);
+            PerfIssueRegisterEntry newIssue = await OpiClient.RegisterAsync(newEntry, default);
 
-            if (newEntry.PermanentId is null)
+            if (newIssue.PermanentId is null)
             {
                 throw new InvalidCastException("New item permanent id can't be null.");
             }
-            newItemSpec.InsightIdString = newEntry.PermanentId.Value.ToString("D");
+            newItemSpec.InsightIdString = newIssue.PermanentId.Value.ToString("D");
             newItemSpec.DisplayMode = IssueRegistryItemDisplayMode.Read;
-            newItemSpec.Model.CreatedAt = newEntry.CreatedAt;
-            newItemSpec.Model.CreatedBy = newEntry.CreatedBy;
-            newItemSpec.Model.LastModifiedAt = newEntry.LastModifiedAt;
-            newItemSpec.Model.LastModifiedBy = newEntry.LastModifiedBy;
+            newItemSpec.Model.CreatedAt = newIssue.CreatedAt;
+            newItemSpec.Model.CreatedBy = newIssue.CreatedBy;
+            newItemSpec.Model.LastModifiedAt = newIssue.LastModifiedAt;
+            newItemSpec.Model.LastModifiedBy = newIssue.LastModifiedBy;
 
-            if (newItemSpec.IsActive)
+            if (newIssue.IsActive)
             {
                 Active++;
             }
@@ -277,8 +278,8 @@ public partial class RegistryManager
             return;
         }
 
-        PerfIssueRegisterEntry newEntry = target.ToRegistryEntry();
-        PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(newEntry, default);
+        RegistryEntryRequestData requestData = target.ToRequestData();
+        PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(requestData, default);
 
         if (result is null)
         {

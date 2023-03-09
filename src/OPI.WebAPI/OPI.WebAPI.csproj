@@ -23,5 +23,6 @@
 
     <ItemGroup>
         <ProjectReference Include="../SPEssentials.Identities/SPEssentials.Identities.csproj" />
+        <ProjectReference Include="..\OPI.WebAPI.Contracts\OPI.WebAPI.Contracts.csproj" />
     </ItemGroup>
 </Project>

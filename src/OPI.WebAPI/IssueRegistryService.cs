@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using OPI.Core.Models;
 using OPI.Core.Validators;
+using OPI.WebAPI.Contracts;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
