@@ -30,7 +30,7 @@ jobs:
 
       - name: Build docker image for the WebAPI
         uses: docker/build-push-action@v4
-        if: ${{ matrix.project }} == 'src/OPI.WebAPI'
+        if: matrix.project == 'src/OPI.WebAPI'
         with:
             push: false
             tags: pr/opiapi:latest
