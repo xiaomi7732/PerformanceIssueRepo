@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.Core.Validators;
+using OPI.WebAPI.Contracts;
 using OPI.WebUI.ViewModels;
 
 namespace OPI.WebUI.Pages;
@@ -220,34 +222,49 @@ public partial class RegistryManager
             return;
         }
 
-        PerfIssueRegisterEntry newEntry = newItemSpec.ToRegistryEntry();
         try
         {
-            newEntry = await OpiClient.RegisterAsync(newEntry, default);
+            newItemSpec.IsInProgress = true;
+            StateHasChanged();
+            RegistryEntryRequestData requestData = newItemSpec.ToRequestData();
 
-            if (newEntry.PermanentId is null)
+            if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
             {
-                throw new InvalidCastException("New item permanent id can't be null.");
+                return;
             }
-            newItemSpec.InsightIdString = newEntry.PermanentId.Value.ToString("D");
-            newItemSpec.DisplayMode = IssueRegistryItemDisplayMode.Read;
-            newItemSpec.Model.CreatedAt = newEntry.CreatedAt;
-            newItemSpec.Model.CreatedBy = newEntry.CreatedBy;
-            newItemSpec.Model.LastModifiedAt = newEntry.LastModifiedAt;
-            newItemSpec.Model.LastModifiedBy = newEntry.LastModifiedBy;
 
-            if (newItemSpec.IsActive)
+            try
             {
-                Active++;
+                PerfIssueRegisterEntry newIssue = await OpiClient.RegisterAsync(requestData, default);
+
+                if (newIssue.PermanentId is null)
+                {
+                    throw new InvalidCastException("New item permanent id can't be null.");
+                }
+                newItemSpec.InsightIdString = newIssue.PermanentId.Value.ToString("D");
+                newItemSpec.DisplayMode = IssueRegistryItemDisplayMode.Read;
+                newItemSpec.Model.CreatedAt = newIssue.CreatedAt;
+                newItemSpec.Model.CreatedBy = newIssue.CreatedBy;
+                newItemSpec.Model.LastModifiedAt = newIssue.LastModifiedAt;
+                newItemSpec.Model.LastModifiedBy = newIssue.LastModifiedBy;
+
+                if (newIssue.IsActive)
+                {
+                    Active++;
+                }
+                else
+                {
+                    InActive++;
+                }
             }
-            else
+            catch (HttpRequestException ex)
             {
-                InActive++;
+                await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
             }
         }
-        catch (HttpRequestException ex)
+        finally
         {
-            await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
+            newItemSpec.IsInProgress = false;
         }
     }
 
@@ -277,25 +294,66 @@ public partial class RegistryManager
             return;
         }
 
-        PerfIssueRegisterEntry newEntry = target.ToRegistryEntry();
-        PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(newEntry, default);
-
-        if (result is null)
+        try
         {
-            // Update failed.
-            await _jsRuntime.InvokeVoidAsync("alert", $"Failed editing item by id: {target.InsightIdString}");
-            return;
+            target.IsInProgress = true;
+            StateHasChanged();
+
+            RegistryEntryRequestData requestData = target.ToRequestData();
+
+            if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
+            {
+                return;
+            }
+
+            PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(requestData, default);
+
+            if (result is null)
+            {
+                // Update failed.
+                await _jsRuntime.InvokeVoidAsync("alert", $"Failed editing item by id: {target.InsightIdString}");
+                return;
+            }
+
+            // Succeeded.
+            target.DisplayMode = IssueRegistryItemDisplayMode.Read;
+
+            // Update tracking info.
+            if (target.Model is not null)
+            {
+                target.Model.LastModifiedAt = result.LastModifiedAt;
+                target.Model.LastModifiedBy = result.LastModifiedBy;
+            }
         }
-
-        // Succeeded.
-        target.DisplayMode = IssueRegistryItemDisplayMode.Read;
-
-        // Update tracking info.
-        if (target.Model is not null)
+        catch (HttpRequestException ex)
         {
-            target.Model.LastModifiedAt = result.LastModifiedAt;
-            target.Model.LastModifiedBy = result.LastModifiedBy;
+            await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
         }
+        finally
+        {
+            target.IsInProgress = false;
+        }
+    }
+
+    private async Task<bool> ValidateSubmitAsync(RegistryEntryRequestData requestData, CancellationToken cancellationToken)
+    {
+        if (!requestData.Options.AllowsDuplicatedHelpDocs)
+        {
+            if (_allRegisteredItems is null)
+            {
+                return true;
+            }
+
+            SameHelpLinkValidator helpLinkValidator = new SameHelpLinkValidator(requestData.Data, _allRegisteredItems);
+
+            bool pass = await helpLinkValidator.ValidateAsync(cancellationToken: default);
+            if (!pass)
+            {
+                await _jsRuntime.InvokeVoidAsync("alert", "Are you intend to submit an item with a duplicated help link? Check the proper option if that's the intention. Details: " + helpLinkValidator.Reason);
+                return false;
+            }
+        }
+        return true;
     }
 
     // Filter
@@ -313,7 +371,7 @@ public partial class RegistryManager
             .ThenBy(item => item.PermanentId)
             .ToList()
             .AsReadOnly();
-        
+
         ExtractedSubstitutes = (await OpiClient.ExtractSubstitutes("latest", cancellationToken).ConfigureAwait(false)).OrderBy(item => item, StringComparer.OrdinalIgnoreCase).ToList().AsReadOnly();
 
         Active = _allRegisteredItems.Count(item => item.IsActive);

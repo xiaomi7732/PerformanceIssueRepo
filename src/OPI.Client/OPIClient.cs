@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
 using OPI.Core.Models;
+using OPI.WebAPI.Contracts;
 
 namespace OPI.Client;
 
@@ -105,10 +106,10 @@ public class OPIClient : IAuthorizedOPIClient
     /// <summary>
     /// Update a performance issue entry
     /// </summary>
-    public async Task<PerfIssueRegisterEntry?> UpdateEntryAsync(PerfIssueRegisterEntry target, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry?> UpdateEntryAsync(RegistryEntryRequestData target, CancellationToken cancellationToken)
     {
         string path = "registry";
-        JsonContent body = JsonContent.Create<PerfIssueRegisterEntry>(target, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
+        JsonContent body = JsonContent.Create<RegistryEntryRequestData>(target, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
         HttpResponseMessage response = await _httpClient.PutAsync(path, body).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         using (Stream stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
@@ -122,10 +123,10 @@ public class OPIClient : IAuthorizedOPIClient
     /// Registers a new entry
     /// </summary>
     /// <param name="newEntry"></param>
-    public async Task<PerfIssueRegisterEntry> RegisterAsync(PerfIssueRegisterEntry newEntry, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry> RegisterAsync(RegistryEntryRequestData newEntry, CancellationToken cancellationToken)
     {
         string path = "registry";
-        JsonContent body = JsonContent.Create<PerfIssueRegisterEntry>(newEntry, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
+        JsonContent body = JsonContent.Create<RegistryEntryRequestData>(newEntry, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
         HttpResponseMessage response = await _httpClient.PostAsync(path, body, cancellationToken).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         PerfIssueRegisterEntry? result = await response.Content.ReadFromJsonAsync<PerfIssueRegisterEntry>(_jsonSerializerOptions, cancellationToken).ConfigureAwait(false);

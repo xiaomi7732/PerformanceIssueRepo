@@ -1,14 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using OPI.Core.Models;
+using OPI.WebAPI.Contracts;
 
 namespace OPI.WebUI.ViewModels;
 
 public class IssueRegistryItemViewModel
 {
+    public bool IsInProgress { get; set; }
+
     public PerfIssueRegisterEntry? Model { get; }
     public IssueRegistryItemViewModel(PerfIssueRegisterEntry model)
     {
-        Model = model?? throw new ArgumentNullException(nameof(model));
+        Model = model ?? throw new ArgumentNullException(nameof(model));
         UpdateBy(model);
     }
 
@@ -29,23 +32,30 @@ public class IssueRegistryItemViewModel
         Rationale = entry.Rationale;
     }
 
-    public PerfIssueRegisterEntry ToRegistryEntry()
+    public RegistryEntryRequestData ToRequestData()
     {
         Guid.TryParse(InsightIdString, out Guid newId);
         Guid? newNullableId = newId == Guid.Empty ? null : newId;
 
         Uri.TryCreate(HelpLink, UriKind.Absolute, out Uri? helpLink);
 
-        PerfIssueRegisterEntry newEntry = new PerfIssueRegisterEntry()
+        RegistryEntryRequestData newEntry = new()
         {
-            PermanentId = newNullableId,
-            LegacyId = LegacyId,
-            IsActive = IsActive,
-            Title = Title,
-            Description = Description,
-            Recommendation = Recommendation,
-            Rationale = Rationale,
-            DocURL = helpLink,
+            Data = new PerfIssueRegisterEntry()
+            {
+                PermanentId = newNullableId,
+                LegacyId = LegacyId,
+                IsActive = IsActive,
+                Title = Title,
+                Description = Description,
+                Recommendation = Recommendation,
+                Rationale = Rationale,
+                DocURL = helpLink,
+            },
+            Options = new RegistryEntryOptions
+            {
+                AllowsDuplicatedHelpDocs = AllowsDuplicatedHelpDocs,
+            },
         };
 
         return newEntry;
@@ -80,6 +90,8 @@ public class IssueRegistryItemViewModel
             }
         }
     }
+
+    public bool AllowsDuplicatedHelpDocs { get; set; } = false;
 
     public bool IsActive { get; set; }
 

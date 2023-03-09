@@ -6,6 +6,7 @@ using Microsoft.JSInterop;
 using NReco.Csv;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.WebAPI.Contracts;
 using OPI.WebUI.ViewModels;
 
 namespace OPI.WebUI.Pages;
@@ -100,16 +101,19 @@ public partial class BatchRegister
             guid = Guid.NewGuid();
         }
 
-        PerfIssueRegisterEntry newEntry = new PerfIssueRegisterEntry()
+        RegistryEntryRequestData newEntry = new()
         {
-            IsActive = false,
-            LegacyId = string.IsNullOrEmpty(legacyId) ? null : legacyId,
-            PermanentId = guid,
-            Title = title,
-            Description = description,
-            Recommendation = recommendation,
-            Rationale = rationale,
-            DocURL = string.IsNullOrEmpty(docUrlString) ? null : new Uri(docUrlString),
+            Data = new PerfIssueRegisterEntry()
+            {
+                IsActive = false,
+                LegacyId = string.IsNullOrEmpty(legacyId) ? null : legacyId,
+                PermanentId = guid,
+                Title = title,
+                Description = description,
+                Recommendation = recommendation,
+                Rationale = rationale,
+                DocURL = string.IsNullOrEmpty(docUrlString) ? null : new Uri(docUrlString),
+            },
         };
         await OpiClient.RegisterAsync(newEntry, default);
     }

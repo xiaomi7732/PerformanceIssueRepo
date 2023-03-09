@@ -61,17 +61,33 @@ IssueRegistryItemDisplayMode.Edit)
 
             <ValidationSummary />
 
-            <div class='button-list'>
-                <button class='button' type="submit">Submit</button>
-                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
-                {
-                    <button class="button" type='button' @onclick="CancelAddAsync">Cancel</button>
-                }
-                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
-                {
-                    <button class="button" type='button' @onclick="CancelEditAsync">Cancel</button>
-                }
+            <hr />
+            <h2>Options:</h2>
+            <div class='issue-item'>
+                <div class='issue-item'>
+                    <label class='issue-item-title' for='allowsDuplicatedHelpLink'>Allows duplicated help link:</label>
+                    <InputCheckbox id="allowsDuplicatedHelpLink" @bind-Value="ViewModel.AllowsDuplicatedHelpDocs" />
+                </div>
             </div>
+
+            @if (ViewModel.IsInProgress)
+            {
+                <div class='spin'>Please stand by ...</div>
+            }
+            else
+            {
+                <div class='button-list'>
+                    <button class='button' type="submit">Submit</button>
+                    @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+                    {
+                        <button class="button" type='button' @onclick="CancelAddAsync">Cancel</button>
+                    }
+                    @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
+                    {
+                        <button class="button" type='button' @onclick="CancelEditAsync">Cancel</button>
+                    }
+                </div>
+            }
         </EditForm>
 
         <div class='item-preview'>
@@ -150,7 +166,7 @@ else
 
         <div class="issue-item">
             <div class='issue-item-title'>Is Active</div>
-            @if(ViewModel.IsActive)
+            @if (ViewModel.IsActive)
             {
                 <div class='active-status active-item'>@ViewModel.IsActive</div>
             }
