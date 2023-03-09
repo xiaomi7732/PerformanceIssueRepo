@@ -1,4 +1,4 @@
-name: Deploy WebAPI to ACR
+name: Deploy WebAPI to Container App by ACR
 
 on:
   workflow_dispatch:
