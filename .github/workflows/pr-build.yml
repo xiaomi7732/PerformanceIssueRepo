@@ -28,7 +28,8 @@ jobs:
       - name: Build
         run: dotnet build ${{ matrix.project }} --configuration Release --no-restore
 
-      - name: Build docker image
+      - name: Build docker image for the WebAPI
+        if: ${{ matrix.project }} == 'src/OPI.WebAPI'
         uses: docker/build-push-action@v4
         with:
             push: false
