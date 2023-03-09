@@ -70,17 +70,24 @@ IssueRegistryItemDisplayMode.Edit)
                 </div>
             </div>
 
-            <div class='button-list'>
-                <button class='button' type="submit">Submit</button>
-                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
-                {
-                    <button class="button" type='button' @onclick="CancelAddAsync">Cancel</button>
-                }
-                @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
-                {
-                    <button class="button" type='button' @onclick="CancelEditAsync">Cancel</button>
-                }
-            </div>
+            @if (ViewModel.IsInProgress)
+            {
+                <div class='spin'>Please stand by ...</div>
+            }
+            else
+            {
+                <div class='button-list'>
+                    <button class='button' type="submit">Submit</button>
+                    @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Add)
+                    {
+                        <button class="button" type='button' @onclick="CancelAddAsync">Cancel</button>
+                    }
+                    @if (ViewModel.DisplayMode == IssueRegistryItemDisplayMode.Edit)
+                    {
+                        <button class="button" type='button' @onclick="CancelEditAsync">Cancel</button>
+                    }
+                </div>
+            }
         </EditForm>
 
         <div class='item-preview'>

@@ -222,40 +222,49 @@ public partial class RegistryManager
             return;
         }
 
-        RegistryEntryRequestData requestData = newItemSpec.ToRequestData();
-
-        if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
-        {
-            return;
-        }
-
         try
         {
-            PerfIssueRegisterEntry newIssue = await OpiClient.RegisterAsync(requestData, default);
+            newItemSpec.IsInProgress = true;
+            StateHasChanged();
+            RegistryEntryRequestData requestData = newItemSpec.ToRequestData();
 
-            if (newIssue.PermanentId is null)
+            if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
             {
-                throw new InvalidCastException("New item permanent id can't be null.");
+                return;
             }
-            newItemSpec.InsightIdString = newIssue.PermanentId.Value.ToString("D");
-            newItemSpec.DisplayMode = IssueRegistryItemDisplayMode.Read;
-            newItemSpec.Model.CreatedAt = newIssue.CreatedAt;
-            newItemSpec.Model.CreatedBy = newIssue.CreatedBy;
-            newItemSpec.Model.LastModifiedAt = newIssue.LastModifiedAt;
-            newItemSpec.Model.LastModifiedBy = newIssue.LastModifiedBy;
 
-            if (newIssue.IsActive)
+            try
             {
-                Active++;
+                PerfIssueRegisterEntry newIssue = await OpiClient.RegisterAsync(requestData, default);
+
+                if (newIssue.PermanentId is null)
+                {
+                    throw new InvalidCastException("New item permanent id can't be null.");
+                }
+                newItemSpec.InsightIdString = newIssue.PermanentId.Value.ToString("D");
+                newItemSpec.DisplayMode = IssueRegistryItemDisplayMode.Read;
+                newItemSpec.Model.CreatedAt = newIssue.CreatedAt;
+                newItemSpec.Model.CreatedBy = newIssue.CreatedBy;
+                newItemSpec.Model.LastModifiedAt = newIssue.LastModifiedAt;
+                newItemSpec.Model.LastModifiedBy = newIssue.LastModifiedBy;
+
+                if (newIssue.IsActive)
+                {
+                    Active++;
+                }
+                else
+                {
+                    InActive++;
+                }
             }
-            else
+            catch (HttpRequestException ex)
             {
-                InActive++;
+                await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
             }
         }
-        catch (HttpRequestException ex)
+        finally
         {
-            await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
+            newItemSpec.IsInProgress = false;
         }
     }
 
@@ -285,30 +294,44 @@ public partial class RegistryManager
             return;
         }
 
-        RegistryEntryRequestData requestData = target.ToRequestData();
-
-        if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
+        try
         {
-            return;
+            target.IsInProgress = true;
+            StateHasChanged();
+
+            RegistryEntryRequestData requestData = target.ToRequestData();
+
+            if (!await ValidateSubmitAsync(requestData, cancellationToken: default))
+            {
+                return;
+            }
+
+            PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(requestData, default);
+
+            if (result is null)
+            {
+                // Update failed.
+                await _jsRuntime.InvokeVoidAsync("alert", $"Failed editing item by id: {target.InsightIdString}");
+                return;
+            }
+
+            // Succeeded.
+            target.DisplayMode = IssueRegistryItemDisplayMode.Read;
+
+            // Update tracking info.
+            if (target.Model is not null)
+            {
+                target.Model.LastModifiedAt = result.LastModifiedAt;
+                target.Model.LastModifiedBy = result.LastModifiedBy;
+            }
         }
-
-        PerfIssueRegisterEntry? result = await OpiClient.UpdateEntryAsync(requestData, default);
-
-        if (result is null)
+        catch (HttpRequestException ex)
         {
-            // Update failed.
-            await _jsRuntime.InvokeVoidAsync("alert", $"Failed editing item by id: {target.InsightIdString}");
-            return;
+            await _jsRuntime.InvokeVoidAsync("alert", ex.Message);
         }
-
-        // Succeeded.
-        target.DisplayMode = IssueRegistryItemDisplayMode.Read;
-
-        // Update tracking info.
-        if (target.Model is not null)
+        finally
         {
-            target.Model.LastModifiedAt = result.LastModifiedAt;
-            target.Model.LastModifiedBy = result.LastModifiedBy;
+            target.IsInProgress = false;
         }
     }
 

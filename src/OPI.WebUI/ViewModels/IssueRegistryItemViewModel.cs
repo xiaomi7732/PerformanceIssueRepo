@@ -6,6 +6,8 @@ namespace OPI.WebUI.ViewModels;
 
 public class IssueRegistryItemViewModel
 {
+    public bool IsInProgress { get; set; }
+
     public PerfIssueRegisterEntry? Model { get; }
     public IssueRegistryItemViewModel(PerfIssueRegisterEntry model)
     {
