@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OPI.Core.Models;
+using OPI.WebAPI.HttpModels;
 using OPI.WebAPI.Services;
 
 namespace OPI.WebAPI.Controllers;
@@ -40,12 +41,16 @@ public class RegistryController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PerfIssueRegisterEntry>> RegisterNew([FromBody] PerfIssueRegisterEntry newItem, CancellationToken cancellationToken)
+    public async Task<ActionResult<PerfIssueRegisterEntry>> RegisterNew([FromBody] RegistryEntryRequest newItem, CancellationToken cancellationToken)
     {
         try
         {
-            PerfIssueRegisterEntry result = await _issueRegistryService.RegisterNewIssueAsync(newItem, cancellationToken).ConfigureAwait(false);
+            PerfIssueRegisterEntry result = await _issueRegistryService.RegisterNewIssueAsync(newItem, CreateOptions(newItem), cancellationToken).ConfigureAwait(false);
             return CreatedAtAction(nameof(Get), new { permanentId = result.PermanentId }, result);
+        }
+        catch (DataModelValidationException validationException)
+        {
+            return Conflict(validationException.Message);
         }
         catch (InvalidOperationException)
         {
@@ -58,11 +63,16 @@ public class RegistryController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<PerfIssueRegisterEntry>> ReplaceExists([FromBody] PerfIssueRegisterEntry newItem, CancellationToken cancellationToken)
+    public async Task<ActionResult<PerfIssueRegisterEntry>> ReplaceExists([FromBody] RegistryEntryRequest newItem, CancellationToken cancellationToken)
     {
         try
         {
-            PerfIssueRegisterEntry result = await _issueRegistryService.UpdateAsync(newItem, cancellationToken).ConfigureAwait(false);
+            RegistryEntryOptions options = new()
+            {
+                AllowsDuplicatedHelpDocs = newItem.AllowSameHelpLinkUri,
+            };
+
+            PerfIssueRegisterEntry result = await _issueRegistryService.UpdateAsync(newItem, CreateOptions(newItem), cancellationToken).ConfigureAwait(false);
             return Ok(result);
         }
         catch (IndexOutOfRangeException)
@@ -104,5 +114,13 @@ public class RegistryController : ControllerBase
         {
             return NoContent();
         }
+    }
+
+    private RegistryEntryOptions CreateOptions(RegistryEntryRequest request)
+    {
+        return new RegistryEntryOptions()
+        {
+            AllowsDuplicatedHelpDocs = request.AllowSameHelpLinkUri,
+        };
     }
 }

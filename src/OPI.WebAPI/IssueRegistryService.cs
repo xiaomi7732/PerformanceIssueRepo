@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using OPI.Core.Models;
+using OPI.Core.Validators;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
@@ -28,7 +29,7 @@ public class IssueRegistryService
     }
 
     // Logic
-    public async Task<PerfIssueRegisterEntry> RegisterNewIssueAsync(PerfIssueRegisterEntry registerEntry, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry> RegisterNewIssueAsync(PerfIssueRegisterEntry registerEntry, RegistryEntryOptions options, CancellationToken cancellationToken)
     {
         // Any register entry shall have id of zero
         if (registerEntry.PermanentId is null || registerEntry.PermanentId == Guid.Empty)
@@ -38,6 +39,8 @@ public class IssueRegistryService
                 PermanentId = Guid.NewGuid(),
             };
         }
+
+        await ValidateDataModelAsync(registerEntry, options, cancellationToken).ConfigureAwait(false);
 
         registerEntry = registerEntry.TrackCreate(_httpContextAccessor);
         await SaveRegistryItemAsync(registerEntry, cancellationToken).ConfigureAwait(false);
@@ -68,7 +71,7 @@ public class IssueRegistryService
     /// Updates the perf issue registry entry. Returns the new result.
     /// Throws IndexOutOfRange exception when not found by id.
     /// </summary>
-    public async Task<PerfIssueRegisterEntry> UpdateAsync(PerfIssueRegisterEntry newIssueRegistryItem, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry> UpdateAsync(PerfIssueRegisterEntry newIssueRegistryItem, RegistryEntryOptions options, CancellationToken cancellationToken)
     {
         if (newIssueRegistryItem.PermanentId is null || newIssueRegistryItem.PermanentId == Guid.Empty)
         {
@@ -80,6 +83,8 @@ public class IssueRegistryService
         {
             throw new InvalidOperationException($"Target entry by id {newIssueRegistryItem.PermanentId} does not exist.");
         }
+
+        await ValidateDataModelAsync(newIssueRegistryItem, options, cancellationToken).ConfigureAwait(false);
 
         newIssueRegistryItem = newIssueRegistryItem.TrackUpdate(entry, _httpContextAccessor);
         await SaveRegistryItemAsync(newIssueRegistryItem, cancellationToken);
@@ -146,6 +151,25 @@ public class IssueRegistryService
                 throw new InvalidCastException($"Can't deserialize blob: {blobName}");
             }
             return entry!;
+        }
+    }
+
+    private async Task ValidateDataModelAsync(PerfIssueRegisterEntry entry, RegistryEntryOptions options, CancellationToken cancellationToken)
+    {
+        // Unless requested by the client, do not allow duplicated help docs.
+        if(!options.AllowsDuplicatedHelpDocs)
+        {
+            List<PerfIssue> allItems = new();
+            await foreach(PerfIssue item in GetAllIssueItemsAsync(activeState: null, cancellationToken).ConfigureAwait(false))
+            {
+                allItems.Add(item);
+            }
+
+            SameHelpLinkValidator validator = new(entry, allItems);
+            if(!await validator.ValidateAsync(cancellationToken))
+            {
+                throw new DataModelValidationException(validator.Reason);
+            }
         }
     }
 
