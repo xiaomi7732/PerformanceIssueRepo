@@ -5,6 +5,9 @@ WORKDIR /source
 COPY ./Directory.Build.props ./Directory.Build.props
 COPY OPI.WebAPI ./OPI.WebAPI
 COPY OPI.Core ./OPI.Core
+COPY OPI.Core.Models ./OPI.Core.Models
+COPY OPI.WebAPI.Contracts ./OPI.WebAPI.Contracts
+
 COPY SPEssentials.Identities ./SPEssentials.Identities
 
 RUN dotnet restore ./OPI.WebAPI
