@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using OPI.Core.Models;
+using OPI.Core.Utilities;
 using OPI.Core.Validators;
 using OPI.WebAPI.Contracts;
 using System.Runtime.CompilerServices;
@@ -9,23 +10,26 @@ namespace OPI.WebAPI.Services;
 
 public class IssueRegistryService
 {
-    private readonly IssueServiceOptions _options;
     private readonly IRegistryBlobClient _storageClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly SubstituteExtractor _substituteExtractor;
+    private readonly SubstituteService _substituteService;
     private readonly ILogger _logger;
 
     public IssueRegistryService(
         IRegistryBlobClient storageClient,
-        IOptions<IssueServiceOptions> options,
         JsonSerializerOptions jsonSerializerOptions,
         IHttpContextAccessor httpContextAccessor,
+        SubstituteExtractor substituteExtractor,
+        SubstituteService substituteService,
         ILogger<IssueRegistryService> logger)
     {
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _storageClient = storageClient ?? throw new ArgumentNullException(nameof(storageClient));
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+        _substituteExtractor = substituteExtractor ?? throw new ArgumentNullException(nameof(substituteExtractor));
+        _substituteService = substituteService ?? throw new ArgumentNullException(nameof(substituteService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -157,17 +161,40 @@ public class IssueRegistryService
 
     private async Task ValidateDataModelAsync(PerfIssueRegisterEntry entry, RegistryEntryOptions options, CancellationToken cancellationToken)
     {
-        // Unless requested by the client, do not allow duplicated help docs.
-        if(!options.AllowsDuplicatedHelpDocs)
+        List<PerfIssue>? allItems = null;
+        if (!options.AllowsDuplicatedHelpDocs || !options.AllowsNewSubstitutes)
         {
-            List<PerfIssue> allItems = new();
-            await foreach(PerfIssue item in GetAllIssueItemsAsync(activeState: null, cancellationToken).ConfigureAwait(false))
+            // Prepare for the validation
+            allItems = new();
+            await foreach (PerfIssue item in GetAllIssueItemsAsync(activeState: null, cancellationToken).ConfigureAwait(false))
             {
                 allItems.Add(item);
             }
+        }
 
+        if (allItems is null)
+        {
+            throw new InvalidOperationException("All items shouldn't be null.");
+        }
+
+        // Unless requested by the client, do not allow duplicated help docs.
+        if (!options.AllowsDuplicatedHelpDocs)
+        {
             SameHelpLinkValidator validator = new(entry, allItems);
-            if(!await validator.ValidateAsync(cancellationToken))
+            if (!await validator.ValidateAsync(cancellationToken))
+            {
+                throw new DataModelValidationException(validator.Reason);
+            }
+        }
+
+        if (!options.AllowsNewSubstitutes)
+        {
+            IEnumerable<string> existingSubstitutes = await _substituteService.ListSubstitutesAsync(
+                (stoppingToken) => Task.FromResult(allItems.AsEnumerable()),
+                cancellationToken).ConfigureAwait(false);
+
+            NewSubstituteValidator validator = new(entry, existingSubstitutes, _substituteExtractor);
+            if (!await validator.ValidateAsync(cancellationToken))
             {
                 throw new DataModelValidationException(validator.Reason);
             }

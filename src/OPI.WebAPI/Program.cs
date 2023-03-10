@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Identity.Web;
+using OPI.Core.Utilities;
 using OPI.WebAPI;
 using OPI.WebAPI.RegistryStorage;
 using OPI.WebAPI.Services;
@@ -51,6 +52,8 @@ builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
 });
 
 // Add services to the container.
+builder.Services.AddSingleton<SubstituteExtractor>(_ => SubstituteExtractor.Instance);
+builder.Services.AddTransient<SubstituteService>();
 builder.Services.AddTransient<IssueRegistryService>();
 builder.Services.AddTransient<IssueItemService>();
 
