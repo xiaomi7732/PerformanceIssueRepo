@@ -1,6 +1,6 @@
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using OPI.Core.Models;
+using OPI.Core.Utilities;
 
 namespace OPI.WebAPI.Services;
 
@@ -9,12 +9,15 @@ public class IssueItemService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IssueRegistryService _issueRegistryService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly SubstituteService _substituteService;
     private readonly ILogger _logger;
 
     public IssueItemService(
         IHttpClientFactory httpClientFactory,
         IssueRegistryService issueRegistryService,
         JsonSerializerOptions jsonSerializerOptions,
+        SubstituteExtractor substituteExtractor,
+        SubstituteService substituteService,
         ILogger<IssueItemService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -22,19 +25,15 @@ public class IssueItemService
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _issueRegistryService = issueRegistryService ?? throw new ArgumentNullException(nameof(issueRegistryService));
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
+        _substituteService = substituteService ?? throw new ArgumentNullException(nameof(substituteService));
     }
 
     public async Task<IEnumerable<string>> ListSubstitutesAsync(string version, CancellationToken cancellationToken)
     {
         HashSet<string> substitutes = new HashSet<string>(StringComparer.Ordinal);
-        foreach (PerfIssueItem item in await GetAllAsync(version, cancellationToken).ConfigureAwait(false))
-        {
-            ExtractSubstitutes(() => item.Title, substitutes);
-            ExtractSubstitutes(() => item.Description, substitutes);
-            ExtractSubstitutes(() => item.Recommendation, substitutes);
-            ExtractSubstitutes(() => item.Rationale, substitutes);
-        }
-        return substitutes;
+        return await _substituteService.ListSubstitutesAsync(
+            async (stoppingToken) => await GetAllAsync(version, stoppingToken),
+            cancellationToken).ConfigureAwait(false);
     }
 
     public Task<IEnumerable<PerfIssueItem>> ListByAsync(string version, CancellationToken cancellationToken)
@@ -92,25 +91,4 @@ public class IssueItemService
         return result;
     }
 
-    private void ExtractSubstitutes(Func<string?> textSelector, HashSet<string> dest)
-    {
-        foreach (string sub in ExtractSubstitutes(textSelector()))
-        {
-            dest.Add(sub);
-        }
-    }
-
-    private IEnumerable<string> ExtractSubstitutes(string? text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            yield break;
-        }
-
-        const string pattern = @"{(.*?)}";
-        foreach (Match match in Regex.Matches(text, pattern, RegexOptions.Singleline, TimeSpan.FromSeconds(1)))
-        {
-            yield return match.Groups[1].Value;
-        }
-    }
 }

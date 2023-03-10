@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.Core.Utilities;
 using OPI.Core.Validators;
 using OPI.WebAPI.Contracts;
 using OPI.WebUI.ViewModels;
@@ -26,6 +27,9 @@ public partial class RegistryManager
 
     [Inject]
     private AuthenticationStateProvider _authContext { get; set; } = default!;
+
+    [Inject]
+    private SubstituteExtractor _substituteExtractor { get; set; } = default!;
 
     private IReadOnlyCollection<PerfIssueRegisterEntry>? _allRegisteredItems;
     public ObservableCollection<IssueRegistryItemViewModel> RegisteredItems { get; } = new ObservableCollection<IssueRegistryItemViewModel>();
@@ -337,19 +341,25 @@ public partial class RegistryManager
 
     private async Task<bool> ValidateSubmitAsync(RegistryEntryRequestData requestData, CancellationToken cancellationToken)
     {
-        if (!requestData.Options.AllowsDuplicatedHelpDocs)
+        if (!requestData.Options.AllowsDuplicatedHelpDocs && _allRegisteredItems is not null)
         {
-            if (_allRegisteredItems is null)
-            {
-                return true;
-            }
 
             SameHelpLinkValidator helpLinkValidator = new SameHelpLinkValidator(requestData.Data, _allRegisteredItems);
-
             bool pass = await helpLinkValidator.ValidateAsync(cancellationToken: default);
             if (!pass)
             {
-                await _jsRuntime.InvokeVoidAsync("alert", "Are you intend to submit an item with a duplicated help link? Check the proper option if that's the intention. Details: " + helpLinkValidator.Reason);
+                await _jsRuntime.InvokeVoidAsync("alert", "Do you intend to submit an item with a duplicated help link? Check the proper option please. Details: " + helpLinkValidator.Reason);
+                return false;
+            }
+        }
+
+        if (!requestData.Options.AllowsNewSubstitutes)
+        {
+            NewSubstituteValidator newSubstituteValidator = new NewSubstituteValidator(requestData.Data, ExtractedSubstitutes, _substituteExtractor);
+            bool pass = await newSubstituteValidator.ValidateAsync(cancellationToken);
+            if (!pass)
+            {
+                await _jsRuntime.InvokeVoidAsync("alert", "Do you intend to add new substitute? Check the proper option please. Details:" + newSubstituteValidator.Reason);
                 return false;
             }
         }

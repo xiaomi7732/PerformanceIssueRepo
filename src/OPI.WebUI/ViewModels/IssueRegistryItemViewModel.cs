@@ -55,6 +55,7 @@ public class IssueRegistryItemViewModel
             Options = new RegistryEntryOptions
             {
                 AllowsDuplicatedHelpDocs = AllowsDuplicatedHelpDocs,
+                AllowsNewSubstitutes = AllowsNewSubstitutes,
             },
         };
 
@@ -92,6 +93,8 @@ public class IssueRegistryItemViewModel
     }
 
     public bool AllowsDuplicatedHelpDocs { get; set; } = false;
+
+    public bool AllowsNewSubstitutes { get; set; } = false;
 
     public bool IsActive { get; set; }
 
