@@ -64,10 +64,12 @@ IssueRegistryItemDisplayMode.Edit)
             <hr />
             <h2>Options:</h2>
             <div class='issue-item'>
-                <div class='issue-item'>
-                    <label class='issue-item-title' for='allowsDuplicatedHelpLink'>Allows duplicated help link:</label>
-                    <InputCheckbox id="allowsDuplicatedHelpLink" @bind-Value="ViewModel.AllowsDuplicatedHelpDocs" />
-                </div>
+                <label class='issue-item-title' for='allowsDuplicatedHelpLink'>Allows duplicated help link:</label>
+                <InputCheckbox id="allowsDuplicatedHelpLink" @bind-Value="ViewModel.AllowsDuplicatedHelpDocs" />
+            </div>
+            <div class='issue-item'>
+                <label class='issue-item-title' for='allowsNewSubstitutes'>Allows new substitutes:</label>
+                <InputCheckbox id="allowsNewSubstitutes" @bind-Value="ViewModel.AllowsNewSubstitutes" />
             </div>
 
             @if (ViewModel.IsInProgress)

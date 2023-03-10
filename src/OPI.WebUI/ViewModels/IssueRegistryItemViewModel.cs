@@ -93,6 +93,8 @@ public class IssueRegistryItemViewModel
 
     public bool AllowsDuplicatedHelpDocs { get; set; } = false;
 
+    public bool AllowsNewSubstitutes { get; set; } = false;
+
     public bool IsActive { get; set; }
 
     public string? LegacyId { get; set; }

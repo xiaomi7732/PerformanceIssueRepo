@@ -22,6 +22,30 @@ public record NewSubstituteValidator : ModelValidatorBase
         _substituteExtractor = substituteExtractor ?? SubstituteExtractor.Instance;
     }
 
+    public NewSubstituteValidator(
+        PerfIssue target,
+        IEnumerable<PerfIssue> perfIssues,
+        SubstituteExtractor? substituteExtractor = null)
+    {
+
+        _target = target ?? throw new System.ArgumentNullException(nameof(target));
+        _substituteExtractor = substituteExtractor ?? SubstituteExtractor.Instance;
+        if (perfIssues is null)
+        {
+            throw new ArgumentNullException(nameof(perfIssues));
+        }
+        
+        HashSet<string> existingSubstitutes = new HashSet<string>(StringComparer.Ordinal);
+        foreach(PerfIssue item in perfIssues)
+        {
+            _substituteExtractor.ExtractSubstitutes(() => item.Title, existingSubstitutes);
+            _substituteExtractor.ExtractSubstitutes(() => item.Description, existingSubstitutes);
+            _substituteExtractor.ExtractSubstitutes(() => item.Recommendation, existingSubstitutes);
+            _substituteExtractor.ExtractSubstitutes(() => item.Rationale, existingSubstitutes);
+        }
+        _existingSubstitutes = existingSubstitutes;
+    }
+
     protected override bool ValidateImp()
     {
         HashSet<string> substituteOnTarget = new HashSet<string>(StringComparer.Ordinal);

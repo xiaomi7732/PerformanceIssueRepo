@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using OPI.Client;
+using OPI.Core.Utilities;
 using OPI.WebUI;
 using OPI.WebUI.Services;
 
@@ -29,6 +30,8 @@ builder.Services.AddOptions<JsonGenOptions>().Configure<IConfiguration>((opt, co
 {
     configuration.GetSection("JsonGenOptions").Bind(opt);
 });
+
+builder.Services.AddSingleton<SubstituteExtractor>(_=> SubstituteExtractor.Instance);
 
 // Register an authenticated client
 string authOpiClientName = "opi-client-auth";
