@@ -16,9 +16,14 @@
         <label for='cbxShowInactive'>Inactive: <span>@InActive</span></label>
     </div>
 </div>
-<div class='operation-buttons'>
-    <button @onclick="AddNewItemAsync">+ Add new item</button>
-</div>
+
+@if (Initialized)
+{
+    <div class='operation-buttons'>
+        <button @onclick="AddNewItemAsync">+ Add new item</button>
+    </div>
+}
+
 @if (!Initialized)
 {
     <div class="spin">Loading ...</div>
