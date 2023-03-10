@@ -14,11 +14,11 @@ public record NewSubstituteValidator : ModelValidatorBase
 
     public NewSubstituteValidator(
         PerfIssue target,
-        IEnumerable<string> existingSubstitutes,
+        IEnumerable<string>? existingSubstitutes,
         SubstituteExtractor? substituteExtractor = null)
     {
         _target = target ?? throw new System.ArgumentNullException(nameof(target));
-        _existingSubstitutes = existingSubstitutes ?? throw new System.ArgumentNullException(nameof(existingSubstitutes));
+        _existingSubstitutes = existingSubstitutes ?? Enumerable.Empty<string>();
         _substituteExtractor = substituteExtractor ?? SubstituteExtractor.Instance;
     }
 
@@ -34,9 +34,9 @@ public record NewSubstituteValidator : ModelValidatorBase
         {
             throw new ArgumentNullException(nameof(perfIssues));
         }
-        
+
         HashSet<string> existingSubstitutes = new HashSet<string>(StringComparer.Ordinal);
-        foreach(PerfIssue item in perfIssues)
+        foreach (PerfIssue item in perfIssues)
         {
             _substituteExtractor.ExtractSubstitutes(() => item.Title, existingSubstitutes);
             _substituteExtractor.ExtractSubstitutes(() => item.Description, existingSubstitutes);
@@ -72,7 +72,7 @@ public record NewSubstituteValidator : ModelValidatorBase
         IEnumerable<string> newOnes = substituteOnTarget.Except(_existingSubstitutes, StringComparer.Ordinal);
         if (newOnes is not null && newOnes.Any())
         {
-            Reason = $"New substitute found: {string.Join(",", newOnes)}";
+            Reason = $"New substitute found: {string.Join(",", newOnes.Select(item => "{" + item + "}"))}";
             return false;
         }
 

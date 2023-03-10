@@ -341,12 +341,7 @@ public partial class RegistryManager
 
     private async Task<bool> ValidateSubmitAsync(RegistryEntryRequestData requestData, CancellationToken cancellationToken)
     {
-        if (_allRegisteredItems is null)
-        {
-            return true;
-        }
-
-        if (!requestData.Options.AllowsDuplicatedHelpDocs)
+        if (!requestData.Options.AllowsDuplicatedHelpDocs && _allRegisteredItems is not null)
         {
 
             SameHelpLinkValidator helpLinkValidator = new SameHelpLinkValidator(requestData.Data, _allRegisteredItems);
@@ -360,7 +355,7 @@ public partial class RegistryManager
 
         if (!requestData.Options.AllowsNewSubstitutes)
         {
-            NewSubstituteValidator newSubstituteValidator = new NewSubstituteValidator(requestData.Data, perfIssues: _allRegisteredItems, _substituteExtractor);
+            NewSubstituteValidator newSubstituteValidator = new NewSubstituteValidator(requestData.Data, ExtractedSubstitutes, _substituteExtractor);
             bool pass = await newSubstituteValidator.ValidateAsync(cancellationToken);
             if (!pass)
             {
