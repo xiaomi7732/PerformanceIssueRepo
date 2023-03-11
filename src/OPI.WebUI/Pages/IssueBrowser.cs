@@ -15,6 +15,9 @@ public partial class IssueBrowser
     [Inject]
     private IOptions<JsonGenOptions> JsonGenOptions { get; set; } = Options.Create<JsonGenOptions>(new JsonGenOptions());
 
+    [Inject]
+    private NavigationManager Navigation {get; set;} = default!;
+
     public bool IsLoading { get; set; }
 
     public IEnumerable<string> SpecVersionCollection { get; private set; } = Enumerable.Empty<string>();

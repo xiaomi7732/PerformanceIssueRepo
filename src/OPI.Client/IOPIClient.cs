@@ -10,6 +10,15 @@ public interface IAnonymousOPIClient
     Task<IEnumerable<string>> ExtractSubstitutes(string specVersion, CancellationToken cancellationToken);
     Task<string> GetAllInJsonStringAsync(string version, CancellationToken cancellationToken);
     Task<IEnumerable<PerfIssueItem>> ListAllAsync(string version, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Gets a perf issue item by its id and version.
+    /// </summary>
+    /// <param name="id">Permanent id or legacy id.</param>
+    /// <param name="version">The spec version.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    Task<PerfIssueItem?> GetPerfIssueItem(Guid issueId, string version, CancellationToken cancellationToken);
+
     Task<IEnumerable<string>> ListSpecVersionsAsync(CancellationToken cancellationToken);
 }
 
