@@ -96,6 +96,13 @@
                                             <div>Not available.</div>
                                         }
                                     </div>
+
+                                    @if(!string.IsNullOrEmpty(PickedVersion))
+                                    {
+                                        <div>
+                                            <button @onclick="@( () => Navigation.NavigateTo($"/Issues/{entry.PermanentId}?spec-version={PickedVersion}") )">Details</button>
+                                        </div>
+                                    }
                                 </div>
                             }
                         }
