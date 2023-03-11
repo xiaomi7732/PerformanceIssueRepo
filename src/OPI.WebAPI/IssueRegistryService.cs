@@ -133,22 +133,35 @@ public class IssueRegistryService
     }
 
     // Data access below
-    private Task<PerfIssueRegisterEntry> GetRegistryEntryAsync(Guid issueId, CancellationToken cancellationToken)
+    private Task<PerfIssueRegisterEntry?> GetRegistryEntryAsync(Guid issueId, CancellationToken cancellationToken)
         => GetRegistryEntryAsync(new RegistryEntryName(issueId).Value, cancellationToken);
 
     private async IAsyncEnumerable<PerfIssueRegisterEntry> GetRegistryEntriesAsync([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         await foreach (string blobName in _storageClient.ListBlobsAsync(RegistryEntryName.RegistryEntryPrefix + "/", cancellationToken))
         {
-            yield return await GetRegistryEntryAsync(blobName, cancellationToken);
+            PerfIssueRegisterEntry? item = await GetRegistryEntryAsync(blobName, cancellationToken);
+            if (item is not null)
+            {
+                yield return item;
+            }
         }
     }
 
-    private async Task<PerfIssueRegisterEntry> GetRegistryEntryAsync(string blobName, CancellationToken cancellationToken)
+    private async Task<PerfIssueRegisterEntry?> GetRegistryEntryAsync(string blobName, CancellationToken cancellationToken)
     {
         using (MemoryStream memoryStream = new MemoryStream())
         {
-            await _storageClient.DownloadStreamAsync(blobName, memoryStream, cancellationToken).ConfigureAwait(false);
+            try
+            {
+
+                await _storageClient.DownloadStreamAsync(blobName, memoryStream, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Azure.RequestFailedException ex) when (string.Equals(ex.ErrorCode, "BlobNotFound"))
+            {
+                _logger.LogInformation("Blob doesn't exist: {blobName}", blobName);
+                return null;
+            }
             memoryStream.Seek(0, SeekOrigin.Begin);
             PerfIssueRegisterEntry? entry = await JsonSerializer.DeserializeAsync<PerfIssueRegisterEntry>(memoryStream, _jsonSerializerOptions, cancellationToken);
             if (entry is null)

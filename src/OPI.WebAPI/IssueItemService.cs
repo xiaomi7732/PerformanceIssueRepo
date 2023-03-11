@@ -39,8 +39,23 @@ public class IssueItemService
     public Task<IEnumerable<PerfIssueItem>> ListByAsync(string version, CancellationToken cancellationToken)
         => GetAllAsync(version, cancellationToken);
 
-    public async Task<PerfIssueItem?> GetAsync(string version, Guid permanentId, CancellationToken cancellationToken)
-        => (await GetAllAsync(version, cancellationToken).ConfigureAwait(false)).FirstOrDefault(item => item.PermanentId == permanentId);
+    public async Task<PerfIssueItem?> GetAsync(string version, Guid issueId, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Getting perf issue item: {version}/{issueId}", version, issueId);
+        if(string.Equals(version, "latest", StringComparison.OrdinalIgnoreCase))
+        {
+            PerfIssueRegisterEntry? entry = await _issueRegistryService.GetRegisteredItemAsync(issueId, cancellationToken);
+            if(entry is null)
+            {
+                return null;
+            }
+            return new PerfIssueItem(entry);
+        }
+        else
+        {
+            return (await GetAllAsync(version, cancellationToken).ConfigureAwait(false)).FirstOrDefault(item => item.PermanentId == issueId);
+        }
+    }
 
     private async Task<IEnumerable<PerfIssueItem>> GetAllAsync(string version, CancellationToken cancellationToken)
     {

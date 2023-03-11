@@ -54,6 +54,17 @@ public class OPIClient : IAuthorizedOPIClient
     }
 
     /// <summary>
+    /// Gets the perf issue item by its permanent id and the spec version.
+    /// </summary>
+    public async Task<PerfIssueItem?> GetPerfIssueItem(Guid issueId, string version, CancellationToken cancellationToken)
+    {
+        string path = $"Issues/{issueId}?spec-version={version}";
+
+        PerfIssueItem? result = await _httpClient.GetFromJsonAsync<PerfIssueItem>(path, cancellationToken).ConfigureAwait(false);
+        return result;
+    }
+
+    /// <summary>
     /// List all spec versions tagged on GitHub.
     /// </summary>
     /// <param name="cancellationToken"></param>
