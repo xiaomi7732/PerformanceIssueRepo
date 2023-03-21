@@ -1,17 +1,18 @@
 {
   "name": "@opi-perf/resx",
-  "version": "1.0.0-alpha9",
+  "version": "1.0.0-alpha9.1",
   "description": "Resx file for Open Performance Issues",
   "main": "index.js",
+  "registryVersion": "1.0.0-alpha9",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "generate-resx": "dotnet run --project ..\\..\\..\\examples\\OPI.Generate\\ -- --type resx --output ..\\..\\..\\packaged\\npm\\resx\\OPIResources-%npm_package_version%.resx --registryVersion %npm_package_version%",
+    "generate-resx": "dotnet run --project ..\\..\\..\\examples\\OPI.Generate\\ -- --type resx --output ..\\..\\..\\packaged\\npm\\resx\\OPIResources.resx --registryVersion %npm_package_registryVersion%",
     "clean-former": "git rm --ignore-unmatch *.resx",
-    "push-to-npm": "yarn publish --new-version %npm_package_version%",
-    "add-to-git": "git add ./OPIResources-%npm_package_version%.resx ./package.json && git commit -m 'Releasing new version %npm_package_version%' && git push",
+    "push-to-npm": "yarn publish --new-version %npm_package_registryVersion%",
+    "add-to-git": "git add ./OPIResources.resx ./package.json && git commit -m 'Releasing new version %npm_package_version%' && git push",
     "publish-package": "yarn run generate-resx && yarn run clean-former && yarn run add-to-git"
   }
 }
