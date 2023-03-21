@@ -1,0 +1,1 @@
+Model project holds contracts for data persistency.

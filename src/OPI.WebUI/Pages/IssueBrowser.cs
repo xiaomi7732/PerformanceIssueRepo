@@ -1,15 +1,22 @@
-using Microsoft.AspNetCore.Authorization;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using OPI.Client;
 using OPI.Core.Models;
 
 namespace OPI.WebUI.Pages;
 
-[Authorize]
 public partial class IssueBrowser
 {
     [Inject]
-    public OPIClient OpiClient { get; private set; } = default!;
+    public IAnonymousOPIClient OpiClient { get; private set; } = default!;
+
+    [Inject]
+    private IOptions<JsonGenOptions> JsonGenOptions { get; set; } = Options.Create<JsonGenOptions>(new JsonGenOptions());
+
+    [Inject]
+    private NavigationManager Navigation {get; set;} = default!;
 
     public bool IsLoading { get; set; }
 
@@ -17,6 +24,7 @@ public partial class IssueBrowser
 
     private IReadOnlyCollection<PerfIssueItem>? _loadedIssues = null;
     public IEnumerable<PerfIssueItem>? IssueCollection { get; private set; } = null;
+
 
     public string JsonContent { get; set; } = string.Empty;
 
@@ -123,7 +131,22 @@ public partial class IssueBrowser
         JsonContent = string.Empty;
         if (!string.IsNullOrEmpty(_pickedVersion))
         {
-            JsonContent = await OpiClient.GetAllInJsonStringAsync(_pickedVersion, cancellationToken).ConfigureAwait(false);
+            List<PerfIssueItem>? allIssueItems = (await OpiClient.ListAllAsync(_pickedVersion, cancellationToken).ConfigureAwait(false)).OrderBy(item => item.LegacyId?.PadLeft(4)).ThenBy(item => item.PermanentId)?.ToList();
+            if (allIssueItems is null || !allIssueItems.Any())
+            {
+                return;
+            }
+
+            PerfIssueRegistryDocument doc = new PerfIssueRegistryDocument()
+            {
+                Schema = JsonGenOptions.Value.SchemaPath,
+                Items = allIssueItems,
+            };
+            JsonSerializerOptions reSerializeOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            reSerializeOptions.WriteIndented = true;
+            reSerializeOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+
+            JsonContent = JsonSerializer.Serialize<PerfIssueRegistryDocument>(doc, reSerializeOptions);
         }
     }
 

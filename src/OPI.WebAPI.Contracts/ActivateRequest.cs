@@ -1,4 +1,4 @@
-namespace OPI.WebAPI.HttpModels;
+namespace OPI.WebAPI.Contracts;
 
 public record ActivateRequest
 {

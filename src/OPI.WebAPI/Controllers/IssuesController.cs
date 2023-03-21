@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using OPI.Core.Models;
-using OPI.WebAPI.HttpModels;
+using OPI.WebAPI.Contracts;
 using OPI.WebAPI.Services;
 
 namespace OPI.WebAPI.Controllers;

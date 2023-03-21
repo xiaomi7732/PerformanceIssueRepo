@@ -1,0 +1,34 @@
+[
+  {
+    "name": "UniqueId",
+    "isRequired": true,
+    "definition": "The unique id for the issue.",
+    "comment": "Recommend to have",
+    "example": [
+      {
+        "text": "A id uniquely identify 1 performance issue",
+        "value": "C0001"
+      }
+    ]
+  },
+  {
+    "name": "Callstack",
+    "isRequired": false,
+    "definition": "Several callstack frames in form of list of strings to provide enough context for investigation",
+    "comment": "Recommend to have when it is possible to pin point the code for investigation",
+    "example": [
+      {
+        "text": "A couple of frames to pin point the issue",
+        "value": [
+          "mscorlib.ni!System.String.Concat(System.String, System.String)",
+          "fullfxwebapi!FullFxWebAPI.Controllers.StringConcatController\u002B\u003CGet\u003Ed__0.MoveNext()",
+          "mscorlib!System.Runtime.CompilerServices.AsyncTaskMethodBuilder\u00601[System.__Canon].Start(!!0\u0026)",
+          "fullfxwebapi!FullFxWebAPI.Controllers.StringConcatController.Get(int32)",
+          "anonymously hosted dynamicmethods assembly!dynamicClass.lambda_method(pMT: 6F970FF8,class System.Object,class System.Object[])",
+          "system.web.http!System.Web.Http.Controllers.ReflectedHttpActionDescriptor\u002BActionExecutor.Execute(class System.Object,class System.Object[])",
+          "system.web.http!System.Web.Http.Controllers.ApiControllerActionInvoker\u002B\u003CInvokeActionAsyncCore\u003Ed__1.MoveNext()"
+        ]
+      }
+    ]
+  }
+]

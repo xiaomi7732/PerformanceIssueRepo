@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\OPI.Core.Models\OPI.Core.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\OPI.Core\IsExternalInit.cs" Link="IsExternalInit.cs" />
+    </ItemGroup>
+</Project>

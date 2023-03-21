@@ -1,6 +1,6 @@
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using OPI.Core.Models;
+using OPI.Core.Utilities;
 
 namespace OPI.WebAPI.Services;
 
@@ -9,35 +9,53 @@ public class IssueItemService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IssueRegistryService _issueRegistryService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly SubstituteService _substituteService;
+    private readonly ILogger _logger;
 
     public IssueItemService(
         IHttpClientFactory httpClientFactory,
         IssueRegistryService issueRegistryService,
-        JsonSerializerOptions jsonSerializerOptions)
+        JsonSerializerOptions jsonSerializerOptions,
+        SubstituteExtractor substituteExtractor,
+        SubstituteService substituteService,
+        ILogger<IssueItemService> logger)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _issueRegistryService = issueRegistryService ?? throw new ArgumentNullException(nameof(issueRegistryService));
         _jsonSerializerOptions = jsonSerializerOptions ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
+        _substituteService = substituteService ?? throw new ArgumentNullException(nameof(substituteService));
     }
 
     public async Task<IEnumerable<string>> ListSubstitutesAsync(string version, CancellationToken cancellationToken)
     {
         HashSet<string> substitutes = new HashSet<string>(StringComparer.Ordinal);
-        foreach (PerfIssueItem item in await GetAllAsync(version, cancellationToken).ConfigureAwait(false))
-        {
-            ExtractSubstitutes(() => item.Title, substitutes);
-            ExtractSubstitutes(() => item.Description, substitutes);
-            ExtractSubstitutes(() => item.Recommendation, substitutes);
-            ExtractSubstitutes(() => item.Rationale, substitutes);
-        }
-        return substitutes;
+        return await _substituteService.ListSubstitutesAsync(
+            async (stoppingToken) => await GetAllAsync(version, stoppingToken),
+            cancellationToken).ConfigureAwait(false);
     }
 
     public Task<IEnumerable<PerfIssueItem>> ListByAsync(string version, CancellationToken cancellationToken)
         => GetAllAsync(version, cancellationToken);
 
-    public async Task<PerfIssueItem?> GetAsync(string version, Guid permanentId, CancellationToken cancellationToken)
-        => (await GetAllAsync(version, cancellationToken).ConfigureAwait(false)).FirstOrDefault(item => item.PermanentId == permanentId);
+    public async Task<PerfIssueItem?> GetAsync(string version, Guid issueId, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Getting perf issue item: {version}/{issueId}", version, issueId);
+        if(string.Equals(version, "latest", StringComparison.OrdinalIgnoreCase))
+        {
+            PerfIssueRegisterEntry? entry = await _issueRegistryService.GetRegisteredItemAsync(issueId, cancellationToken);
+            if(entry is null)
+            {
+                return null;
+            }
+            return new PerfIssueItem(entry);
+        }
+        else
+        {
+            return (await GetAllAsync(version, cancellationToken).ConfigureAwait(false)).FirstOrDefault(item => item.PermanentId == issueId);
+        }
+    }
 
     private async Task<IEnumerable<PerfIssueItem>> GetAllAsync(string version, CancellationToken cancellationToken)
     {
@@ -62,7 +80,25 @@ public class IssueItemService
         // .../1.0.0-alpha/specs/registry/perf-issue.json
         string url = $"{version}/specs/registry/perf-issue.json";
         HttpClient client = _httpClientFactory.CreateClient("issue-spec");
-        IEnumerable<PerfIssueItem>? result = await client.GetFromJsonAsync<IEnumerable<PerfIssueItem>>(url, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+
+        IEnumerable<PerfIssueItem>? result = null;
+        try
+        {
+            PerfIssueRegistryDocument? document = await client.GetFromJsonAsync<PerfIssueRegistryDocument>(url, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+            result = document?.Items;
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogDebug(ex, "Not able to deserialize PerfIssueRegistryDocument. This should not happen for any version higher than 1.0.0-alpha7.");
+        }
+
+        // This is for backward compatibility for 1.0.0-alpha7 and any versions released before it.
+        if (result is null || !result.Any())
+        {
+            _logger.LogInformation("Try get perf issue item collection without schema.");
+            result = await client.GetFromJsonAsync<IEnumerable<PerfIssueItem>>(url, _jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+        }
+
         if (result is null)
         {
             return Enumerable.Empty<PerfIssueItem>();
@@ -70,25 +106,4 @@ public class IssueItemService
         return result;
     }
 
-    private void ExtractSubstitutes(Func<string?> textSelector, HashSet<string> dest)
-    {
-        foreach (string sub in ExtractSubstitutes(textSelector()))
-        {
-            dest.Add(sub);
-        }
-    }
-
-    private IEnumerable<string> ExtractSubstitutes(string? text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            yield break;
-        }
-
-        const string pattern = @"{(.*?)}";
-        foreach (Match match in Regex.Matches(text, pattern, RegexOptions.Singleline, TimeSpan.FromSeconds(1)))
-        {
-            yield return match.Groups[1].Value;
-        }
-    }
 }

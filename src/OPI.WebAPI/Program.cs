@@ -2,13 +2,31 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Identity.Web;
+using OPI.Core.Utilities;
+using OPI.WebAPI;
 using OPI.WebAPI.RegistryStorage;
 using OPI.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>{
-    config.WithOrigins("http://localhost:5160", "https://white-bay-0b797e61e.2.azurestaticapps.net")
+builder.Logging.AddSimpleConsole(opt =>
+{
+    opt.ColorBehavior = LoggerColorBehavior.Disabled;
+#if (DEBUG)
+    opt.ColorBehavior = LoggerColorBehavior.Enabled;
+#endif
+    opt.UseUtcTimestamp = true;
+    opt.SingleLine = true;
+});
+
+builder.Services.AddHealthChecks().AddCheck<SimpleHealthCheck>(nameof(SimpleHealthCheck));
+
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddServiceProfiler();
+
+builder.Services.AddCors(opt => opt.AddDefaultPolicy(config =>
+{
+    config.WithOrigins("http://localhost:5160", "https://white-bay-0b797e61e.2.azurestaticapps.net", "https://purple-beach-00e7e341e.2.azurestaticapps.net")
         .AllowAnyMethod()
         .WithHeaders("content-type", "authorization");
 }));
@@ -34,6 +52,8 @@ builder.Services.AddSingleton<JsonSerializerOptions>(_ =>
 });
 
 // Add services to the container.
+builder.Services.AddSingleton<SubstituteExtractor>(_ => SubstituteExtractor.Instance);
+builder.Services.AddTransient<SubstituteService>();
 builder.Services.AddTransient<IssueRegistryService>();
 builder.Services.AddTransient<IssueItemService>();
 
@@ -65,5 +85,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/healthz");
 
 app.Run();

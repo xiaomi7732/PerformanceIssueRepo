@@ -1,0 +1,25 @@
+.container
+{
+    display: flex;
+    align-items: center;
+}
+
+.head
+{
+    margin-right: 12px;
+}
+
+::deep .link-item
+{
+    margin-right: 8px;
+    font-size: 18px;
+    text-decoration: none;
+    color: var(--accent-color-disabled);
+    font-style: italic;
+}
+
+::deep .activeLink{
+    color: var(--accent-color);
+    font-weight:500;
+    font-style: normal;
+}

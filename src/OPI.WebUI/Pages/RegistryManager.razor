@@ -1,84 +1,49 @@
 ﻿@page "/Manage"
 
-<h2>Manage Registry</h2>
-
-<NavLink href="/">Issues</NavLink>
-<NavLink href="/Import">Import</NavLink>
-
 <div>
-    <input class="search-input" type="search" placeholder="Type in keywords to search for a specific registered performance issue."
-        @bind="Keyword"></input>
+    <input class="search-input" type="search"
+        placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"
+        @bind:event="oninput"></input>
+</div>
+<div class='status-filter'>
+    <div>Displays:</div>
+    <div class='status-filter-item active-item'>
+        <input id='cbxShowActive' type='checkbox' @bind='@ShowActiveEntries' />
+        <label for='cbxShowActive'>Active: <span>@Active</span></label>
+    </div>
+    <div class='status-filter-item inactive-item'>
+        <input id='cbxShowInactive' type='checkbox' @bind='@ShowInactiveEntries' />
+        <label for='cbxShowInactive'>Inactive: <span>@InActive</span></label>
+    </div>
 </div>
 
-@if (RegisteredItems.Any())
+@if (Initialized)
 {
-    @foreach (PerfIssueRegisterEntry entry in RegisteredItems)
-    {
-        <div class='card'>
-            <div class="issue-item">
-                <div class='issue-item-title'>
-                    Issue #
-                </div>
-                <div>
-                    <span>@entry.PermanentId</span>
-                    @if(!string.IsNullOrEmpty(entry.LegacyId))
-                    {
-                        <span>&nbsp;(Legacy id: @entry.LegacyId)</span>
-                    }
-                </div>
-            </div>
+    <div class='operation-buttons'>
+        <button @onclick="AddNewItemAsync">+ Add new item</button>
+    </div>
+}
 
-            <div class="issue-item">
-                <div class='issue-item-title'>Is Active</div>
-                <div>@entry.IsActive</div>
-            </div>
+@if (!Initialized)
+{
+    <div class="spin">Loading ...</div>
+}
+else if (RegisteredItems.Any())
+{
+    <div class='main-area'>
+        <div class='registered-items'>
 
-            <div class="issue-item">
-                <div class='issue-item-title'>Title</div>
-                <div>@entry.Title</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Description</div>
-                <div>@entry.Description</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Recommendation</div>
-                <div>@entry.Recommendation</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>Rationale</div>
-                <div>@entry.Rationale</div>
-            </div>
-
-            <div class="issue-item">
-                <div class='issue-item-title'>HelpLink</div>
-                @if (entry.DocURL is not null)
-                {
-                    <div><a href="@entry.DocURL" target="_blank">@entry.DocURL</a></div>
-                }
-                else
-                {
-                    <div>Not available.</div>
-                }
-            </div>
-
-            <div class='button-list'>
-                @if(entry.IsActive)
-                {
-                    <button class='button' id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Deactive</button>
-                }
-                else
-                {
-                    <button class='button' id='activate-toggle-button' @onclick="() => ToggleActivateAsync(entry.PermanentId)">Active</button>
-                }
-
-                <button class="button" @onclick="()=> DeleteAsync(entry)">Delete</button>
-            </div>
+            @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
+            {
+                <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
+            CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
+            CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
+            }
         </div>
-    }
+        <div id='substitute'>
+            <SubstituteViewer Title="Substitutes" ExtractedSubstitutes="@ExtractedSubstitutes" />
+        </div>
+    </div>
 }
 else
 {

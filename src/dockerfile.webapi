@@ -1,0 +1,21 @@
+# https://hub.docker.com/_/microsoft-dotnet
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /source
+
+COPY ./Directory.Build.props ./
+
+COPY OPI.WebAPI/. ./OPI.WebAPI
+COPY OPI.Core/. ./OPI.Core
+COPY OPI.Core.Models/. ./OPI.Core.Models
+COPY OPI.WebAPI.Contracts/. ./OPI.WebAPI.Contracts
+COPY SPEssentials.Identities/. ./SPEssentials.Identities
+
+WORKDIR /source/OPI.WebAPI
+RUN dotnet restore 
+RUN dotnet publish -c release -o /app --no-restore
+
+# final stage/image
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /app
+COPY --from=build /app ./
+ENTRYPOINT ["dotnet", "OPI.WebAPI.dll"]

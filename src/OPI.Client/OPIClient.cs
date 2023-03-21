@@ -6,14 +6,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
 using OPI.Core.Models;
+using OPI.WebAPI.Contracts;
 
 namespace OPI.Client;
 
-public class OPIClient
+public class OPIClient : IAuthorizedOPIClient
 {
     private readonly HttpClient _httpClient;
     private readonly IGitHubClient? _gitHubClient;
-    private readonly ILogger<OPIClient> _logger;
+    private readonly ILogger _logger;
     private readonly OPIClientOptions _clientOptions;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
@@ -24,7 +25,6 @@ public class OPIClient
         ILogger<OPIClient> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
         _gitHubClient = gitHubClient;
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _clientOptions = clientOptions?.Value ?? throw new ArgumentNullException(nameof(clientOptions));
@@ -38,14 +38,37 @@ public class OPIClient
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
     }
 
-    public Uri? Endpoint => _httpClient.BaseAddress;
+    /// <summary>
+    /// Gets the base address of the http requests.
+    /// </summary>
+    public Uri? BaseAddress => _httpClient.BaseAddress;
 
+    /// <summary>
+    /// List all the performance issues of a given spec version.
+    /// When latest is used, generate the issue list by the latest items in the registry.
+    /// </summary>
     public Task<IEnumerable<PerfIssueItem>> ListAllAsync(string version, CancellationToken cancellationToken)
     {
         string path = $"issues?spec-version={version}";
         return ListAllAsync<PerfIssueItem>(path, cancellationToken);
     }
 
+    /// <summary>
+    /// Gets the perf issue item by its permanent id and the spec version.
+    /// </summary>
+    public async Task<PerfIssueItem?> GetPerfIssueItem(Guid issueId, string version, CancellationToken cancellationToken)
+    {
+        string path = $"Issues/{issueId}?spec-version={version}";
+
+        PerfIssueItem? result = await _httpClient.GetFromJsonAsync<PerfIssueItem>(path, cancellationToken).ConfigureAwait(false);
+        return result;
+    }
+
+    /// <summary>
+    /// List all spec versions tagged on GitHub.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<IEnumerable<string>> ListSpecVersionsAsync(CancellationToken cancellationToken)
     {
         if (_gitHubClient is null)
@@ -61,6 +84,9 @@ public class OPIClient
             );
     }
 
+    /// <summary>
+    /// Gets all issues in form of Json string.
+    /// </summary>
     public async Task<string> GetAllInJsonStringAsync(string version, CancellationToken cancellationToken)
     {
         string path = $"issues?spec-version={version}";
@@ -91,10 +117,10 @@ public class OPIClient
     /// <summary>
     /// Update a performance issue entry
     /// </summary>
-    public async Task<PerfIssueRegisterEntry?> UpdateEntryAsync(PerfIssueRegisterEntry target, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry?> UpdateEntryAsync(RegistryEntryRequestData target, CancellationToken cancellationToken)
     {
         string path = "registry";
-        JsonContent body = JsonContent.Create<PerfIssueRegisterEntry>(target, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
+        JsonContent body = JsonContent.Create<RegistryEntryRequestData>(target, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
         HttpResponseMessage response = await _httpClient.PutAsync(path, body).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         using (Stream stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
@@ -108,12 +134,18 @@ public class OPIClient
     /// Registers a new entry
     /// </summary>
     /// <param name="newEntry"></param>
-    public async Task RegisterAsync(PerfIssueRegisterEntry newEntry, CancellationToken cancellationToken)
+    public async Task<PerfIssueRegisterEntry> RegisterAsync(RegistryEntryRequestData newEntry, CancellationToken cancellationToken)
     {
         string path = "registry";
-        JsonContent body = JsonContent.Create<PerfIssueRegisterEntry>(newEntry, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
+        JsonContent body = JsonContent.Create<RegistryEntryRequestData>(newEntry, new MediaTypeHeaderValue(MediaTypeNames.Application.Json), _jsonSerializerOptions);
         HttpResponseMessage response = await _httpClient.PostAsync(path, body, cancellationToken).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
+        PerfIssueRegisterEntry? result = await response.Content.ReadFromJsonAsync<PerfIssueRegisterEntry>(_jsonSerializerOptions, cancellationToken).ConfigureAwait(false);
+        if (result is null)
+        {
+            throw new InvalidOperationException("Result object is expected, null returned.");
+        }
+        return result;
     }
 
     /// <summary>

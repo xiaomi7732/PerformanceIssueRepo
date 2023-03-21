@@ -1,0 +1,55 @@
+@page "/Issues/{IssueId}"
+
+@if (InProgress)
+{
+    <div class='spin'>Loading data</div>
+}
+else if (string.IsNullOrEmpty(Message))
+{
+    <div class='issue-item version-description'>
+        <div>In spec&nbsp;<span clsss='version-text'>@SpecVersion</span>:</div>
+    </div>
+
+    <div class="issue-item">
+        <div class='issue-item-title'>Title</div>
+        <div class='issue-item-text'>@Data.Title</div>
+    </div>
+
+    <div class="issue-item">
+        <div class='issue-item-title'>Issue Id:</div>
+        <div class='issue-item-text'>
+            @IssueId
+        </div>
+    </div>
+
+    <div class="issue-item">
+        <div class='issue-item-title'>Description</div>
+        <div class='issue-item-text'>@Data.Description</div>
+    </div>
+
+    <div class="issue-item">
+        <div class='issue-item-title'>Recommendation</div>
+        <div class='issue-item-text'>@Data.Recommendation</div>
+    </div>
+
+    <div class="issue-item">
+        <div class='issue-item-title'>Rationale</div>
+        <div class='issue-item-text'>@Data.Rationale</div>
+    </div>
+
+    <div class="issue-item">
+        <div class='issue-item-title'>HelpLink</div>
+        @if (Data.DocURL is not null)
+        {
+            <div class='issue-item-text'><a href="@Data.DocURL" target="_blank">@Data.DocURL</a></div>
+        }
+        else
+        {
+            <div>Not available.</div>
+        }
+    </div>
+}
+else
+{
+    <div>@Message</div>
+}

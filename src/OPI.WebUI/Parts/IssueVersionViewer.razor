@@ -1,0 +1,18 @@
+@if (SpecVersions is null)
+{
+    <div>Loading ...</div>
+}
+else if (!SpecVersions.Any())
+{
+    <div>This item has never been published.</div>
+}
+else
+{
+    <div class='title'>Published in version(s): </div>
+    <div class='version-list'>
+        @foreach (string specVersion in SpecVersions)
+        {
+            <div class='version-item'>@specVersion</div>
+        }
+    </div>
+}

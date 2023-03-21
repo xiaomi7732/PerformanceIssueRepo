@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build webapi",
-            "program": "${workspaceFolder}/src/PerfIssueRepo.WebAPI/bin/Debug/net7.0/PerfIssueRepo.WebAPI.dll",
+            "program": "${workspaceFolder}/src/OPI.WebAPI/bin/Debug/net7.0/OPI.WebAPI.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/PerfIssueRepo.WebAPI",
+            "cwd": "${workspaceFolder}/src/OPI.WebAPI",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
