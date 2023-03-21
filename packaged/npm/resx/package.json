@@ -11,7 +11,7 @@
     "generate-resx": "dotnet run --project ..\\..\\..\\examples\\OPI.Generate\\ -- --type resx --output ..\\..\\..\\packaged\\npm\\resx\\OPIResources-%npm_package_version%.resx --registryVersion %npm_package_version%",
     "clean-former": "git rm --ignore-unmatch *.resx",
     "push-to-npm": "yarn publish --new-version %npm_package_version%",
-    "add-to-git": "git add OPIResources-%npm_package_version%.resx package.json && git commit -m 'Releasing version %npm_package_version%' && git push",
-    "publish-package": "yarn run generate-resx && yarn run clean-former && yarn run push-to-npm"
+    "add-to-git": "git add ./OPIResources-%npm_package_version%.resx ./package.json && git commit -m 'Releasing version %npm_package_version%' && git push",
+    "publish-package": "yarn run generate-resx && yarn run clean-former && yarn run push-to-npm && yarn run add-to-git"
   }
 }
