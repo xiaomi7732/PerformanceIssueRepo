@@ -1,0 +1,22 @@
+{
+  "name": "@opi/json",
+  "version": "1.0.0-alpha9",
+  "description": "Json file for Open Performance Issues",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "generate-json": "dotnet run --project ..\\..\\..\\exmaples\\OPI.Generate\\ -- --type json --output ..\\..\\..\\packaged\\npm\\json\\OPIResources-1.0.0-alpha9.json --registryVersion 1.0.0-alpha9",
+    "clean-former": "git rm --ignore-unmatch *.resx",
+    "push-to-npm": "yarn publish --new-version %npm_package_version%",
+    "add-to-git": "git add ./OPIResources.json ./package.json;git commit -m 'Releasing new version %npm_package_version%';git push",
+    "publish-package": "yarn run generate-json && yarn run clean-former && yarn run add-to-git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.17.8"
+  }
+}
