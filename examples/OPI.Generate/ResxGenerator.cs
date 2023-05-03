@@ -28,8 +28,6 @@ public class ResxGenerator
 
         // Initialize the resource writer
         using ResXResourceWriter writer = new ResXResourceWriter(outputPath);
-        // Write the schema version
-        writer.AddResource("$schema", resxSchemaVersion);
         // Write the entries
         foreach (PerfIssueItem entry in entries)
         {
@@ -57,7 +55,7 @@ public class ResxGenerator
             throw new ArgumentNullException(nameof(permanentId));
         }
 
-        prefix = string.IsNullOrWhiteSpace(prefix) ? string.Empty : $"{prefix}.";
-        return $"{prefix}{permanentId}.{key}";
+        prefix = string.IsNullOrWhiteSpace(prefix) ? string.Empty : $"'{prefix}'_";
+        return $"{prefix}'{permanentId}'_{key}";
     }
 }

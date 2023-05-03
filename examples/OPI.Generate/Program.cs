@@ -16,7 +16,7 @@ string outputPath = configuration["output"] ?? throw new ArgumentNullException(n
 // Get the registry version
 string registryVersion = configuration["registryVersion"] ?? "latest";
 // Get the registry endpoint
-string registryEndpoint = configuration["registryEndpoint"] ?? "https://opir-test.azurewebsites.net/issues";
+string registryEndpoint = configuration["registryEndpoint"] ?? "https://opiapi.delightfulrock-a140dca6.westus.azurecontainerapps.io/issues";
 // Get the optional prefix
 string prefix = configuration["prefix"] ?? string.Empty;
 
