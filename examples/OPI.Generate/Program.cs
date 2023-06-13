@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using OPI.Core.Models;
-using OPI.Generators;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Microsoft.Extensions.Configuration;
+using OPI.Core.Models;
+using OPI.Generators;
 
 // Configure command line arguments
 IConfiguration configuration = new ConfigurationBuilder()
@@ -38,6 +38,13 @@ Func<PerfIssueItem[]> GetRegistryJson = () =>
 };
 
 
+// Generate action
+Action GenerateJson = () =>
+{
+    PerfIssueItem[] entries = GetRegistryJson();
+    JsonGenerator.Generate(entries, outputPath, prefix);
+};
+
 // Generate command for resx
 Action ResXGenerator = () =>
 {
@@ -51,6 +58,10 @@ Action ResXGenerator = () =>
 if (generatorType.ToLower() == "resx")
 {
     ResXGenerator();
+}
+else if (generatorType.ToLower() == "json")
+{
+    GenerateJson();
 }
 
 return 0;
