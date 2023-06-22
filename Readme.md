@@ -6,6 +6,32 @@ Whether you're working on a web application, mobile app, or a system, performanc
 
 This is an open source repository and we welcome contributions from the community. If you have encountered a performance issue and have a solution, please consider submitting a pull request to add it to the repository. The more knowledge we share, the more we can improve the performance of our applications and systems.
 
+## Get started
+
+* Assuming there's a performance issue you want to share with someone, instead of describing it, share a url like this (click on it to see it live):
+
+    * <https://purple-beach-00e7e341e.2.azurestaticapps.net/Issues/032a1d51-428a-4b16-bf75-ebff5e1755d2?spec-version=1.0.0-alpha9>
+
+        * Alright, it will be a stable/custom domain name;
+        * But then the key information would be:
+            * Issue permanent id: 032a1d51-428a-4b16-bf75-ebff5e1755d2
+            * In registry spec of version: 1.0.0-alpha9
+
+    * On the other end, we will get:
+        ![Issue example](./images/IssueExample.png)
+
+## Common scenarios
+
+* If you are building a performance issue detecting system, consider bake in the permanent id and the version into the output, you don't have to worry about writing descriptions or recommendations, help docs for the issue.
+
+* You could access the issues through the RESTful API. For example:
+    * <https://opiapi.delightfulrock-a140dca6.westus.azurecontainerapps.io/issues/032a1d51-428a-4b16-bf75-ebff5e1755d2?spec-version=1.0.0-alpha9>
+        * You will get a json representative of the same issue.
+        * Now, it can be render to a UI by your choice.
+
+* To contribute to the collection of the performance issues (the registry), submit a PR for [this registry file](https://github.com/xiaomi7732/PerformanceIssueRepo/blob/main/specs/registry/perf-issue.json).
+    * You could use the Web UI to generate the json: https://aka.ms/opiweb.
+
 # Performance issue language
 
 ![Image describe the importance of sharing language](./images/Vision.png)
