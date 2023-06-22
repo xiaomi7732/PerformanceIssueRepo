@@ -31,8 +31,26 @@ public partial class RegistryManager
     [Inject]
     private SubstituteExtractor _substituteExtractor { get; set; } = default!;
 
+    public IEnumerable<string> SpecVersionCollection { get; private set; } = Enumerable.Empty<string>();
+
     private IReadOnlyCollection<PerfIssueRegisterEntry>? _allRegisteredItems;
     public ObservableCollection<IssueRegistryItemViewModel> RegisteredItems { get; } = new ObservableCollection<IssueRegistryItemViewModel>();
+
+    private string? _pickedVersion = null;
+    public string? PickedVersion
+    {
+        get
+        {
+            return _pickedVersion;
+        }
+        set
+        {
+            if (!string.Equals(_pickedVersion, value))
+            {
+                _pickedVersion = value;
+            }
+        }
+    }
 
     private bool _showActiveEntries = true;
     public bool ShowActiveEntries
@@ -65,8 +83,14 @@ public partial class RegistryManager
                 _showInactiveEntries = value;
                 FilterData();
             }
-
         }
+    }
+
+    public bool IsDangerousZoneExpanded { get; set; } = false;
+
+    public void ToggleDangerousZone()
+    {
+        IsDangerousZoneExpanded = !IsDangerousZoneExpanded;
     }
 
     public bool Initialized { get; private set; }
@@ -93,6 +117,12 @@ public partial class RegistryManager
     {
         try
         {
+            if (SpecVersionCollection is null || !SpecVersionCollection.Any())
+            {
+                SpecVersionCollection = (await OpiClient.ListSpecVersionsAsync(default).ConfigureAwait(false)).OrderByDescending(v => v, StringComparer.OrdinalIgnoreCase);
+                PickedVersion = "noVersion";
+            }
+
             await ReloadDataAsync(default);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
@@ -107,6 +137,21 @@ public partial class RegistryManager
         finally
         {
             Initialized = true;
+        }
+    }
+
+    public async Task OverwriteWithVersionAsync()
+    {
+        if (string.IsNullOrEmpty(PickedVersion) || string.Equals(PickedVersion, "noVersion", StringComparison.OrdinalIgnoreCase))
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", "Please pick a version first.");
+            return;
+        }
+
+        bool confirmed = await _jsRuntime.InvokeAsync<bool>("confirm", $"WARNING: Are you sure to overwrite all issues to align with {PickedVersion}? This operation is non-reversible!");
+        if (!confirmed)
+        {
+            return;
         }
     }
 

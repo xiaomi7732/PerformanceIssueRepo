@@ -1,9 +1,42 @@
 ﻿@page "/Manage"
 
+@if (!IsDangerousZoneExpanded)
+{
+    <div>
+        Dangerous Zone 
+        <button @onclick="ToggleDangerousZone">+</button>
+    </div>
+}
+else
+{
+    <div>Dangerous Zone
+        <button @onclick="ToggleDangerousZone">-</button>
+    </div>
+    <div>
+        <div>Overwrite latest version with a released spec. This operation is non-reversible.</div>
+        <div>Pick a version to continue: </div>
+        @if (SpecVersionCollection.Any())
+        {
+                <div>
+                    <select @bind="PickedVersion" for="specVersion">
+                        <option value="noVersion">Pick a version</option>
+                    @foreach (string version in SpecVersionCollection)
+                    {
+                                <option value="@version">@version</option>
+                    }
+                    </select>
+                </div>
+        }
+        <div class='operation-buttons'>
+            <button @onclick="OverwriteWithVersionAsync">Overwrite the latest data!</button>
+        </div>
+    </div>
+}
+
 <div>
     <input class="search-input" type="search"
         placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"
-        @bind:event="oninput"></input>
+    @bind:event="oninput"></input>
 </div>
 <div class='status-filter'>
     <div>Displays:</div>
@@ -19,33 +52,32 @@
 
 @if (Initialized)
 {
-    <div class='operation-buttons'>
-        <button @onclick="AddNewItemAsync">+ Add new item</button>
-    </div>
+        <div class='operation-buttons'>
+            <button @onclick="AddNewItemAsync">+ Add new item</button>
+        </div>
 }
 
 @if (!Initialized)
 {
-    <div class="spin">Loading ...</div>
+        <div class="spin">Loading ...</div>
 }
 else if (RegisteredItems.Any())
 {
-    <div class='main-area'>
-        <div class='registered-items'>
-
+        <div class='main-area'>
+            <div class='registered-items'>
             @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
             {
-                <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
-            CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
-            CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
+                        <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
+                    CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
+                    CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
             }
+            </div>
+            <div id='substitute'>
+                <SubstituteViewer Title="Substitutes" ExtractedSubstitutes="@ExtractedSubstitutes" />
+            </div>
         </div>
-        <div id='substitute'>
-            <SubstituteViewer Title="Substitutes" ExtractedSubstitutes="@ExtractedSubstitutes" />
-        </div>
-    </div>
 }
 else
 {
-    <div>No registred entry.</div>
+        <div>No registred entry.</div>
 }
