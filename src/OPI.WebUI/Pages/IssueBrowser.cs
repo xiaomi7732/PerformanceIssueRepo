@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
 using OPI.Client;
 using OPI.Core.Models;
 using OPI.WebUI.Services;
@@ -11,6 +12,9 @@ namespace OPI.WebUI.Pages;
 
 public partial class IssueBrowser
 {
+    [Inject]
+    private IJSRuntime _jsRuntime { get; set; } = default!;
+
     [Inject]
     public IAnonymousOPIClient OpiClient { get; private set; } = default!;
 
@@ -215,6 +219,22 @@ public partial class IssueBrowser
         {
             yield return string.Empty;
         }
+    }
+
+    private Task DownloadJsonAsync()
+        => DownloadStringAsFileAsync("spec." + PickedVersion + ".json", JsonContent);
+
+    private Task DownloadCSVAsync()
+        => DownloadStringAsFileAsync("spec." + PickedVersion + ".csv", CSVContent);
+
+    private async Task DownloadStringAsFileAsync(string fileName, string? content)
+    {
+        if (string.IsNullOrEmpty(content))
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", "There's no content to download.");
+            return;
+        }
+        await _jsRuntime.InvokeAsync<object>("saveFile", fileName, content);
     }
 
     private async Task OnKeywordChanged()

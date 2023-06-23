@@ -43,6 +43,9 @@
                     @bind="Keyword" @bind:event="oninput"></input>
                     </div>
 
+                    <button @onclick="DownloadJsonAsync">Download as JSON</button>
+                    <button @onclick="DownloadCSVAsync">Download as CSV</button>
+
                     <div>
                         @if (IssueCollection is null)
                         {
