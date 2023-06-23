@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.WebUI.Services;
 
 namespace OPI.WebUI.Pages;
 
@@ -18,6 +19,9 @@ public partial class IssueBrowser
 
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    private CSVGen<PerfIssueItem> CSVGen { get; set; } = default!;
 
     public bool IsLoading { get; set; }
 
@@ -172,63 +176,46 @@ public partial class IssueBrowser
             return;
         }
 
-        CSVContent = CreateCSVText(allIssueItems);
-        Console.WriteLine("csv content: {0}", CSVContent);
+        CSVContent = CSVGen.CreateCSVText(allIssueItems, CreateCSVFields);
     }
 
-    private string CreateCSVText(IEnumerable<PerfIssueItem> items)
+    private IEnumerable<string?> CreateCSVFields(PerfIssueItem item)
     {
-        StringBuilder builder = new StringBuilder();
-        foreach (PerfIssueItem item in items)
-        {
-            builder.AppendLine(CreateCSVLine(item));
-        }
-        return builder.ToString();
-    }
-
-    private string CreateCSVLine(PerfIssueItem item)
-    {
-        string line = string.Empty;
-        // CSV schema: id,issue*,description*,recommendation*,rationale,docUrl
 
         // id
+        string id = string.Empty;
         if (item.PermanentId.HasValue)
         {
-            line = item.PermanentId.Value.ToString("D");
+            id = item.PermanentId.Value.ToString("D");
         }
         else if (!string.IsNullOrEmpty(item.LegacyId))
         {
-            line = $@"""{EscapeCSVField(item.LegacyId)}""";
+            id = item.LegacyId;
         }
-        line += ",";
+        yield return id;
 
-        // issue
-        line += $@"""{EscapeCSVField(item.Title)}"",";
+        // title
+        yield return item.Title;
 
         // description
-        line += $@"""{EscapeCSVField(item.Description)}"",";
+        yield return item.Description;
 
         // Recommendation
-        line += $@"""{EscapeCSVField(item.Recommendation)}"",";
+        yield return item.Recommendation;
 
         // rationale
-        if (!string.IsNullOrEmpty(item.Rationale))
-        {
-            line += $@"""{EscapeCSVField(item.Description)}""";
-        }
-        line += ",";
+        yield return item.Rationale;
 
         // docurl
         if (item.DocURL is not null)
         {
-            line += $@"""{EscapeCSVField(item.DocURL.AbsoluteUri)}""";
+            yield return item.DocURL.AbsoluteUri;
         }
-
-        return line;
+        else
+        {
+            yield return string.Empty;
+        }
     }
-
-    private string EscapeCSVField(string content)
-        => content.Replace("\"", "\"\"", StringComparison.Ordinal);
 
     private async Task OnKeywordChanged()
     {
