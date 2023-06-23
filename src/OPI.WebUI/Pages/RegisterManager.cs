@@ -9,6 +9,7 @@ using OPI.Core.Models;
 using OPI.Core.Utilities;
 using OPI.Core.Validators;
 using OPI.WebAPI.Contracts;
+using OPI.WebUI.Services;
 using OPI.WebUI.ViewModels;
 
 namespace OPI.WebUI.Pages;
@@ -30,6 +31,9 @@ public partial class RegistryManager
 
     [Inject]
     private SubstituteExtractor _substituteExtractor { get; set; } = default!;
+
+    [Inject]
+    private SpecDataSyncService _specDataSyncService { get; set; } = default!;
 
     public IEnumerable<string> SpecVersionCollection { get; private set; } = Enumerable.Empty<string>();
 
@@ -142,16 +146,36 @@ public partial class RegistryManager
 
     public async Task OverwriteWithVersionAsync()
     {
-        if (string.IsNullOrEmpty(PickedVersion) || string.Equals(PickedVersion, "noVersion", StringComparison.OrdinalIgnoreCase))
+        string? pickedVersion = PickedVersion;
+        if (string.IsNullOrEmpty(pickedVersion) || string.Equals(pickedVersion, "noVersion", StringComparison.OrdinalIgnoreCase))
         {
             await _jsRuntime.InvokeVoidAsync("alert", "Please pick a version first.");
             return;
         }
 
-        bool confirmed = await _jsRuntime.InvokeAsync<bool>("confirm", $"WARNING: Are you sure to overwrite all issues to align with {PickedVersion}? This operation is non-reversible!");
+        bool confirmed = await _jsRuntime.InvokeAsync<bool>("confirm", $"WARNING: Are you sure to overwrite all issues to align with {pickedVersion}? This operation is non-reversible!");
         if (!confirmed)
         {
             return;
+        }
+
+        try
+        {
+            Initialized = false;
+            StateHasChanged();
+            RegistryEntryOptions aggressiveUpdatePolicy = new RegistryEntryOptions()
+            {
+                AllowsDuplicatedHelpDocs = true,
+                AllowsNewSubstitutes = true,
+            };
+            await _specDataSyncService.RunAsync(pickedVersion, aggressiveUpdatePolicy, default);
+
+            await ReloadDataAsync(default);
+            await _jsRuntime.InvokeVoidAsync("alert", "The data has been refreshed.");
+        }
+        finally
+        {
+            Initialized = true;
         }
     }
 
