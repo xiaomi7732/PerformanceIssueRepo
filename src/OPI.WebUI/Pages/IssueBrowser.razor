@@ -33,6 +33,9 @@
 
     @if (!IsLoading)
     {
+        <button @onclick="DownloadJsonAsync">Download as JSON</button>
+        <button @onclick="DownloadCSVAsync">Download as CSV</button>
+
         <div class='working-space'>
             @if (string.Equals(CurrentView, "card", StringComparison.OrdinalIgnoreCase))
             {
@@ -42,9 +45,6 @@
                             placeholder="Type in keywords to search for a specific registered performance issue."
                     @bind="Keyword" @bind:event="oninput"></input>
                     </div>
-
-                    <button @onclick="DownloadJsonAsync">Download as JSON</button>
-                    <button @onclick="DownloadCSVAsync">Download as CSV</button>
 
                     <div>
                         @if (IssueCollection is null)
@@ -126,7 +126,7 @@
             else if (string.Equals(CurrentView, "csv", StringComparison.Ordinal))
             {
                 <div id='json-view' class='main-section'>
-                    <JsonViewer Title="CSV View" Content="@CSVContent" />
+                    <JsonViewer Title="CSV View" Content="@CSVContent" Tips="Tips: Download, open csv in excel, edit in batch and import back." />
                 </div>
             }
             <div id='substitute'>
