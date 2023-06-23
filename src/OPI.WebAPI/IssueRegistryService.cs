@@ -183,33 +183,33 @@ public class IssueRegistryService
             {
                 allItems.Add(item);
             }
-        }
 
-        if (allItems is null)
-        {
-            throw new InvalidOperationException("All items shouldn't be null.");
-        }
-
-        // Unless requested by the client, do not allow duplicated help docs.
-        if (!options.AllowsDuplicatedHelpDocs)
-        {
-            SameHelpLinkValidator validator = new(entry, allItems);
-            if (!await validator.ValidateAsync(cancellationToken))
+            if (allItems is null)
             {
-                throw new DataModelValidationException(validator.Reason);
+                throw new InvalidOperationException("All items shouldn't be null.");
             }
-        }
 
-        if (!options.AllowsNewSubstitutes)
-        {
-            IEnumerable<string> existingSubstitutes = await _substituteService.ListSubstitutesAsync(
-                (stoppingToken) => Task.FromResult(allItems.AsEnumerable()),
-                cancellationToken).ConfigureAwait(false);
-
-            NewSubstituteValidator validator = new(entry, existingSubstitutes, _substituteExtractor);
-            if (!await validator.ValidateAsync(cancellationToken))
+            // Unless requested by the client, do not allow duplicated help docs.
+            if (!options.AllowsDuplicatedHelpDocs)
             {
-                throw new DataModelValidationException(validator.Reason);
+                SameHelpLinkValidator validator = new(entry, allItems);
+                if (!await validator.ValidateAsync(cancellationToken))
+                {
+                    throw new DataModelValidationException(validator.Reason);
+                }
+            }
+
+            if (!options.AllowsNewSubstitutes)
+            {
+                IEnumerable<string> existingSubstitutes = await _substituteService.ListSubstitutesAsync(
+                    (stoppingToken) => Task.FromResult(allItems.AsEnumerable()),
+                    cancellationToken).ConfigureAwait(false);
+
+                NewSubstituteValidator validator = new(entry, existingSubstitutes, _substituteExtractor);
+                if (!await validator.ValidateAsync(cancellationToken))
+                {
+                    throw new DataModelValidationException(validator.Reason);
+                }
             }
         }
     }

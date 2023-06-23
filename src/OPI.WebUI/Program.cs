@@ -48,5 +48,6 @@ builder.Services.AddSingleton<IssueVersionService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<CSVReaderFactory>();
+builder.Services.AddScoped<SpecDataSyncService>();
 
 await builder.Build().RunAsync();

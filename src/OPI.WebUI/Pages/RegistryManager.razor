@@ -1,24 +1,60 @@
 ﻿@page "/Manage"
 
-<div>
-    <input class="search-input" type="search"
-        placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"
-        @bind:event="oninput"></input>
-</div>
-<div class='status-filter'>
-    <div>Displays:</div>
-    <div class='status-filter-item active-item'>
-        <input id='cbxShowActive' type='checkbox' @bind='@ShowActiveEntries' />
-        <label for='cbxShowActive'>Active: <span>@Active</span></label>
-    </div>
-    <div class='status-filter-item inactive-item'>
-        <input id='cbxShowInactive' type='checkbox' @bind='@ShowInactiveEntries' />
-        <label for='cbxShowInactive'>Inactive: <span>@InActive</span></label>
-    </div>
-</div>
+@if (@Initialized)
+{
+    @if (!IsDangerousZoneExpanded)
+    {
+        <div>
+            Dangerous Zone 
+            <button @onclick="ToggleDangerousZone">+</button>
+        </div>
+    }
+    else
+    {
+        <div>Dangerous Zone
+            <button @onclick="ToggleDangerousZone">-</button>
+        </div>
+        <div>
+            <div>Overwrite latest version with a released spec. This operation is non-reversible.</div>
+            <div>Pick a version to continue: </div>
+            @if (SpecVersionCollection.Any())
+            {
+                <div>
+                    <select @bind="PickedVersion" for="specVersion">
+                        <option value="noVersion">Pick a version</option>
+                        @foreach (string version in SpecVersionCollection)
+                        {
+                            <option value="@version">@version</option>
+                        }
+                    </select>
+                </div>
+            }
+            <div class='operation-buttons'>
+                <button @onclick="OverwriteWithVersionAsync">Overwrite the latest data!</button>
+            </div>
+        </div>
+    }
+}
 
 @if (Initialized)
 {
+    <div>
+        <input class="search-input" type="search"
+            placeholder="Type in keywords to search for a specific registered performance issue." @bind="Keyword"
+        @bind:event="oninput"></input>
+    </div>
+    <div class='status-filter'>
+        <div>Displays:</div>
+        <div class='status-filter-item active-item'>
+            <input id='cbxShowActive' type='checkbox' @bind='@ShowActiveEntries' />
+            <label for='cbxShowActive'>Active: <span>@Active</span></label>
+        </div>
+        <div class='status-filter-item inactive-item'>
+            <input id='cbxShowInactive' type='checkbox' @bind='@ShowInactiveEntries' />
+            <label for='cbxShowInactive'>Inactive: <span>@InActive</span></label>
+        </div>
+    </div>
+
     <div class='operation-buttons'>
         <button @onclick="AddNewItemAsync">+ Add new item</button>
     </div>
@@ -32,12 +68,11 @@ else if (RegisteredItems.Any())
 {
     <div class='main-area'>
         <div class='registered-items'>
-
             @foreach (IssueRegistryItemViewModel entry in RegisteredItems)
             {
                 <RegistryEntryViewer ViewModel="@entry" ToggleActivateCallback="ToggleActivateAsync"
-            CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
-            CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
+                    CancelAddCallback="OnCancelAddAsync" DeleteItemCallback="DeleteAsync" SubmitAddedCallback="OnSubmitAddAsync"
+                    CancelEditCallback="OnCancelEditAsync" SubmitEditCallback="OnSubmitEditAsync" />
             }
         </div>
         <div id='substitute'>
