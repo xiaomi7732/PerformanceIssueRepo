@@ -1,14 +1,20 @@
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
 using OPI.Client;
 using OPI.Core.Models;
+using OPI.WebUI.Services;
 
 namespace OPI.WebUI.Pages;
 
 public partial class IssueBrowser
 {
+    [Inject]
+    private IJSRuntime _jsRuntime { get; set; } = default!;
+
     [Inject]
     public IAnonymousOPIClient OpiClient { get; private set; } = default!;
 
@@ -16,7 +22,10 @@ public partial class IssueBrowser
     private IOptions<JsonGenOptions> JsonGenOptions { get; set; } = Options.Create<JsonGenOptions>(new JsonGenOptions());
 
     [Inject]
-    private NavigationManager Navigation {get; set;} = default!;
+    private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    private CSVGen<PerfIssueItem> CSVGen { get; set; } = default!;
 
     public bool IsLoading { get; set; }
 
@@ -25,8 +34,8 @@ public partial class IssueBrowser
     private IReadOnlyCollection<PerfIssueItem>? _loadedIssues = null;
     public IEnumerable<PerfIssueItem>? IssueCollection { get; private set; } = null;
 
-
-    public string JsonContent { get; set; } = string.Empty;
+    public string? JsonContent { get; set; } = null;
+    public string? CSVContent { get; set; } = null;
 
     private string? _keyword;
     public string? Keyword
@@ -98,6 +107,7 @@ public partial class IssueBrowser
             _loadedIssues = new List<PerfIssueItem>(await OpiClient.ListAllAsync(_pickedVersion, default)).OrderBy(item => item.LegacyId?.PadLeft(4)).ThenBy(item => item.PermanentId).ToList().AsReadOnly();
             ApplyFilter();
             await UpdateJsonViewAsync(cancellationToken: default);
+            await UpdateCSVViewAsync(cancellationToken: default);
             await UpdateSubstitutesAsync(cancellationToken: default);
             StateHasChanged();
         }
@@ -128,26 +138,103 @@ public partial class IssueBrowser
 
     private async Task UpdateJsonViewAsync(CancellationToken cancellationToken)
     {
-        JsonContent = string.Empty;
-        if (!string.IsNullOrEmpty(_pickedVersion))
+        JsonContent = null;
+        if (string.IsNullOrEmpty(_pickedVersion))
         {
-            List<PerfIssueItem>? allIssueItems = (await OpiClient.ListAllAsync(_pickedVersion, cancellationToken).ConfigureAwait(false)).OrderBy(item => item.LegacyId?.PadLeft(4)).ThenBy(item => item.PermanentId)?.ToList();
-            if (allIssueItems is null || !allIssueItems.Any())
-            {
-                return;
-            }
-
-            PerfIssueRegistryDocument doc = new PerfIssueRegistryDocument()
-            {
-                Schema = JsonGenOptions.Value.SchemaPath,
-                Items = allIssueItems,
-            };
-            JsonSerializerOptions reSerializeOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-            reSerializeOptions.WriteIndented = true;
-            reSerializeOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-
-            JsonContent = JsonSerializer.Serialize<PerfIssueRegistryDocument>(doc, reSerializeOptions);
+            return;
         }
+
+        List<PerfIssueItem>? allIssueItems = (await OpiClient.ListAllAsync(_pickedVersion, cancellationToken).ConfigureAwait(false)).OrderBy(item => item.LegacyId?.PadLeft(4)).ThenBy(item => item.PermanentId)?.ToList();
+        if (allIssueItems is null || !allIssueItems.Any())
+        {
+            JsonContent = string.Empty;
+            return;
+        }
+
+        PerfIssueRegistryDocument doc = new PerfIssueRegistryDocument()
+        {
+            Schema = JsonGenOptions.Value.SchemaPath,
+            Items = allIssueItems,
+        };
+        JsonSerializerOptions reSerializeOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        reSerializeOptions.WriteIndented = true;
+        reSerializeOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+
+        JsonContent = JsonSerializer.Serialize<PerfIssueRegistryDocument>(doc, reSerializeOptions);
+    }
+
+    private async Task UpdateCSVViewAsync(CancellationToken cancellationToken)
+    {
+        CSVContent = null;
+        if (string.IsNullOrEmpty(_pickedVersion))
+        {
+            return;
+        }
+
+        List<PerfIssueItem>? allIssueItems = (await OpiClient.ListAllAsync(_pickedVersion, cancellationToken).ConfigureAwait(false)).OrderBy(item => item.LegacyId?.PadLeft(4)).ThenBy(item => item.PermanentId)?.ToList();
+        if (allIssueItems is null || !allIssueItems.Any())
+        {
+            Console.WriteLine("No csv content.");
+            // Nothing
+            CSVContent = string.Empty;
+            return;
+        }
+
+        CSVContent = CSVGen.CreateCSVText(allIssueItems, CreateCSVFields);
+    }
+
+    private IEnumerable<string?> CreateCSVFields(PerfIssueItem item)
+    {
+
+        // id
+        string id = string.Empty;
+        if (item.PermanentId.HasValue)
+        {
+            id = item.PermanentId.Value.ToString("D");
+        }
+        else if (!string.IsNullOrEmpty(item.LegacyId))
+        {
+            id = item.LegacyId;
+        }
+        yield return id;
+
+        // title
+        yield return item.Title;
+
+        // description
+        yield return item.Description;
+
+        // Recommendation
+        yield return item.Recommendation;
+
+        // rationale
+        yield return item.Rationale;
+
+        // docurl
+        if (item.DocURL is not null)
+        {
+            yield return item.DocURL.AbsoluteUri;
+        }
+        else
+        {
+            yield return string.Empty;
+        }
+    }
+
+    private Task DownloadJsonAsync()
+        => DownloadStringAsFileAsync("spec." + PickedVersion + ".json", JsonContent);
+
+    private Task DownloadCSVAsync()
+        => DownloadStringAsFileAsync("spec." + PickedVersion + ".csv", CSVContent);
+
+    private async Task DownloadStringAsFileAsync(string fileName, string? content)
+    {
+        if (string.IsNullOrEmpty(content))
+        {
+            await _jsRuntime.InvokeVoidAsync("alert", "There's no content to download.");
+            return;
+        }
+        await _jsRuntime.InvokeAsync<object>("saveFile", fileName, content);
     }
 
     private async Task OnKeywordChanged()

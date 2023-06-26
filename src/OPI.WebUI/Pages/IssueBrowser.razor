@@ -20,6 +20,7 @@
             <div>
                 <select @bind="@CurrentView" for="currentView">
                     <option value="card">Card</option>
+                    <option value="csv">CSV</option>
                     <option value="json">Json</option>
                 </select>
             </div>
@@ -32,6 +33,9 @@
 
     @if (!IsLoading)
     {
+        <button @onclick="DownloadJsonAsync">Download as JSON</button>
+        <button @onclick="DownloadCSVAsync">Download as CSV</button>
+
         <div class='working-space'>
             @if (string.Equals(CurrentView, "card", StringComparison.OrdinalIgnoreCase))
             {
@@ -113,10 +117,16 @@
                     </div>
                 </div>
             }
-            else if (string.Equals(CurrentView, "json", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(CurrentView, "json", StringComparison.Ordinal))
             {
                 <div id='json-view' class='main-section'>
                     <JsonViewer Title="Json View" Content="@JsonContent" />
+                </div>
+            }
+            else if (string.Equals(CurrentView, "csv", StringComparison.Ordinal))
+            {
+                <div id='json-view' class='main-section'>
+                    <JsonViewer Title="CSV View" Content="@CSVContent" Tips="Tips: Download, open csv in excel, edit in batch and import back." />
                 </div>
             }
             <div id='substitute'>
