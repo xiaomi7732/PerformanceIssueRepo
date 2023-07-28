@@ -1,9 +1,9 @@
 {
   "name": "@opi-perf/resx",
-  "version": "1.0.0-alpha10",
+  "version": "1.0.0-beta1",
   "description": "Resx file for Open Performance Issues",
   "main": "index.js",
-  "registryVersion": "1.0.0-alpha10",
+  "registryVersion": "1.0.0-beta1",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
