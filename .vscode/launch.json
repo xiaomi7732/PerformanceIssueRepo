@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build webapi",
-            "program": "${workspaceFolder}/src/OPI.WebAPI/bin/Debug/net7.0/OPI.WebAPI.dll",
+            "program": "${workspaceFolder}/src/OPI.WebAPI/bin/Debug/net8.0/OPI.WebAPI.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/OPI.WebAPI",
             "stopAtEntry": false,
