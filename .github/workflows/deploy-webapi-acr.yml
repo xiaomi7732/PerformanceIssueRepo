@@ -8,6 +8,9 @@ env:
   CONTAINER_APP_NAME: opiapi
   CONTAINER_APP_RESOURCE_GROUP: opi-dev-westus-002
 
+permissions:
+  id-token: write
+  contents: read
 jobs:
   docker_build_push_acr:
     name: 'Docker Build and Push to ACR'
@@ -39,20 +42,17 @@ jobs:
         push: true
         tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-    # Unfortunately, there's no way currently to setup a service principal with password
-    # to revision the Azure Container App. Check back later.
-    # For now, it makes sense to use managed identity to pull the image by running az appcontainer locally.
-    # Signing in Azure (azure CLI) is possible locally.
-    
-    # - name: Log in to Azure
-    #   uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
-    # - name: deploy Container App
-    #   uses: azure/container-apps-deploy-action@v0
-    #   with:
-    #     acrName: ${{ secrets.ACR_NAME }}
-    #     containerAppName: ${{ env.CONTAINER_APP_NAME }}
-    #     resourceGroup: ${{ env.CONTAINER_APP_RESOURCE_GROUP }}
-    #     imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+    - name: 'Az CLI login'
+      uses: azure/login@a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: deploy Container App
+      uses: azure/container-apps-deploy-action@v0
+      with:
+        acrName: ${{ secrets.ACR_NAME }}
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.CONTAINER_APP_RESOURCE_GROUP }}
+        imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
