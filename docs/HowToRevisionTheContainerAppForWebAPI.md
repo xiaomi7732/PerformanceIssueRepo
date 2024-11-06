@@ -1,4 +1,7 @@
-# Quick guide to revision the WebAPI for revision
+# Quick guide to revision the WebAPI - manually
+
+This is how to use Azure CLI to reversion the app on a local box.
+See [how to do it in GitHub Action](./HowActionReversionTheContainerAppForWebAPI.md).
 
 ## The setup
 
