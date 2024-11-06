@@ -10,14 +10,14 @@ This is an open source repository and we welcome contributions from the communit
 
 * Assuming there's a performance issue you want to share with someone, instead of describing it, share a url like this (click on it to see it live):
 
-    * <https://purple-beach-00e7e341e.2.azurestaticapps.net/Issues/032a1d51-428a-4b16-bf75-ebff5e1755d2?spec-version=1.0.0-alpha9>
+  * <https://purple-beach-00e7e341e.2.azurestaticapps.net/Issues/032a1d51-428a-4b16-bf75-ebff5e1755d2?spec-version=1.0.0-alpha9>
 
-        * Alright, it will be a stable/custom domain name;
-        * But then the key information would be:
-            * Issue permanent id: 032a1d51-428a-4b16-bf75-ebff5e1755d2
-            * In registry spec of version: 1.0.0-alpha9
+    * Alright, it will be a stable/custom domain name;
+    * But then the key information would be:
+      * Issue permanent id: 032a1d51-428a-4b16-bf75-ebff5e1755d2
+      * In registry spec of version: 1.0.0-alpha9
 
-    * On the other end, we will get:
+  * On the other end, we will get:
         ![Issue example](./images/IssueExample.png)
 
 ## Common scenarios
@@ -25,22 +25,22 @@ This is an open source repository and we welcome contributions from the communit
 * If you are building a performance issue detecting system, consider bake in the permanent id and the version into the output, you don't have to worry about writing descriptions or recommendations, help docs for the issue.
 
 * You could access the issues through the RESTful API. For example:
-    * <https://opiapi.delightfulrock-a140dca6.westus.azurecontainerapps.io/issues/032a1d51-428a-4b16-bf75-ebff5e1755d2?spec-version=1.0.0-alpha9>
-        * You will get a json representative of the same issue.
-        * Now, it can be render to a UI by your choice.
+  * <https://opiapi.delightfulrock-a140dca6.westus.azurecontainerapps.io/issues/032a1d51-428a-4b16-bf75-ebff5e1755d2?spec-version=1.0.0-alpha9>
+    * You will get a json representative of the same issue.
+    * Now, it can be render to a UI by your choice.
 
 * To contribute to the collection of the performance issues (the registry), submit a PR for [this registry file](https://github.com/xiaomi7732/PerformanceIssueRepo/blob/main/specs/registry/perf-issue.json).
-    * You could use the Web UI to generate the json: https://aka.ms/opiweb.
+  * You could use the Web UI to generate the json: <https://aka.ms/opiweb>.
 
-# Performance issue language
+## Performance issue language
 
 ![Image describe the importance of sharing language](./images/Vision.png)
 
-# Benefits
+## Benefits
 
 * Consistent performance issue descriptions
   * Index the performance issues and provide consistent language to describe a performance issues in unified format.
-    * See https://aka.ms/opiweb for all issues index.
+    * See <https://aka.ms/opiweb> for all issues index.
   * The issue registries are versioned, so that you always know the set of issues by the specific version.
     * See [this json file](https://raw.githubusercontent.com/xiaomi7732/PerformanceIssueRepo/main/specs/registry/perf-issue.json) for the latest version of all the issues.
     * For the same file, see [version 1.0.0-alpha1](https://raw.githubusercontent.com/xiaomi7732/PerformanceIssueRepo/1.0.0-alpha1/specs/registry/perf-issue.json).
@@ -54,16 +54,14 @@ This is an open source repository and we welcome contributions from the communit
 
 * SDK support in the future that you will be able to access issues by code.
 
-# Semantics
+## Semantics
 
 * Semantics that will be handled by the SDK
 
 * Semantics that you will need to provide
 
-# Actions
+## Actions
 
 * Generate localization resources for known issues.
-    * The issue registry will be published at <https://aka.ms/opi-registry>. It will be in form `perf-issue.version.json`.
-        * For example: perf-issue.20230201.json.
-
-
+  * The issue registry will be published at <https://aka.ms/opi-registry>. It will be in form `perf-issue.version.json`.
+    * For example: perf-issue.20230201.json.

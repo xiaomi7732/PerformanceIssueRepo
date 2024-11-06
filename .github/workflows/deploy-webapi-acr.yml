@@ -5,8 +5,8 @@ on:
 
 env:
   IMAGE_NAME: opiapi
-  CONTAINER_APP_NAME: opiapi
-  CONTAINER_APP_RESOURCE_GROUP: opi-dev-westus-002
+#   CONTAINER_APP_NAME: opiapi
+#   CONTAINER_APP_RESOURCE_GROUP: opi-dev-westus-002
 
 jobs:
   docker_build_push_acr:
