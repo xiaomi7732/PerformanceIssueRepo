@@ -21,7 +21,7 @@ jobs:
   docker_build_push_acr:
     name: 'Docker Build and Push to ACR'
     # Only run scheduled deployments on the main branch
-    if: ${{ github.event_name != 'schedule' || github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main') }}
     runs-on: ubuntu-latest
     environment: production
   
