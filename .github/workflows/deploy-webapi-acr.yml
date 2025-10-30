@@ -1,8 +1,14 @@
 name: Deploy WebAPI to Container App by ACR
 
+# This workflow deploys the WebAPI to the container app:
+# - Manually via workflow_dispatch
+# - Automatically on the 1st and 15th of each month (main branch only)
+
 on:
   workflow_dispatch:
-
+  schedule:
+    # Run at 00:00 on the 1st and 15th day of each month
+    - cron: '0 0 1,15 * *'
 env:
   IMAGE_NAME: opiapi
   CONTAINER_APP_NAME: opiapi
@@ -14,6 +20,8 @@ permissions:
 jobs:
   docker_build_push_acr:
     name: 'Docker Build and Push to ACR'
+    # Only run scheduled deployments on the main branch
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main') }}
     runs-on: ubuntu-latest
     environment: production
   
